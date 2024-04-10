@@ -8,7 +8,7 @@ import { getHomeRouteForLoggedInUser } from './routes/privateRouter';
 
 const Router = () => {
   // eslint-disable-next-line no-constant-condition
-  const getHomeRoute = () => (true ? getHomeRouteForLoggedInUser('admin') : '/auth/login');
+  const getHomeRoute = () => (getHomeRouteForLoggedInUser());
   const routes = useRoutes([
     {
       path: '/',

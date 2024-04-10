@@ -40,7 +40,7 @@ const LoginPage = () => {
     })();
   }, []);
   const handleLogin = () => {
-    if (ListUser.length > 0) {
+    if (ListUser && ListUser?.length > 0) {
       const LoginSuccess = ListUser.filter((ele: IUserListModel) => {
         return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
       });

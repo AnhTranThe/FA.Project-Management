@@ -1,15 +1,15 @@
-import getStartedNavigations from "./getStartedNavigations";
+// import getStartedNavigations from "./getStartedNavigations";
+// import pagesNavigations from "./pagesNavigations";
+// import utilitiesNavigations from "./utilitiesNavigations";
 import homeNavigations from "./homeNavigations";
-import pagesNavigations from "./pagesNavigations";
 import uiComponentsNavigations from "./uiComponentsNavigations";
-import utilitiesNavigations from "./utilitiesNavigations";
 
 const allNavigations = [
   ...homeNavigations,
   ...uiComponentsNavigations,
-  ...utilitiesNavigations,
-  ...pagesNavigations,
-  ...getStartedNavigations,
+  // ...utilitiesNavigations,
+  // ...pagesNavigations,
+  // ...getStartedNavigations,
 ];
 
 export default allNavigations;

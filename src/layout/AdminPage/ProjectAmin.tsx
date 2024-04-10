@@ -21,7 +21,7 @@ import { CustomerService } from "../../../demo/service/CustomerService";
 import { ProductService } from "../../../demo/service/ProductService";
 import { getListUserService } from "../../../serviceApi/userServiceApi";
 
-const TableDemo = () => {
+const ProjectAdmin = () => {
   const [customers1, setCustomers1] = useState(null);
   const [customers2, setCustomers2] = useState([]);
   const [customers3, setCustomers3] = useState([]);
@@ -29,11 +29,7 @@ const TableDemo = () => {
   const [loading1, setLoading1] = useState(true);
   const [loading2, setLoading2] = useState(true);
   const [idFrozen, setIdFrozen] = useState(false);
-  const [products, setProducts] = useState([
-    { Name: "Thái", Email: "email@gmail.com", Role: 1 },
-    { Name: "Sơn", Email: "email@gmail.com", Role: 0 },
-    { Name: "Lâm", Email: "email@gmail.com", Role: 0 },
-  ]);
+
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   const [expandedRows, setExpandedRows] = useState(null);
   const [allExpanded, setAllExpanded] = useState(false);
@@ -100,19 +96,6 @@ const TableDemo = () => {
 
   useEffect(() => {
     setLoading2(true);
-
-    // customerService.getCustomersLarge().then((data) => {
-    //   setCustomers1(getCustomers(data));
-    //   setLoading1(false);
-    // });
-    // customerService.getCustomersLarge().then((data) => {
-    //   setCustomers2(getCustomers(data));
-    //   setLoading2(false);
-    // });
-    // customerService.getCustomersMedium().then((data) => setCustomers3(data));
-    // productService
-    //   .getProductsWithOrdersSmall()
-    //   .then((data) => setProducts(data));
 
     initFilters1();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -538,7 +521,7 @@ const TableDemo = () => {
 
   return (
     <div className="grid">
-      {/* <div className="col-12">
+      <div className="col-12">
         <div className="card">
           <h5>Filter Menu</h5>
           <DataTable
@@ -629,75 +612,9 @@ const TableDemo = () => {
             />
           </DataTable>
         </div>
-      </div> */}
-
-      {/* <div className="col-12">
-                <div className="card">
-                    <h5>Frozen Columns</h5>
-                    <ToggleButton checked={idFrozen} onChange={(e) => setIdFrozen(e.value)} onIcon="pi pi-lock" offIcon="pi pi-lock-open" onLabel="Unfreeze Id" offLabel="Freeze Id" style={{ width: '10rem' }} />
-
-                    <DataTable value={customers2} scrollable scrollHeight="400px" loading={loading2} scrollDirection="both" className="mt-3">
-                        <Column field="name" header="Name" style={{ flexGrow: 1, flexBasis: '160px' }} frozen className="font-bold"></Column>
-                        <Column field="id" header="Id" style={{ flexGrow: 1, flexBasis: '100px' }} frozen={idFrozen} alignFrozen="left" bodyClassName={classNames({ 'font-bold': idFrozen })}></Column>
-                        <Column field="country.name" header="Country" style={{ flexGrow: 1, flexBasis: '200px' }} body={countryBodyTemplate}></Column>
-                        <Column field="date" header="Date" style={{ flexGrow: 1, flexBasis: '200px' }} body={dateBodyTemplate}></Column>
-                        <Column field="company" header="Company" style={{ flexGrow: 1, flexBasis: '200px' }}></Column>
-                        <Column field="status" header="Status" style={{ flexGrow: 1, flexBasis: '200px' }} body={statusBodyTemplate}></Column>
-                        <Column field="activity" header="Activity" style={{ flexGrow: 1, flexBasis: '200px' }}></Column>
-                        <Column field="representative.name" header="Representative" style={{ flexGrow: 1, flexBasis: '200px' }} body={representativeBodyTemplate}></Column>
-                        <Column field="balance" header="Balance" body={balanceTemplate} frozen style={{ flexGrow: 1, flexBasis: '120px' }} className="font-bold" alignFrozen="right"></Column>
-                    </DataTable>
-                </div>
-            </div> */}
-
-      <div className="col-12">
-        <div className="card">
-          <h5>List User</h5>
-          <DataTable
-            value={products}
-            expandedRows={expandedRows}
-            onRowToggle={(e) => setExpandedRows(e.data)}
-            responsiveLayout="scroll"
-            // rowExpansionTemplate={rowExpansionTemplate}
-            dataKey="Name">
-            {/* // header={header} */}
-            {/* <Column expander style={{ width: "3em" }} /> */}
-            <Column field="Name" header="Name" sortable />
-            <Column field="Email" header="Email" sortable />
-            <Column field="Role" header="Role" body={roleBodyTemplate} />
-            <Column field="Action" header="Action" body={actionBodyTemplate} />
-            {/* <Column field="rating" header="Reviews" sortable body={ratingBodyTemplate} />
-                        <Column field="inventoryStatus" header="Status" sortable body={statusBodyTemplate2} /> */}
-          </DataTable>
-        </div>
       </div>
-
-      {/* <div className="col-12">
-                <div className="card">
-                    <h5>Subheader Grouping</h5>
-                    <DataTable
-                        value={customers3}
-                        rowGroupMode="subheader"
-                        groupRowsBy="representative.name"
-                        sortMode="single"
-                        sortField="representative.name"
-                        sortOrder={1}
-                        scrollable
-                        scrollHeight="400px"
-                        rowGroupHeaderTemplate={headerTemplate}
-                        rowGroupFooterTemplate={footerTemplate}
-                        responsiveLayout="scroll"
-                    >
-                        <Column field="name" header="Name" style={{ minWidth: '200px' }}></Column>
-                        <Column field="country" header="Country" body={countryBodyTemplate} style={{ minWidth: '200px' }}></Column>
-                        <Column field="company" header="Company" style={{ minWidth: '200px' }}></Column>
-                        <Column field="status" header="Status" body={statusBodyTemplate} style={{ minWidth: '200px' }}></Column>
-                        <Column field="date" header="Date" style={{ minWidth: '200px' }}></Column>
-                    </DataTable>
-                </div>
-            </div> */}
     </div>
   );
 };
 
-export default TableDemo;
+export default ProjectAdmin;

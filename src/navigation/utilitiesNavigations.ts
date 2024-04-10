@@ -2,18 +2,17 @@ import { IModel } from "../models/commonModel";
 
 const utilitiesNavigations: IModel[] = [
   {
-    label: "Utilities",
+    label: "Service",
     items: [
       {
-        label: "PrimeIcons",
+        label: "Project",
         icon: "pi pi-fw pi-prime",
-        to: "/utilities/icons",
+        to: "/utilities/project",
       },
       {
-        label: "PrimeFlex",
+        label: "Task",
         icon: "pi pi-fw pi-desktop",
-        url: "https://www.primefaces.org/primeflex/",
-        target: "_blank",
+        to: "/utilities/task",
       },
     ],
   },

@@ -44,9 +44,9 @@ const LoginPage = () => {
       const LoginSuccess = ListUser.filter((ele: IUserListModel) => {
         return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
       });
-      console.log(LoginSuccess);
       if (LoginSuccess.length > 0) {
-        localStorage.setItem("user", JSON.stringify(LoginSuccess[0]));
+        const stringData = JSON.stringify(LoginSuccess[0]);
+        localStorage.setItem("user", stringData);
         showSuccess();
         navigate("/dashboard");
       }

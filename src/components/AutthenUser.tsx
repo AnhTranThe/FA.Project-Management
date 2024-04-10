@@ -5,8 +5,9 @@ interface IProps {
   children: ReactNode;
 }
 export default function AutthenUser({ children }: IProps) {
-  const userData = localStorage.getItem("user");
-  if (!userData) {
+  const data = localStorage.getItem("user");
+
+  if (!data) {
     return <Navigate to={"/auth/login"} />;
   }
   return <div>{children}</div>;

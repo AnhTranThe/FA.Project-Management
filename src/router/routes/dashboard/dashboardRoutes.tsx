@@ -1,15 +1,24 @@
-
-import DashboardLayout from '../../../layout/DashboardLayout';
-import homeRoutes from './homeRoutes';
-import pagesRoutes from './pagesRoutes';
-import uiComponentsRoutes from './uiComponentsRoutes';
-import utilitiesRoutes from './utilitiesRoutes';
+import AutthenUser from "../../../components/AutthenUser";
+import DashboardLayout from "../../../layout/DashboardLayout";
+import homeRoutes from "./homeRoutes";
+import uiComponentsRoutes from "./uiComponentsRoutes";
+import pagesRoutes from "./pagesRoutes";
+import utilitiesRoutes from "./utilitiesRoutes";
 
 const dashboardRoutes = [
   {
-    path: '/',
-    element: <DashboardLayout />,
-    children: [...homeRoutes, ...uiComponentsRoutes, ...utilitiesRoutes, ...pagesRoutes],
+    path: "/",
+    element: (
+      <AutthenUser>
+        <DashboardLayout />
+      </AutthenUser>
+    ),
+    children: [
+      ...homeRoutes,
+      ...uiComponentsRoutes,
+      ...utilitiesRoutes,
+      ...pagesRoutes,
+    ],
   },
 ];
 export default dashboardRoutes;

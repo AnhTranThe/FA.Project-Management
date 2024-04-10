@@ -16,9 +16,10 @@ import { Slider } from "primereact/slider";
 import { ToggleButton } from "primereact/togglebutton";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { classNames } from "primereact/utils";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { CustomerService } from "../../../demo/service/CustomerService";
 import { ProductService } from "../../../demo/service/ProductService";
+import { getListUserService } from "../../../serviceApi/userServiceApi";
 
 const TableDemo = () => {
   const [customers1, setCustomers1] = useState(null);
@@ -420,9 +421,9 @@ const TableDemo = () => {
   const priceBodyTemplate = (rowData) => {
     return formatCurrency(rowData.price);
   };
-  const actionBodyTemplate = () => {
+  const actionBodyTemplate = (rowData) => {
     return (
-      <>
+      <Fragment key={rowData.name}>
         <Button
           icon="pi pi-user"
           className="p-button-rounded p-button-info p-button-text"
@@ -431,18 +432,20 @@ const TableDemo = () => {
           icon="pi pi-times"
           className="p-button-rounded p-button-danger p-button-text"
         />
-      </>
+      </Fragment>
     );
   };
 
   const roleBodyTemplate = (rowData) => {
-    return (
-      <>
-        <p>{rowData.Role === 1 ? "Admin" : "User"}</p>
-      </>
-    );
+    return <p key={rowData.name}>{rowData.Role === 1 ? "Admin" : "User"}</p>;
   };
 
+  useEffect(() => {
+    (async () => {
+      const data = await getListUserService();
+      setProducts(data);
+    })();
+  }, []);
   const ratingBodyTemplate = (rowData) => {
     return <Rating value={rowData.rating} readOnly cancel={false} />;
   };
@@ -456,40 +459,40 @@ const TableDemo = () => {
     );
   };
 
-  const rowExpansionTemplate = (data) => {
-    return (
-      <div className="orders-subtable">
-        <h5>Orders for {data.name}</h5>
-        <DataTable value={data.orders} responsiveLayout="scroll">
-          <Column field="id" header="Id" sortable></Column>
-          <Column field="customer" header="Customer" sortable></Column>
-          <Column field="date" header="Date" sortable></Column>
-          <Column
-            field="amount"
-            header="Amount"
-            body={amountBodyTemplate}
-            sortable></Column>
-          <Column
-            field="status"
-            header="Status"
-            body={statusOrderBodyTemplate}
-            sortable></Column>
-          <Column
-            headerStyle={{ width: "4rem" }}
-            body={searchBodyTemplate}></Column>
-        </DataTable>
-      </div>
-    );
-  };
+  // const rowExpansionTemplate = (data) => {
+  //   return (
+  //     <div className="orders-subtable">
+  //       <h5>Orders for {data.name}</h5>
+  //       <DataTable value={data.orders} responsiveLayout="scroll">
+  //         <Column field="id" header="Id" sortable></Column>
+  //         <Column field="customer" header="Customer" sortable></Column>
+  //         <Column field="date" header="Date" sortable></Column>
+  //         <Column
+  //           field="amount"
+  //           header="Amount"
+  //           body={amountBodyTemplate}
+  //           sortable></Column>
+  //         <Column
+  //           field="status"
+  //           header="Status"
+  //           body={statusOrderBodyTemplate}
+  //           sortable></Column>
+  //         <Column
+  //           headerStyle={{ width: "4rem" }}
+  //           body={searchBodyTemplate}></Column>
+  //       </DataTable>
+  //     </div>
+  //   );
+  // };
 
-  const header = (
-    <Button
-      icon={allExpanded ? "pi pi-minus" : "pi pi-plus"}
-      label={allExpanded ? "Collapse All" : "Expand All"}
-      onClick={toggleAll}
-      className="w-11rem"
-    />
-  );
+  // const header = (
+  //   <Button
+  //     icon={allExpanded ? "pi pi-minus" : "pi pi-plus"}
+  //     label={allExpanded ? "Collapse All" : "Expand All"}
+  //     onClick={toggleAll}
+  //     className="w-11rem"
+  //   />
+  // );
 
   const headerTemplate = (data) => {
     return (
@@ -600,9 +603,9 @@ const TableDemo = () => {
             expandedRows={expandedRows}
             onRowToggle={(e) => setExpandedRows(e.data)}
             responsiveLayout="scroll"
-            rowExpansionTemplate={rowExpansionTemplate}
-            dataKey="id"
-            header={header}>
+            // rowExpansionTemplate={rowExpansionTemplate}
+            dataKey="Name">
+            {/* // header={header} */}
             {/* <Column expander style={{ width: "3em" }} /> */}
             <Column field="Name" header="Name" sortable />
             <Column field="Email" header="Email" sortable />

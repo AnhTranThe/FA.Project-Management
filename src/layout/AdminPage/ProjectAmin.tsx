@@ -1,33 +1,32 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
-import { FilterMatchMode, FilterOperator } from "primereact/api";
+import { Fragment, useEffect, useState } from "react";
+import { CustomerService } from "../../demo/service/CustomerService";
+import { ProductService } from "../../demo/service/ProductService";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
-import { Column } from "primereact/column";
-import { DataTable } from "primereact/datatable";
-import { Dropdown } from "primereact/dropdown";
-import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
+import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { MultiSelect } from "primereact/multiselect";
+import { Calendar } from "primereact/calendar";
+import { InputNumber } from "primereact/inputnumber";
+import { Dropdown } from "primereact/dropdown";
 import { ProgressBar } from "primereact/progressbar";
-import { Rating } from "primereact/rating";
 import { Slider } from "primereact/slider";
-import { ToggleButton } from "primereact/togglebutton";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { classNames } from "primereact/utils";
-import React, { Fragment, useEffect, useState } from "react";
-import { CustomerService } from "../../../demo/service/CustomerService";
-import { ProductService } from "../../../demo/service/ProductService";
-import { getListUserService } from "../../../serviceApi/userServiceApi";
+import { Rating } from "primereact/rating";
+import { getListUserService } from "../../serviceApi/userServiceApi";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
 
 const ProjectAdmin = () => {
   const [customers1, setCustomers1] = useState(null);
   const [customers2, setCustomers2] = useState([]);
   const [customers3, setCustomers3] = useState([]);
   const [filters1, setFilters1] = useState(null);
-  const [loading1, setLoading1] = useState(true);
-  const [loading2, setLoading2] = useState(true);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
   const [idFrozen, setIdFrozen] = useState(false);
 
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
@@ -94,11 +93,11 @@ const ProjectAdmin = () => {
     );
   };
 
-  useEffect(() => {
-    setLoading2(true);
+  // useEffect(() => {
+  //   setLoading2(true);
 
-    initFilters1();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  //   initFilters1();
+  // }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const balanceTemplate = (rowData) => {
     return (
@@ -162,7 +161,7 @@ const ProjectAdmin = () => {
 
   const countryBodyTemplate = (rowData) => {
     return (
-      <React.Fragment>
+      <>
         <img
           alt="flag"
           src={`/demo/images/flag/flag_placeholder.png`}
@@ -172,7 +171,7 @@ const ProjectAdmin = () => {
         <span style={{ marginLeft: ".5em", verticalAlign: "middle" }}>
           {rowData.country.name}
         </span>
-      </React.Fragment>
+      </>
     );
   };
 
@@ -199,7 +198,7 @@ const ProjectAdmin = () => {
   const representativeBodyTemplate = (rowData) => {
     const representative = rowData.representative;
     return (
-      <React.Fragment>
+      <>
         <img
           alt={representative.name}
           src={`/demo/images/avatar/${representative.image}`}
@@ -213,7 +212,7 @@ const ProjectAdmin = () => {
         <span style={{ marginLeft: ".5em", verticalAlign: "middle" }}>
           {representative.name}
         </span>
-      </React.Fragment>
+      </>
     );
   };
 
@@ -319,7 +318,7 @@ const ProjectAdmin = () => {
 
   const activityFilterTemplate = (options) => {
     return (
-      <React.Fragment>
+      <>
         <Slider
           value={options.value}
           onChange={(e) => options.filterCallback(e.value)}
@@ -329,7 +328,7 @@ const ProjectAdmin = () => {
           <span>{options.value ? options.value[0] : 0}</span>
           <span>{options.value ? options.value[1] : 100}</span>
         </div>
-      </React.Fragment>
+      </>
     );
   };
 
@@ -357,13 +356,13 @@ const ProjectAdmin = () => {
     else expandAll();
   };
 
-  const expandAll = () => {
-    const _expandedRows = {};
-    products.forEach((p) => (_expandedRows[`${p.id}`] = true));
+  // const expandAll = () => {
+  //   const _expandedRows = {};
+  //   products.forEach((p) => (_expandedRows[`${p.id}`] = true));
 
-    setExpandedRows(_expandedRows);
-    setAllExpanded(true);
-  };
+  //   setExpandedRows(_expandedRows);
+  //   setAllExpanded(true);
+  // };
 
   const collapseAll = () => {
     setExpandedRows(null);
@@ -423,24 +422,24 @@ const ProjectAdmin = () => {
     return <p key={rowData.name}>{rowData.Role === 1 ? "Admin" : "User"}</p>;
   };
 
-  useEffect(() => {
-    (async () => {
-      const data = await getListUserService();
-      setProducts(data);
-    })();
-  }, []);
-  const ratingBodyTemplate = (rowData) => {
-    return <Rating value={rowData.rating} readOnly cancel={false} />;
-  };
+  // useEffect(() => {
+  //   (async () => {
+  //     const data = await getListUserService();
+  //     setProducts(data);
+  //   })();
+  // }, []);
+  // const ratingBodyTemplate = (rowData) => {
+  //   return <Rating value={rowData.rating} readOnly cancel={false} />;
+  // };
 
-  const statusBodyTemplate2 = (rowData) => {
-    return (
-      <span
-        className={`product-badge status-${rowData.inventoryStatus.toLowerCase()}`}>
-        {rowData.inventoryStatus}
-      </span>
-    );
-  };
+  // const statusBodyTemplate2 = (rowData) => {
+  //   return (
+  //     <span
+  //       className={`product-badge status-${rowData.inventoryStatus.toLowerCase()}`}>
+  //       {rowData.inventoryStatus}
+  //     </span>
+  //   );
+  // };
 
   // const rowExpansionTemplate = (data) => {
   //   return (
@@ -477,23 +476,23 @@ const ProjectAdmin = () => {
   //   />
   // );
 
-  const headerTemplate = (data) => {
-    return (
-      <React.Fragment>
-        <img
-          alt={data.representative.name}
-          src={`/demo/images/avatar/${data.representative.image}`}
-          width="32"
-          style={{ verticalAlign: "middle" }}
-        />
-        <span className="font-bold ml-2">{data.representative.name}</span>
-      </React.Fragment>
-    );
-  };
+  // const headerTemplate = (data) => {
+  //   return (
+  //     <React.Fragment>
+  //       <img
+  //         alt={data.representative.name}
+  //         src={`/demo/images/avatar/${data.representative.image}`}
+  //         width="32"
+  //         style={{ verticalAlign: "middle" }}
+  //       />
+  //       <span className="font-bold ml-2">{data.representative.name}</span>
+  //     </React.Fragment>
+  //   );
+  // };
 
   const footerTemplate = (data) => {
     return (
-      <React.Fragment>
+      <>
         <td
           colSpan="4"
           style={{ textAlign: "right" }}
@@ -501,7 +500,7 @@ const ProjectAdmin = () => {
           Total Customers
         </td>
         <td>{calculateCustomerTotal(data.representative.name)}</td>
-      </React.Fragment>
+      </>
     );
   };
 

@@ -7,7 +7,6 @@ export const getListUserService = async () => {
     // console.log(res.data);
     return res.data;
   } catch (error: any) {
-    // console.log(error.message);
-    return error.message;
+    console.log(error.message);
   }
 };

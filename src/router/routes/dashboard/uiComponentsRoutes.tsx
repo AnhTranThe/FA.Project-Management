@@ -1,51 +1,51 @@
-// import { Navigate } from 'react-router-dom';
-// import ButtonDemo from '../../../views/uikit/button';
-// import ChartDemo from '../../../views/uikit/charts';
-// import FileDemo from '../../../views/uikit/file';
-// import FloatLabelDemo from '../../../views/uikit/floatlabel';
-// import FormLayoutDemo from '../../../views/uikit/formlayout';
-// import InputDemo from '../../../views/uikit/input';
-// import InvalidStateDemo from '../../../views/uikit/invalidstate';
-// import ListDemo from '../../../views/uikit/list';
-// import MediaDemo from '../../../views/uikit/media';
-// import MenuDemo from '../../../views/uikit/menu';
-// import MessagesDemo from '../../../views/uikit/message';
-// import MiscDemo from '../../../views/uikit/misc';
-// import OverlayDemo from '../../../views/uikit/overlay';
-// import PanelDemo from '../../../views/uikit/panel';
-// import TreeDemo from '../../../views/uikit/tree';
-import TableDemo from '../../../views/uikit/table';
+// import { Navigate } from "react-router-dom";
+// import ButtonDemo from "../../../views/uikit/button";
+// import ChartDemo from "../../../views/uikit/charts";
+// import FileDemo from "../../../views/uikit/file";
+// import FloatLabelDemo from "../../../views/uikit/floatlabel";
+// import FormLayoutDemo from "../../../views/uikit/formlayout";
+// import InputDemo from "../../../views/uikit/input";
+// import InvalidStateDemo from "../../../views/uikit/invalidstate";
+// import ListDemo from "../../../views/uikit/list";
+// import MediaDemo from "../../../views/uikit/media";
+// import MenuDemo from "../../../views/uikit/menu";
+// import MessagesDemo from "../../../views/uikit/message";
+// import MiscDemo from "../../../views/uikit/misc";
+// import OverlayDemo from "../../../views/uikit/overlay";
+// import PanelDemo from "../../../views/uikit/panel";
+// import TreeDemo from "../../../views/uikit/tree";
+import TableDemo from "../../../views/uikit/table";
 
 const uiComponentsRoutes = [
   {
-    path: '/uikit',
+    path: "/uikit",
     children: [
       // {
-      //   path: '/uikit',
+      //   path: "/uikit",
       //   element: <Navigate to="/" replace />,
       // },
       // {
-      //   path: 'formlayout',
+      //   path: "formlayout",
       //   element: <FormLayoutDemo />,
       // },
       // {
-      //   path: 'input',
+      //   path: "input",
       //   element: <InputDemo />,
       // },
       // {
-      //   path: 'floatlabel',
+      //   path: "floatlabel",
       //   element: <FloatLabelDemo />,
       // },
       // {
-      //   path: 'invalidstate',
+      //   path: "invalidstate",
       //   element: <InvalidStateDemo />,
       // },
       // {
-      //   path: 'button',
+      //   path: "button",
       //   element: <ButtonDemo />,
       // },
       {
-        path: 'user',
+        path: "user",
         element: <TableDemo />,
       },
       // {

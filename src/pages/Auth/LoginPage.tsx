@@ -2,16 +2,19 @@ import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
-import { ChangeEvent, useContext, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LayoutContext } from "../../../layout/context/layoutcontext";
-import { getListUserService } from "../../../serviceApi/userServiceApi";
+
+import { InputSwitch } from "primereact/inputswitch";
+import { IUserListModel } from "../../models/userListModel";
+import { getListUserService } from "../../serviceApi/userServiceApi";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ Name: "", Email: "" });
   const [checked, setChecked] = useState(false);
   const [ListUser, setListUsser] = useState<IUserListModel[]>([]);
-  const { layoutConfig } = useContext(LayoutContext);
+  const [switchValue, setSwitchValue] = useState(false);
+  // const { layoutConfig } = useContext(LayoutContext);
 
   const navigate = useNavigate();
   const toast = useRef<Toast>(null);
@@ -33,6 +36,8 @@ const LoginPage = () => {
       life: 3000,
     });
   };
+  console.log(ListUser);
+
   useEffect(() => {
     (async () => {
       const userData: IUserListModel[] = await getListUserService();
@@ -45,7 +50,9 @@ const LoginPage = () => {
         return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
       });
       if (LoginSuccess.length > 0) {
+        console.log(1);
         const stringData = JSON.stringify(LoginSuccess[0]);
+        console.log(stringData);
         localStorage.setItem("user", stringData);
         showSuccess();
         navigate("/dashboard");
@@ -134,6 +141,13 @@ const LoginPage = () => {
                 Forgot password?
               </a>
             </div>
+            <div className="flex align-items-center mb-5 gap-2">
+              <InputSwitch checked={switchValue} onChange={(e) => setSwitchValue(e.value)} />
+              <label htmlFor="rememberme1">Switch dark/light</label>
+            </div>
+
+
+
             <Button
               label="Sign In"
               className="w-full p-3 text-xl"

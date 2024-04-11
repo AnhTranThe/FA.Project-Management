@@ -1,24 +1,22 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
-import { Fragment, useEffect, useState } from "react";
-import { CustomerService } from "../../demo/service/CustomerService";
-import { ProductService } from "../../demo/service/ProductService";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
-import { MultiSelect } from "primereact/multiselect";
+import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
-import { InputNumber } from "primereact/inputnumber";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
+import { InputNumber } from "primereact/inputnumber";
+import { InputText } from "primereact/inputtext";
+import { MultiSelect } from "primereact/multiselect";
 import { ProgressBar } from "primereact/progressbar";
 import { Slider } from "primereact/slider";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { classNames } from "primereact/utils";
-import { Rating } from "primereact/rating";
-import { getListUserService } from "../../serviceApi/userServiceApi";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
+import { Fragment, useState } from "react";
+import { CustomerService } from "../../demo/service/CustomerService";
+import { ProductService } from "../../demo/service/ProductService";
 
 const ProjectAdmin = () => {
   const [customers1, setCustomers1] = useState(null);
@@ -203,8 +201,8 @@ const ProjectAdmin = () => {
           alt={representative.name}
           src={`/demo/images/avatar/${representative.image}`}
           onError={(e) =>
-            (e.target.src =
-              "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+          (e.target.src =
+            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
           }
           width={32}
           style={{ verticalAlign: "middle" }}
@@ -390,8 +388,8 @@ const ProjectAdmin = () => {
       <img
         src={`/demo/images/product/${rowData.image}`}
         onError={(e) =>
-          (e.target.src =
-            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+        (e.target.src =
+          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
         }
         alt={rowData.image}
         className="shadow-2"

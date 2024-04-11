@@ -9,7 +9,8 @@ import { Menu } from 'primereact/menu';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ProductService } from '../demo/service/ProductService';
-import { LayoutContext } from '../layout/context/layoutcontext';
+import { LayoutContext } from '../pages/context/layoutcontext';
+
 const lineData = {
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
   datasets: [

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { LayoutContext } from "../context/layoutcontext";
 
 const AppTopbar = forwardRef((_props, ref) => {
-  const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } =
+  const { layoutState, onMenuToggle, showProfileSidebar } =
     useContext(LayoutContext);
   const menubuttonRef = useRef(null);
   const topbarmenuRef = useRef(null);

@@ -4,7 +4,6 @@ import authRoutes from "./routes/authRoutes";
 import dashboardRoutes from "./routes/dashboardRoutes";
 import errorRoutes from "./routes/errorRoutes";
 
-
 const Router = () => {
   // eslint-disable-next-line no-constant-condition
   const routes = useRoutes([

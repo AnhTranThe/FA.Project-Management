@@ -1,14 +1,13 @@
-
-
 import { Navigate } from "react-router-dom";
 import { IRouteModel } from "../../models/routerModel";
 import ProjectAdmin from "../../pages/Project/ProjectAmin";
 import DashboardLayout from "../../pages/DashboardLayout";
 import Dashboard from "../../viewsTemplate";
 import UserPrivateRoute from "./userPrivateRouter";
+import UserAdmin from "../../pages/User/UserAdmin";
+import DetailUser from "../../pages/User/DetailUser";
 
-const dashboardRoutes: IRouteModel =
-{
+const dashboardRoutes: IRouteModel = {
   path: "/",
   element: (
     <UserPrivateRoute>
@@ -17,8 +16,18 @@ const dashboardRoutes: IRouteModel =
   ),
   children: [
     {
-      path: '/dashboard',
-      element: <Dashboard />
+      path: "/",
+      element: <Dashboard />,
+    },
+    {
+      path: "/uikit/user",
+      element: <UserAdmin />,
+      children: [
+        {
+          path: "/uikit/user/detail/:email",
+          element: <DetailUser />,
+        },
+      ],
     },
     {
       path: "/utilities",
@@ -29,5 +38,5 @@ const dashboardRoutes: IRouteModel =
       element: <ProjectAdmin />,
     },
   ],
-}
+};
 export default dashboardRoutes;

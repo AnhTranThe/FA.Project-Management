@@ -5,6 +5,8 @@ import { thunk } from "redux-thunk";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import tabReducer from "./reducer/tabReducer";
+import loginReducer from "./reducer/loginReducer";
+import userReducer from "./reducer/userReducer";
 
 const customizedMiddleware = {
   serializableCheck: false,
@@ -17,6 +19,8 @@ const persistConfig = {
 
 const allReducer: Reducer = combineReducers({
   tabReducer: tabReducer,
+  loginReducer: loginReducer,
+  userReducer: userReducer,
 });
 const persistedReducer = persistReducer(persistConfig, allReducer);
 

@@ -1,5 +1,5 @@
 import { actionPayload } from "../../models/actionPayloadModel";
-import { IUserListModel } from "../../models/userListModel";
+import { IUserListModel } from "../../models/userModel";
 import { GET_LIST_USER } from "../type/userType";
 
 interface IInitialState {

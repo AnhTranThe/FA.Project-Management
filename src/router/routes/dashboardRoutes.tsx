@@ -1,5 +1,3 @@
-
-
 import { IRouteModel } from "../../models/routerModel";
 import DashboardLayout from "../../pages/DashboardLayout";
 import ProjectAdmin from "../../pages/Project/ProjectAmin";
@@ -17,20 +15,13 @@ const dashboardRoutes: IRouteModel = {
     </UserPrivateRoute>
   ),
   children: [
-
     {
-      path: "/",
+      path: "/admin/dashboard",
       element: <Dashboard />,
     },
     {
-      path: "/uikit/user",
+      path: "/admin/user",
       element: <UserAdmin />,
-      children: [
-        {
-          path: "/uikit/user/detail/:email",
-          element: <DetailUser />,
-        },
-      ],
     },
     {
       path: "/admin/task",
@@ -40,7 +31,6 @@ const dashboardRoutes: IRouteModel = {
       path: "/admin/project",
       element: <ProjectAdmin />,
     },
-
   ],
 };
 export default dashboardRoutes;

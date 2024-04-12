@@ -2,7 +2,6 @@ import { IRouteModel } from "../../models/routerModel";
 import DashboardLayout from "../../pages/DashboardLayout";
 import ProjectAdmin from "../../pages/Project/ProjectAmin";
 import TaskAdmin from "../../pages/Task/TaskAdmin";
-import DetailUser from "../../pages/User/DetailUser";
 import UserAdmin from "../../pages/User/UserAdmin";
 import Dashboard from "../../viewsTemplate";
 import UserPrivateRoute from "./userPrivateRouter";

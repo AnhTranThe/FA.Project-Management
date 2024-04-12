@@ -13,5 +13,9 @@ export default function UserPrivateRoute({ children }: IUserPrivateRouteProps) {
   if (!detailUser) {
     return <Navigate to={"/auth/login"} />;
   }
+
+  if (detailUser && detailUser.Role === 2) {
+    
+  }
   return <>{children}</>;
 }

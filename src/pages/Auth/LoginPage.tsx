@@ -1,42 +1,26 @@
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { InputText } from "primereact/inputtext";
-import { Toast } from "primereact/toast";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { InputSwitch } from "primereact/inputswitch";
 import { IUserListModel } from "../../models/userModel";
 import { getListUserService } from "../../serviceApi/userServiceApi";
+import { loginAction } from "../../store/action/loginiAction";
+import { useAppDispatch } from "../../store/store";
+import { ToastContext } from "../context/toastContext";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ Name: "", Email: "" });
   const [checked, setChecked] = useState(false);
-  const [ListUser, setListUsser] = useState<IUserListModel[]>([]);
   const [switchValue, setSwitchValue] = useState(false);
+  const [ListUser, setListUsser] = useState<IUserListModel[]>([]);
+  const dispatch = useAppDispatch();
+  const { setShowDetail } = useContext(ToastContext);
   // const { layoutConfig } = useContext(LayoutContext);
 
   const navigate = useNavigate();
-  const toast = useRef<Toast>(null);
-
-  const showWarning = () => {
-    toast.current?.show({
-      severity: "warn",
-      summary: "Warning",
-      detail: "Email or Name Error",
-      life: 3000,
-    });
-  };
-
-  const showSuccess = () => {
-    toast.current?.show({
-      severity: "success",
-      summary: "Success",
-      detail: "WellCome!!",
-      life: 3000,
-    });
-  };
-  console.log(ListUser);
 
   useEffect(() => {
     (async () => {
@@ -44,18 +28,19 @@ const LoginPage = () => {
       setListUsser(userData);
     })();
   }, []);
+
   const handleLogin = () => {
     if (ListUser && ListUser?.length > 0) {
       const LoginSuccess = ListUser.filter((ele: IUserListModel) => {
         return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
       });
       if (LoginSuccess.length > 0) {
-        const stringData = JSON.stringify(LoginSuccess[0]);
-        localStorage.setItem("user", stringData);
-        showSuccess();
-        navigate("/admin/dashboard");
+        dispatch(loginAction(LoginSuccess[0]));
+        navigate("/");
+        setShowDetail("success");
+        return;
       }
-      showWarning();
+      setShowDetail("error");
     }
   };
   const handleChangeDetailUser = (event: ChangeEvent<HTMLInputElement>) => {
@@ -66,14 +51,6 @@ const LoginPage = () => {
 
   return (
     <div className="flex flex-column align-items-center justify-content-center">
-      <Toast ref={toast} position="top-left" />
-      {/* <img
-        src={`/layout/images/logo-${
-          layoutConfig.colorScheme === "light" ? "dark" : "white"
-        }.svg`}
-        alt="Sakai logo"
-        className="mb-5 w-6rem flex-shrink-0"
-      /> */}
       <div
         style={{
           borderRadius: "56px",
@@ -85,12 +62,6 @@ const LoginPage = () => {
           className="w-full surface-card py-8 px-5 sm:px-8"
           style={{ borderRadius: "53px" }}>
           <div className="text-center mb-5">
-            {/* <img
-              src={`/demo/images/login/avatar.png`}
-              alt="Image"
-              height="50"
-              className="mb-3"
-            /> */}
             <div className="text-900 text-3xl font-medium mb-3">Welcome!!</div>
             <span className="text-600 font-medium">Sign in to continue</span>
           </div>
@@ -140,11 +111,12 @@ const LoginPage = () => {
               </a>
             </div>
             <div className="flex align-items-center mb-5 gap-2">
-              <InputSwitch checked={switchValue} onChange={(e) => setSwitchValue(e.value)} />
+              <InputSwitch
+                checked={switchValue}
+                onChange={(e) => setSwitchValue(e.value)}
+              />
               <label htmlFor="rememberme1">Switch dark/light</label>
             </div>
-
-
 
             <Button
               label="Sign In"

@@ -2,6 +2,8 @@ import { classNames } from "primereact/utils";
 import { forwardRef, useContext, useImperativeHandle, useRef } from "react";
 import { Link } from "react-router-dom";
 import { LayoutContext } from "../context/layoutcontext";
+import { useAppDispatch } from "../../store/store";
+import { logoutAction } from "../../store/action/loginiAction";
 
 
 const AppTopbar = forwardRef((_props, ref) => {
@@ -16,15 +18,16 @@ const AppTopbar = forwardRef((_props, ref) => {
     topbarmenubutton: topbarmenubuttonRef.current,
   }));
 
+  const dispatch = useAppDispatch();
+
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    dispatch(logoutAction());
   };
 
   return (
     <div className="layout-topbar">
       <Link to="/" className="layout-topbar-logo">
         <>
-          {/* <img src={`/layout/images/logo-${layoutConfig.colorScheme !== 'light' ? 'white' : 'dark'}.svg`} width="47.22px" height={'35px'} alt="logo" /> */}
           <span>MockProject</span>
         </>
       </Link>

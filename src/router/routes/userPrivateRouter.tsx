@@ -1,14 +1,17 @@
+import { Navigate } from "react-router-dom";
+import { useAppSelector } from "../../hooks/ReduxHook";
+import { ILoginReducer } from "../../models/loginModel";
 
-import { Navigate } from "react-router-dom"
 interface IUserPrivateRouteProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 export default function UserPrivateRoute({ children }: IUserPrivateRouteProps) {
-  if (!localStorage.getItem("user")) {
-    return <Navigate to={"/auth/login"} />
-  }
-  return (
-    <>{children}</>
-  )
-}
+  const { detailUser } = useAppSelector(
+    (state: ILoginReducer) => state.loginReducer
+  );
 
+  if (!detailUser) {
+    return <Navigate to={"/auth/login"} />;
+  }
+  return <>{children}</>;
+}

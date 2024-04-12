@@ -104,10 +104,10 @@ const Dashboard = () => {
     setLineOptions(lineOptions);
   };
 
-  useEffect(() => {
-    const productService = new ProductService();
-    productService.getProductsSmall().then((data) => setProducts(data));
-  }, []);
+  // useEffect(() => {
+  //   const productService = new ProductService();
+  //   productService.getProductsSmall().then((data) => setProducts(data));
+  // }, []);
 
   useEffect(() => {
     if (layoutConfig.colorScheme === 'light') {

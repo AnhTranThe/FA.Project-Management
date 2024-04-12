@@ -1,15 +1,18 @@
 import { BrowserRouter } from "react-router-dom";
 
-import Router from '../src/router/Router';
+import Router from "../src/router/Router";
 import { LayoutProvider } from "./pages/context/layoutcontext";
+import { ToastProvider } from "./pages/context/toastContext";
 export default function App() {
   return (
     <>
       <BrowserRouter>
         <LayoutProvider>
-          <Router />
+          <ToastProvider>
+            <Router />
+          </ToastProvider>
         </LayoutProvider>
       </BrowserRouter>
     </>
-  )
+  );
 }

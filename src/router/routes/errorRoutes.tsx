@@ -1,8 +1,7 @@
-import { Navigate } from "react-router-dom";
 import { IRouteModel } from "../../models/routerModel";
 import BlankLayout from "../../pages/BlankLayout";
-import AccessDeniedPage from "../../viewsTemplate/error/notAuth";
 import ErrorPage from "../../viewsTemplate/error/InternalServerError";
+import AccessDeniedPage from "../../viewsTemplate/error/notAuth";
 
 const errorRoutes: IRouteModel = {
   path: "/error",
@@ -10,7 +9,7 @@ const errorRoutes: IRouteModel = {
   children: [
     {
       path: "/error",
-      element: <Navigate replace to={"/"} />,
+      element: <ErrorPage />,
     },
     {
       path: "not-auth",

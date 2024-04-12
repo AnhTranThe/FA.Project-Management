@@ -1,7 +1,8 @@
 import { Navigate } from 'react-router-dom';
 import { IRouteModel } from '../../models/routerModel';
-import LoginPage from '../../pages/Auth/LoginPage';
 import AuthLayout from '../../pages/AuthLayout';
+import LoginPage from '../../pages/Auth/LoginPage';
+
 
 const authRoutes: IRouteModel =
 {

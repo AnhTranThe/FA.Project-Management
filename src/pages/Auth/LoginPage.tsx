@@ -6,7 +6,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { InputSwitch } from "primereact/inputswitch";
-import { IUserListModel } from "../../models/userListModel";
+import { IUserListModel } from "../../models/userModel";
 import { getListUserService } from "../../serviceApi/userServiceApi";
 
 const LoginPage = () => {
@@ -50,12 +50,10 @@ const LoginPage = () => {
         return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
       });
       if (LoginSuccess.length > 0) {
-        console.log(1);
         const stringData = JSON.stringify(LoginSuccess[0]);
-        console.log(stringData);
         localStorage.setItem("user", stringData);
         showSuccess();
-        navigate("/dashboard");
+        navigate("/admin/dashboard");
       }
       showWarning();
     }

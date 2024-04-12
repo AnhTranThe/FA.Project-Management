@@ -1,21 +1,26 @@
 import { IModel } from "../models/commonModel";
 
-const utilitiesNavigations: IModel[] = [
+const serviceNavigations: IModel[] = [
   {
     label: "Service",
     items: [
       {
+        label: "User",
+        icon: "pi pi-fw pi-id-card",
+        to: "/admin/user",
+      },
+      {
         label: "Project",
         icon: "pi pi-fw pi-prime",
-        to: "/utilities/project",
+        to: "/admin/project",
       },
       {
         label: "Task",
         icon: "pi pi-fw pi-desktop",
-        to: "/utilities/task",
+        to: "/admin/task",
       },
     ],
   },
 ];
 
-export default utilitiesNavigations;
+export default serviceNavigations;

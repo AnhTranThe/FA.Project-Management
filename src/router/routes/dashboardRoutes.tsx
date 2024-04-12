@@ -1,9 +1,9 @@
 
 
-import { Navigate } from "react-router-dom";
 import { IRouteModel } from "../../models/routerModel";
-import ProjectAdmin from "../../pages/Project/ProjectAmin";
 import DashboardLayout from "../../pages/DashboardLayout";
+import ProjectAdmin from "../../pages/Project/ProjectAmin";
+import TaskAdmin from "../../pages/Task/TaskAdmin";
 import Dashboard from "../../viewsTemplate";
 import UserPrivateRoute from "./userPrivateRouter";
 
@@ -16,18 +16,20 @@ const dashboardRoutes: IRouteModel =
     </UserPrivateRoute>
   ),
   children: [
+
     {
-      path: '/dashboard',
+      path: 'admin/dashboard',
       element: <Dashboard />
     },
     {
-      path: "/utilities",
-      element: <Navigate to="/" replace />,
+      path: "/admin/task",
+      element: <TaskAdmin />,
     },
     {
-      path: "/utilities/project",
+      path: "/admin/project",
       element: <ProjectAdmin />,
     },
+
   ],
 }
 export default dashboardRoutes;

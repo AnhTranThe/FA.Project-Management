@@ -26,7 +26,7 @@ const uiComponentsNavigations: IModel[] = [
       //   to: "/uikit/button",
       //   class: "rotated-icon",
       // },
-      { label: "User", icon: "pi pi-fw pi-id-card", to: "/uikit/user" },
+      // { label: "User", icon: "pi pi-fw pi-id-card", to: "/admin/user" },
       // pi pi-fw pi-table
       // { label: "List", icon: "pi pi-fw pi-list", to: "/uikit/list" },
       // { label: "Tree", icon: "pi pi-fw pi-share-alt", to: "/uikit/tree" },

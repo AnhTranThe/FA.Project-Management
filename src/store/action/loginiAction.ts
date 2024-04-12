@@ -1,5 +1,5 @@
 import { AppDispatch } from "../../hooks/ReduxHook";
-import { IUserListModel } from "../../models/userListModel";
+import { IUserListModel } from "../../models/userModel";
 import { LOGIN_TYPE, LOGOUT_TYPE } from "../type/loginType";
 
 export const loginAction = (detailuser: IUserListModel) => {

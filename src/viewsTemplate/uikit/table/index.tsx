@@ -13,7 +13,6 @@ import { MultiSelect } from "primereact/multiselect";
 import { ProgressBar } from "primereact/progressbar";
 import { Rating } from "primereact/rating";
 import { Slider } from "primereact/slider";
-import { ToggleButton } from "primereact/togglebutton";
 import { TriStateCheckbox } from "primereact/tristatecheckbox";
 import { classNames } from "primereact/utils";
 import React, { Fragment, useEffect, useState } from "react";
@@ -221,8 +220,8 @@ const TableDemo = () => {
           alt={representative.name}
           src={`/demo/images/avatar/${representative.image}`}
           onError={(e) =>
-            (e.target.src =
-              "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+          (e.target.src =
+            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
           }
           width={32}
           style={{ verticalAlign: "middle" }}
@@ -408,8 +407,8 @@ const TableDemo = () => {
       <img
         src={`/demo/images/product/${rowData.image}`}
         onError={(e) =>
-          (e.target.src =
-            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+        (e.target.src =
+          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
         }
         alt={rowData.image}
         className="shadow-2"

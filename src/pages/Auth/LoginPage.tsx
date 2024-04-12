@@ -5,7 +5,7 @@ import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { InputSwitch } from "primereact/inputswitch";
-import { IUserListModel } from "../../models/userListModel";
+import { IUserListModel } from "../../models/userModel";
 import { getListUserService } from "../../serviceApi/userServiceApi";
 import { loginAction } from "../../store/action/loginiAction";
 import { useAppDispatch } from "../../store/store";

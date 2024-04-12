@@ -1,5 +1,5 @@
 import { actionPayload } from "../../models/actionPayloadModel";
-import { IUserListModel } from "../../models/userListModel";
+import { IUserListModel } from "../../models/userModel";
 import { LOGIN_TYPE } from "../type/loginType";
 
 interface IInitialState {
@@ -8,7 +8,6 @@ interface IInitialState {
 const initialState: IInitialState = {
   detailUser: null,
 };
-
 
 const loginReducer = (
   state = initialState,

@@ -2,7 +2,7 @@ import { InputText } from "primereact/inputtext";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../hooks/ReduxHook";
-import { IUserListModel, IUserReducer } from "../../models/userListModel";
+import { IUserListModel, IUserReducer } from "../../models/userModel";
 
 export default function DetailUser() {
   const [detailUserState, setdetailUserState] = useState<IUserListModel>();

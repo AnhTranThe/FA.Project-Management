@@ -4,6 +4,7 @@ import allNavigations from '../../navigation/allNavigations';
 import { MenuProvider } from '../context/menucontext';
 import AppMenuitem from './AppMenuitem';
 
+
 const AppMenu = () => {
   const model: IModel[] = [...allNavigations];
   return (

@@ -9,7 +9,7 @@ import { IUserListModel } from "../../models/userModel";
 import { getListUserService } from "../../serviceApi/userServiceApi";
 import { loginAction } from "../../store/action/loginiAction";
 import { useAppDispatch } from "../../store/store";
-import { ToastContext } from "../context/toastContext";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ Name: "", Email: "" });
@@ -17,7 +17,8 @@ const LoginPage = () => {
   const [switchValue, setSwitchValue] = useState(false);
   const [ListUser, setListUsser] = useState<IUserListModel[]>([]);
   const dispatch = useAppDispatch();
-  const { setShowDetail } = useContext(ToastContext);
+  const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+
   // const { layoutConfig } = useContext(LayoutContext);
 
   const navigate = useNavigate();
@@ -29,18 +30,45 @@ const LoginPage = () => {
     })();
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (ListUser && ListUser?.length > 0) {
       const LoginSuccess = ListUser.filter((ele: IUserListModel) => {
         return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
       });
       if (LoginSuccess.length > 0) {
-        dispatch(loginAction(LoginSuccess[0]));
-        navigate("/");
-        setShowDetail("success");
-        return;
+        await dispatch(loginAction(LoginSuccess[0]));
+        if (LoginSuccess[0].Role === 1) {
+          navigate("/");
+          setShowModelToast((pre) => {
+            return {
+              ...pre,
+              severity: "success",
+              summary: "Success",
+              detail: "Login Success",
+            };
+          });
+          return;
+        } else {
+          navigate("/client");
+          setShowModelToast((pre) => {
+            return {
+              ...pre,
+              severity: "success",
+              summary: "Success",
+              detail: "Login Success",
+            };
+          });
+          return;
+        }
       }
-      setShowDetail("error");
+      setShowModelToast((pre) => {
+        return {
+          ...pre,
+          severity: "warn",
+          summary: "Warning",
+          detail: "Name or Emaill not exsisted",
+        };
+      });
     }
   };
   const handleChangeDetailUser = (event: ChangeEvent<HTMLInputElement>) => {

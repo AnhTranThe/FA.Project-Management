@@ -4,7 +4,7 @@ const homeNavigations: IModel[] = [
   {
     label: "Home",
     items: [
-      { label: "Dashboard", icon: "pi pi-fw pi-home", to: "admin/dashboard" },
+      { label: "Dashboard", icon: "pi pi-fw pi-home", to: "/" },
     ],
   },
 ];

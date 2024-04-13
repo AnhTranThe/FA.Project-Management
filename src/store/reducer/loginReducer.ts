@@ -1,6 +1,6 @@
 import { actionPayload } from "../../models/actionPayloadModel";
 import { IUserListModel } from "../../models/userModel";
-import { LOGIN_TYPE } from "../type/loginType";
+import { LOGIN_TYPE, LOGOUT_TYPE } from "../type/loginType";
 
 interface IInitialState {
   detailUser: IUserListModel | null;
@@ -16,6 +16,11 @@ const loginReducer = (
 ) => {
   switch (type) {
     case LOGIN_TYPE:
+      return {
+        ...state,
+        detailUser: payload,
+      };
+    case LOGOUT_TYPE:
       return {
         ...state,
         detailUser: payload,

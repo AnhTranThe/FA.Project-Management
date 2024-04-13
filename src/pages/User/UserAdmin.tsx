@@ -1,35 +1,36 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
-import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Fragment, ReactNode, useEffect, useState } from "react";
-import { getListUserService } from "../../serviceApi/userServiceApi";
-import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { IUserListModel, IUserReducer } from "../../models/userListModel";
-import DetailUser from "./DetailUser";
-import { Navigate } from "react-router-dom";
-import { useAppDispatch } from "../../store/store";
-import { getListUserAction } from "../../store/action/userAction";
+import { DataTable } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
+import { Fragment, useContext, useEffect, useState } from "react";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { ILoginReducer } from "../../models/loginModel";
+import { IUserListModel, IUserReducer } from "../../models/userListModel";
+import { getListUserService } from "../../serviceApi/userServiceApi";
+import { getListUserAction } from "../../store/action/userAction";
+import { useAppDispatch } from "../../store/store";
+import { InputText } from "primereact/inputtext";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 export default function UserAdmin() {
-  const [customers1, setCustomers1] = useState(null);
-  const [customers2, setCustomers2] = useState([]);
-  const [customers3, setCustomers3] = useState([]);
   const [filters1, setFilters1] = useState(null);
-  const [loading1, setLoading1] = useState(true);
-  const [loading2, setLoading2] = useState(true);
-  const [idFrozen, setIdFrozen] = useState(false);
-  const [products, setProducts] = useState([]);
   const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   const [expandedRows, setExpandedRows] = useState(null);
-  const [allExpanded, setAllExpanded] = useState(false);
-
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [isCreate, setIsCreate] = useState<boolean>(false);
+  const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
   const dispatch = useAppDispatch();
+
+  const [detailUserUpdate, setDetailUserUpdate] = useState<IUserListModel>({
+    Name: "",
+    Email: "",
+    Role: 0,
+  });
+
   const { listUser } = useAppSelector(
     (state: IUserReducer) => state.userReducer
   );
@@ -38,127 +39,85 @@ export default function UserAdmin() {
     (state: ILoginReducer) => state.loginReducer
   );
 
-  const representatives = [
-    { name: "Amy Elsner", image: "amyelsner.png" },
-    { name: "Anna Fali", image: "annafali.png" },
-    { name: "Asiya Javayant", image: "asiyajavayant.png" },
-    { name: "Bernardo Dominic", image: "bernardodominic.png" },
-    { name: "Elwin Sharvill", image: "elwinsharvill.png" },
-    { name: "Ioni Bowcher", image: "ionibowcher.png" },
-    { name: "Ivan Magalhaes", image: "ivanmagalhaes.png" },
-    { name: "Onyama Limba", image: "onyamalimba.png" },
-    { name: "Stephen Shaw", image: "stephenshaw.png" },
-    { name: "XuXue Feng", image: "xuxuefeng.png" },
-  ];
-
-  const statuses = [
-    "unqualified",
-    "qualified",
-    "new",
-    "negotiation",
-    "renewal",
-    "proposal",
-  ];
-
-  const clearFilter1 = () => {
-    initFilters1();
-  };
-
-  const renderHeader1 = () => {
-    return (
-      <div className="flex justify-content-between">
-        <Button
-          type="button"
-          icon="pi pi-filter-slash"
-          label="Clear"
-          className="p-button-outlined"
-          onClick={clearFilter1}
-        />
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={globalFilterValue1}
-            onChange={onGlobalFilterChange1}
-            placeholder="Keyword Search"
-          />
-        </span>
-      </div>
-    );
-  };
-
   // eslint-disable-line react-hooks/exhaustive-deps
+  const handleUpdateDataBase = async () => {
+    const data = await getListUserService();
+    dispatch(getListUserAction(data));
+  };
 
-  const formatDate = (value) => {
-    return value.toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+  const handleDelete = () => {
+    setDeleteDialogVisible(true);
+  };
+
+  const confirmDelete = () => {
+    setDeleteDialogVisible(false);
+  };
+
+  const handleCreateUser = (event: HTMLFormElement) => {
+    event?.preventDefault();
+    console.log(detailUserUpdate);
+    setDialogVisible(false);
+  };
+
+  const handleUpdateUser = (event: HTMLFormElement) => {
+    event?.preventDefault();
+    console.log(detailUserUpdate);
+    setDialogVisible(false);
+  };
+
+  const handleOpenCreate = () => {
+    setDetailUserUpdate((pre) => {
+      return {
+        ...pre,
+        Name: "",
+        Email: "",
+        Role: 2,
+      };
     });
+    setDialogVisible(true);
+    setIsCreate(true);
   };
 
-  const formatCurrency = (value) => {
-    return value.toLocaleString("en-US", {
-      style: "currency",
-      currency: "USD",
-    });
+  const handleUpdateDetailUser = (detail: IUserListModel) => {
+    console.log(detail);
+    setDetailUserUpdate(detail);
+    setDialogVisible(true);
+    setIsCreate(false);
   };
 
-  const initFilters1 = () => {
-    setFilters1({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      name: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      "country.name": {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      representative: { value: null, matchMode: FilterMatchMode.IN },
-      date: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
-      },
-      balance: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-      },
-      status: {
-        operator: FilterOperator.OR,
-        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-      },
-      activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
-      verified: { value: null, matchMode: FilterMatchMode.EQUALS },
-    });
-    setGlobalFilterValue1("");
+  const handleChangeUpdate = (event) => {
+    if (event.target.name === "Role") {
+      setDetailUserUpdate((pre) => {
+        return {
+          ...pre,
+          [event.target.name]: +event.target.value,
+        };
+      });
+    } else {
+      setDetailUserUpdate((pre) => {
+        return {
+          ...pre,
+          [event.target.name]: event.target.value,
+        };
+      });
+    }
   };
-
-  const countryBodyTemplate = (rowData) => {
-    return (
-      <React.Fragment>
-        <img
-          alt="flag"
-          src={`/demo/images/flag/flag_placeholder.png`}
-          className={`flag flag-${rowData.country.code}`}
-          width={30}
-        />
-        <span style={{ marginLeft: ".5em", verticalAlign: "middle" }}>
-          {rowData.country.name}
-        </span>
-      </React.Fragment>
-    );
-  };
-
   const actionBodyTemplate = (rowData) => {
     return (
       <Fragment key={rowData.name}>
         <Button
-          icon="pi pi-user"
-          className="p-button-rounded p-button-info p-button-text"
+          icon="pi pi-pencil"
+          label="Update"
+          className="p-button-rounded p-button-success p-mr-2 "
+          onClick={() => handleUpdateDetailUser(rowData)}
         />
+
         <Button
-          icon="pi pi-times"
-          className="p-button-rounded p-button-danger p-button-text"
+          icon="pi pi-trash"
+          label="Delete"
+          className="p-button-rounded p-button-danger"
+          style={{ marginLeft: ".5rem" }}
+          onClick={() => handleDelete(rowData)}
         />
       </Fragment>
     );
@@ -178,6 +137,15 @@ export default function UserAdmin() {
   const content = (
     <>
       <h5>List User</h5>
+      <div className="my-2">
+        <Button
+          label="New"
+          onClick={handleOpenCreate}
+          icon="pi pi-plus"
+          severity="success"
+          className=" mr-2"
+        />
+      </div>
       <DataTable
         value={listUser}
         expandedRows={expandedRows}
@@ -191,13 +159,88 @@ export default function UserAdmin() {
       </DataTable>
     </>
   );
-  // if (detailUser.Role !== 1) {
-  //   return <Navigate to={`/uikit/user/detail/${detailUser.Email}`} />;
-  // }
+
   return (
     <div className="grid">
       <div className="col-12">
         <div className="card">{content}</div>
+
+        <Dialog
+          header={isCreate ? "Add User" : "Update User"}
+          visible={dialogVisible}
+          style={{ width: "550px" }}
+          onHide={() => setDialogVisible(false)}>
+          <form
+            className="p-fluid"
+            onSubmit={isCreate ? handleCreateUser : handleUpdateUser}>
+            <div className="p-field mb-4">
+              <label>Name</label>
+              <InputText
+                name="Name"
+                value={detailUserUpdate.Name}
+                onChange={handleChangeUpdate}
+                className="mt-2"
+                placeholder="name..."
+                required={true}
+              />
+            </div>
+            <div className="p-field mb-4">
+              <label>Email</label>
+              <InputText
+                name="Email"
+                type="email"
+                value={detailUserUpdate.Email}
+                onChange={handleChangeUpdate}
+                className="mt-2"
+                placeholder="email..."
+                required={true}
+              />
+            </div>
+            <div className="p-field mb-4">
+              <label className="mr-2">Role:</label>
+              <select
+                className="px-3 py-2"
+                defaultValue={detailUserUpdate.Role + ""}
+                name="Role"
+                onChange={handleChangeUpdate}>
+                <option value="1">Admin</option>
+                <option value="2">User</option>
+              </select>
+            </div>
+            <div className="p-field mb-4 flex justify-content-end">
+              <div className="flex w-6">
+                <Button
+                  label="Cancel"
+                  className="p-button-text underline"
+                  onClick={() => setDialogVisible(false)}
+                />
+                <Button
+                  label={isCreate ? "Create" : "Update"}
+                  severity="success"
+                  type="submit"
+                />
+              </div>
+            </div>
+          </form>
+        </Dialog>
+
+        <Dialog
+          header="Confirm Delete"
+          visible={deleteDialogVisible}
+          style={{ width: "30vw" }}
+          onHide={() => setDeleteDialogVisible(false)}
+          footer={
+            <div className="text-right">
+              <Button
+                label="No! thanks"
+                onClick={() => setDeleteDialogVisible(false)}
+                className="p-button-text underline"
+              />
+              <Button label="Yes" icon="pi pi-check" onClick={confirmDelete} />
+            </div>
+          }>
+          <p>Are you sure you want to delete this User?</p>
+        </Dialog>
       </div>
     </div>
   );

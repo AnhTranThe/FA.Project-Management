@@ -4,43 +4,48 @@ import React, { useEffect, useRef, useState } from "react";
 
 export const ToastContext = React.createContext({} as any);
 
+export interface IToastState {
+  severity: "success" | "warn" | "error" | "info" | "";
+  summary: string;
+  detail: string;
+}
+
+export interface IToastValueContext {
+  showModelToast: IToastState;
+  setShowModelToast: React.Dispatch<React.SetStateAction<IToastState>>;
+}
+
 export const ToastProvider = (props: any) => {
-  const [showDetail, setShowDetail] = useState<string>("");
+  // const [showDetail, setShowDetail] = useState<string>("");
+  const [showModelToast, setShowModelToast] = useState<IToastState>({
+    severity: "",
+    summary: "",
+    detail: "",
+  });
   const toast = useRef<Toast>(null);
 
-  const showWarning = () => {
-    toast.current?.show({
-      severity: "warn",
-      summary: "Warning",
-      detail: "Email or Name Error",
-      life: 3000,
-    });
-  };
-
-  const showSuccess = () => {
-    toast.current?.show({
-      severity: "success",
-      summary: "Success",
-      detail: "WellCome!!",
-      life: 3000,
-    });
-  };
-
-  useEffect(() => {
-    if (showDetail === "success") {
-      showSuccess();
-      setShowDetail("");
-      return;
-    } else if (showDetail === "error") {
-      showWarning();
-      setShowDetail("");
-      return;
+  const showToast = ({ severity, summary, detail }: IToastState) => {
+    if (severity !== "") {
+      toast.current?.show({
+        severity: severity,
+        summary: summary,
+        detail: detail,
+        life: 3000,
+      });
     }
-  }, [showDetail]);
+  };
+  useEffect(() => {
+    const returnShow = showToast({
+      severity: showModelToast.severity,
+      summary: showModelToast.summary,
+      detail: showModelToast.detail,
+    });
+    return () => returnShow;
+  }, [showModelToast]);
 
-  const value = {
-    showDetail,
-    setShowDetail,
+  const value: IToastValueContext = {
+    showModelToast,
+    setShowModelToast,
   };
 
   return (

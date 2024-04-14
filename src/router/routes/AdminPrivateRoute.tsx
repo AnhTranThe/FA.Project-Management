@@ -10,21 +10,33 @@ import {
 interface IUserPrivateRouteProps {
   children: React.ReactNode;
 }
-export default function UserPrivateRoute({ children }: IUserPrivateRouteProps) {
+export default function AdminPrivateRoute({
+  children,
+}: IUserPrivateRouteProps) {
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+
   const { detailUser } = useAppSelector(
     (state: ILoginReducer) => state.loginReducer
   );
 
   useEffect(() => {
     if (!detailUser) {
-      console.log("client");
+      console.log("admin");
       setShowModelToast((pre) => ({
         ...pre,
         severity: "warn",
         summary: "Warning",
         detail: "Pls!! Login",
       }));
+      return;
+    } else if (detailUser && detailUser.Role !== 1) {
+      setShowModelToast((pre) => ({
+        ...pre,
+        severity: "warn",
+        summary: "Warning",
+        detail: "Client cann't Go To Page Admin",
+      }));
+      return;
     }
   }, [detailUser, setShowModelToast]);
 
@@ -32,18 +44,8 @@ export default function UserPrivateRoute({ children }: IUserPrivateRouteProps) {
     return <Navigate to={"/auth/login"} />;
   }
 
-  // if (!detailUser) {
-  //   console.log("client");
-  //   setShowModelToast((pre) => {
-  //     return {
-  //       ...pre,
-  //       severity: "warn",
-  //       summary: "Warning",
-  //       detail: "Pls!! Login",
-  //     };
-  //   });
-  //   return <Navigate to={"/auth/login"} />;
-  // }
-
+  if (detailUser && detailUser.Role !== 1) {
+    return <Navigate to={"/client"} />;
+  }
   return <>{children}</>;
 }

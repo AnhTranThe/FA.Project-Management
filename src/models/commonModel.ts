@@ -1,16 +1,24 @@
+import { MenuItemCommandEvent } from "primereact/menuitem";
+
 export interface IMenuItem {
-  label: string;
-  icon: string;
+  label?: string;
+  icon?: string;
   to?: string;
   preventExact?: boolean;
   class?: string;
   url?: string;
   target?: string;
   items?: IMenuItem[] | IMenuItem[][];
+  command?: (event?: React.MouseEvent | MenuItemCommandEvent) => void;
 }
 
 export interface IModel {
   label: string;
   items?: IMenuItem[];
   separator?: boolean;
+}
+
+export enum ETheme {
+  LIGHT = "light",
+  DARK = "dark",
 }

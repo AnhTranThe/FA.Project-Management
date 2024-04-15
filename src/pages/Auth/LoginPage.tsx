@@ -49,7 +49,7 @@ const LoginPage = () => {
           });
           return;
         } else {
-          navigate("/client");
+          navigate("/client/projects");
           setShowModelToast((pre) => {
             return {
               ...pre,

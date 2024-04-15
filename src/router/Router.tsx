@@ -52,7 +52,7 @@ const Router = () => {
       ),
       children: [
         {
-          path: "/client/project",
+          path: "/client/projects",
           element: <ProjectUser />,
         },
       ],

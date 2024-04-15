@@ -36,24 +36,24 @@ export default function TaskAdmin() {
     );
     const [dialogVisible, setDialogVisible] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-    const [task, setTask] = useState<ITaskModel>(emptyTask);
-    const [selectedTask, setSelectedTask] = useState<ITaskModel | null>(null);
+    const [selectedTask, setSelectedTask] = useState<ITaskModel>(emptyTask);
     const [taskToDelete, setTaskToDelete] = useState<ITaskModel | null>(null);
-    const [globalFilter, setGlobalFilter] = useState("");
     const toast = useRef<Toast>(null);
     const [isNewTask, setIsNewTask] = useState(true);
     useEffect(() => {
         dispatch(getTaskAll());
     }, []);
+    console.log(selectedTask);
+
     const handleAddOrUpdateTask = () => {
         const taskData: ITaskModel = {
-            Id: task.Id,
-            UserMail: task.UserMail,
-            ProjectId: task.ProjectId,
-            TimeStart: task.TimeStart,
-            TimeEnd: task.TimeEnd,
-            Status: task.Status,
-            Note: task.Note,
+            Id: selectedTask.Id,
+            UserMail: selectedTask.UserMail,
+            ProjectId: selectedTask.ProjectId,
+            TimeStart: selectedTask.TimeStart,
+            TimeEnd: selectedTask.TimeEnd,
+            Status: selectedTask.Status,
+            Note: selectedTask.Note,
         };
 
         if (isNewTask) {
@@ -74,7 +74,6 @@ export default function TaskAdmin() {
                     detail: "Failed to create new task",
                     life: 2000,
                 });
-
             }
 
         } else {
@@ -130,14 +129,15 @@ export default function TaskAdmin() {
     const openDialogForCreate = () => {
         setDialogVisible(true);
         setIsNewTask(true);
-        setSelectedTask(null);
-        setTask(emptyTask)
+        setSelectedTask(emptyTask);
+
     };
     const openDialogForUpdate = (Task: ITaskModel) => {
+        console.log(Task);
         setDialogVisible(true);
         setIsNewTask(false);
         setSelectedTask(Task);
-        setTask(task)
+
     };
     const leftToolbarTemplate = () => {
         return (
@@ -211,32 +211,34 @@ export default function TaskAdmin() {
                 <div className="p-fluid">
                     <div className="p-field ">
                         <label>Task Name</label>
-                        <InputText value={task.UserMail} onChange={(e) => setTask({ ...task, UserMail: e.target.value })} />
+                        <InputText value={selectedTask.UserMail} onChange={(e) => setSelectedTask({ ...selectedTask, UserMail: e.target.value })} />
                     </div>
                     <div className="p-field ">
                         <label >Project Id</label>
-                        <InputNumber value={task.ProjectId} onChange={(e) => setTask({ ...task, ProjectId: e.value ?? 0 })} />
+                        <InputNumber value={selectedTask.ProjectId} onChange={(e) => setSelectedTask({ ...selectedTask, ProjectId: e.value ?? 0 })} />
                     </div>
                     <div className="p-field ">
                         <label >Status</label>
-                        <InputNumber value={task.Status} onChange={(e) => setTask({ ...task, Status: e.value ?? 0 })} />
+                        <InputNumber value={selectedTask.Status} onChange={(e) => setSelectedTask({ ...selectedTask, Status: e.value ?? 0 })} />
                     </div>
                     <div className="p-field ">
                         <label>Note</label>
-                        <InputText value={task.Note} onChange={(e) => setTask({ ...task, Note: e.target.value })} />
+                        <InputText value={selectedTask.Note} onChange={(e) => setSelectedTask({ ...selectedTask, Note: e.target.value })} />
                     </div>
                     <div className="p-field">
                         <label>Time start</label>
                         <Calendar
-                            value={task.TimeStart} // Assuming task.date is your date value
-                            onChange={(e) => setTask({ ...task, TimeStart: e.value || null })}
+                            value={selectedTask.TimeStart} // Assuming task.date is your date value
+                            dateFormat="dd-mm-yyyy"
+                            onChange={(e) => setSelectedTask({ ...selectedTask, TimeStart: e.value || null })}
                         />
                     </div>
                     <div className="p-field">
                         <label>Time end</label>
                         <Calendar
-                            value={task.TimeEnd} // Assuming task.date is your date value
-                            onChange={(e) => setTask({ ...task, TimeEnd: e.value || null })}
+                            value={selectedTask.TimeEnd} // Assuming task.date is your date value
+                            dateFormat="dd/mm/yy"
+                            onChange={(e) => setSelectedTask({ ...selectedTask, TimeEnd: e.value || null })}
                         />
                     </div>
                 </div>

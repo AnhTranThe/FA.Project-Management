@@ -2,8 +2,6 @@ import { classNames } from "primereact/utils";
 import { forwardRef, useContext, useImperativeHandle, useRef } from "react";
 import { Link } from "react-router-dom";
 import { LayoutContext } from "../context/layoutcontext";
-import { useAppDispatch } from "../../store/store";
-import { logoutAction } from "../../store/action/loginiAction";
 
 const AppTopbar = forwardRef((_props, ref) => {
   const { layoutState, onMenuToggle, showProfileSidebar } =
@@ -17,10 +15,8 @@ const AppTopbar = forwardRef((_props, ref) => {
     topbarmenubutton: topbarmenubuttonRef.current,
   }));
 
-  const dispatch = useAppDispatch();
-
   const handleLogout = () => {
-    dispatch(logoutAction());
+    localStorage.removeItem("Token");
   };
 
   return (

@@ -1,11 +1,13 @@
 export interface IUserReducer {
   userReducer: {
-    listUser: IUserListModel[] | [];
+    listUser: IUserModel[] | [];
   };
 }
 
-export interface IUserListModel {
-  Email: string;
-  Name: string;
-  Role: number;
+export interface IUserModel {
+  email: string;
+  name: string;
+  role: number;
+  password: string;
+  id: string;
 }

@@ -8,6 +8,7 @@ export interface IMenuItem {
   class?: string;
   url?: string;
   target?: string;
+  severity?: string | undefined;
   items?: IMenuItem[] | IMenuItem[][];
   command?: (event?: React.MouseEvent | MenuItemCommandEvent) => void;
 }
@@ -16,9 +17,4 @@ export interface IModel {
   label: string;
   items?: IMenuItem[];
   separator?: boolean;
-}
-
-export enum ETheme {
-  LIGHT = "light",
-  DARK = "dark",
 }

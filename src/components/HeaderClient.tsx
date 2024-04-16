@@ -1,25 +1,52 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PrimeReactContext } from "primereact/api";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
-import { useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../hooks/ReduxHook";
 import { IMenuItem } from "../models/commonModel";
+import { LayoutContext } from "../pages/context/layoutcontext";
 import { logoutAction } from "../store/action/loginiAction";
+import { setTheme } from "../store/action/themeAction";
 import { useAppDispatch } from "../store/store";
+import { LayoutConfig } from "../types/layout";
 
 export default function HeaderClient() {
-  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
-  const menuRef = useRef<Menu>(null);
   const dispatch = useAppDispatch();
+  const { IsDarkTheme }: { IsDarkTheme: boolean } = useAppSelector(
+    (state) => state.themeReducer
+  );
+
+  console.log(IsDarkTheme);
+
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
+  const { changeTheme } = useContext(PrimeReactContext);
+
+  const _changeTheme = (theme: string, colorScheme: string) => {
+    changeTheme?.(layoutConfig.theme, theme, 'theme-css', () => {
+      setLayoutConfig((prevState: LayoutConfig) => ({ ...prevState, theme, colorScheme }));
+    });
+  };
+
+  useEffect(() => {
+    IsDarkTheme ? _changeTheme("lara-dark-indigo", 'dark') : _changeTheme("lara-light-indigo", "light");
+  }, [IsDarkTheme])
+
+  const menuRef = useRef<Menu>(null);
   const nav = useNavigate();
   const handleLogout = () => {
     dispatch(logoutAction());
     nav("/auth/login");
   };
+
+
   const handleProfileButtonClick = (event: any) => {
     setProfileDropdownOpen(!profileDropdownOpen);
     menuRef.current?.toggle(event);
   };
+
   const itemLeft: IMenuItem[] = [
     {
       label: 'Jira',
@@ -27,7 +54,7 @@ export default function HeaderClient() {
       command: () => {
         nav("/client/projects")
       },
-      class: "h-2rem p-button-white "
+      class: "h-2rem p-button-light "
     }
   ];
 
@@ -35,22 +62,22 @@ export default function HeaderClient() {
     {
       label: 'Github',
       icon: '/public/imgs/github-mark.png',
-      class: "circle-button",
+      class: `circle-button ${!IsDarkTheme ? "p-button-light" : ""}`,
       command: () => {
         window.open("https://github.com/AnhTranThe/FA.Project-Management", "_blank");
       }
 
     },
     {
-      class: "circle-button  pi pi-moon",
+      class: `circle-button  pi ${!IsDarkTheme ? ("pi-sun p-button-light") : ("pi-sun p-button-dark")}`,
+      command: () => {
+        dispatch(setTheme(!IsDarkTheme));
 
+      }
     },
     {
-      label: 'Profile',
-      icon: 'https://www.gravatar.com/avatar/05dfd4b41340d09cae045235eb0893c3?d=mp',
-      class: "circle-button",
+      class: `circle-button  pi ${!IsDarkTheme ? ("pi-user p-button-light") : ("pi-user p-button-dark")}`,
       command: handleProfileButtonClick,
-
       items: [
         {
           label: "Log out",
@@ -75,11 +102,8 @@ export default function HeaderClient() {
       ],
     },
   ];
-
-
   return (
     <>
-
       <header className="flex relative w-full py-2 px-5  justify-content-between align-items-center shadow-3 surface-card  border-round-sm  align-items-center font-semibold">
         <div className="flex align-items-center">
           {itemLeft.map((item, index) => (
@@ -88,20 +112,17 @@ export default function HeaderClient() {
               <label className="text-xl text-white">Jira</label>
             </Button>
           ))}
-
-
         </div>
-
         <div className="flex gap-3">
           {itemRights.map((item, index) => (
             <Button
               key={index}
               onClick={item.command}
               className={item.class}
-              severity="secondary"
               aria-label={item.label}
-
+              severity="secondary"
             >
+
               {
                 item.icon && <img alt="logo" src={item.icon} className="icon" />
 
@@ -109,7 +130,6 @@ export default function HeaderClient() {
               {
                 item.label && <label className="text-xl text-white">{item.label}</label>
               }
-
 
             </Button>
           ))}

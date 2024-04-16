@@ -3,22 +3,27 @@
 import { SET_THEME } from "../type/actionType";
 
 export interface IThemeModelResponse {
-  theme: string;
+  IsDarkTheme: boolean;
 }
-const initialState: IThemeModelResponse = {
-  theme: "default",
-};
 
+const initialState: IThemeModelResponse = {
+  IsDarkTheme: false,
+};
 const themeReducer = (
   state: IThemeModelResponse = initialState,
   { type, payload }: any
 ) => {
   switch (type) {
     case SET_THEME: {
-      return { ...state, theme: payload };
+      return {
+        ...state,
+        IsDarkTheme: payload.IsDarkTheme,
+      };
     }
     default:
-      return state;
+      return {
+        ...state,
+      };
   }
 };
 export default themeReducer;

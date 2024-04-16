@@ -1,6 +1,8 @@
 import { SET_THEME } from "../type/actionType";
 
-export const setTheme = (theme: string) => ({
+export const setTheme = (IsDarkTheme: boolean) => ({
   type: SET_THEME,
-  payload: theme,
+  payload: {
+    IsDarkTheme,
+  },
 });

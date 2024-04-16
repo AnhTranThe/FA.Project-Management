@@ -11,6 +11,7 @@ import AppTopbar from './AppTopbar';
 import { LayoutContext } from '../context/layoutcontext';
 import PrimeReact from 'primereact/api';
 import { useLocation } from 'react-router-dom';
+import AppConfig from './AppConfig';
 
 const Layout = (props: any) => {
   const { layoutConfig, layoutState, setLayoutState } = useContext(LayoutContext);
@@ -107,6 +108,7 @@ const Layout = (props: any) => {
           <div className="layout-main">{props.children}</div>
           <AppFooter />
         </div>
+        <AppConfig />
         <div className="layout-mask"></div>
       </div>
     </React.Fragment>

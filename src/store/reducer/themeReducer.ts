@@ -2,6 +2,11 @@
 
 import { SET_THEME } from "../type/actionType";
 
+export interface IThemReducer {
+  themeReducer: {
+    IsDarkTheme: boolean;
+  };
+}
 export interface IThemeModelResponse {
   IsDarkTheme: boolean;
 }
@@ -15,6 +20,7 @@ const themeReducer = (
 ) => {
   switch (type) {
     case SET_THEME: {
+      console.log(payload);
       return {
         ...state,
         IsDarkTheme: payload.IsDarkTheme,

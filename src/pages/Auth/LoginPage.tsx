@@ -1,76 +1,67 @@
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
-import { InputText } from "primereact/inputtext";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { InputSwitch } from "primereact/inputswitch";
-import { IUserListModel } from "../../models/userModel";
-import { getListUserService } from "../../serviceApi/userServiceApi";
-import { loginAction } from "../../store/action/loginiAction";
-import { useAppDispatch } from "../../store/store";
+import { InputText } from "primereact/inputtext";
+import { ChangeEvent, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { loginService } from "../../serviceApi/userServiceApi";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 const LoginPage = () => {
-  const [detailLogin, setDetailLogin] = useState({ Name: "", Email: "" });
+  const [detailLogin, setDetailLogin] = useState({ email: "", password: "" });
   const [checked, setChecked] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
-  const [ListUser, setListUsser] = useState<IUserListModel[]>([]);
-  const dispatch = useAppDispatch();
+
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   // const { layoutConfig } = useContext(LayoutContext);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    (async () => {
-      const userData: IUserListModel[] = await getListUserService();
-      setListUsser(userData);
-    })();
-  }, []);
-
   const handleLogin = async () => {
-    if (ListUser && ListUser?.length > 0) {
-      const LoginSuccess = ListUser.filter((ele: IUserListModel) => {
-        return ele.Name === detailLogin.Name && ele.Email === detailLogin.Email;
-      });
-      if (LoginSuccess.length > 0) {
-        await dispatch(loginAction(LoginSuccess[0]));
-        if (LoginSuccess[0].Role === 1) {
+    if (detailLogin.email && detailLogin.password) {
+      const data = await loginService(detailLogin);
+
+      if (data) {
+        localStorage.setItem("Token", JSON.stringify(data));
+        if (data.role === 1) {
           navigate("/");
-          setShowModelToast((pre) => {
-            return {
-              ...pre,
-              severity: "success",
-              summary: "Success",
-              detail: "Login Success",
-            };
-          });
-          return;
         } else {
           navigate("/client/projects");
-          setShowModelToast((pre) => {
-            return {
-              ...pre,
-              severity: "success",
-              summary: "Success",
-              detail: "Login Success",
-            };
-          });
-          return;
         }
+        setShowModelToast((pre) => {
+          return {
+            ...pre,
+            severity: "success",
+            summary: "Success",
+            detail: "Login Success",
+          };
+        });
+        return;
+      } else {
+        setShowModelToast((pre) => {
+          return {
+            ...pre,
+            severity: "warn",
+            summary: "Warning",
+            detail: "Name or Emaill not exsisted",
+          };
+        });
+        return;
       }
+    } else {
       setShowModelToast((pre) => {
         return {
           ...pre,
-          severity: "warn",
+          severity: "info",
           summary: "Warning",
-          detail: "Name or Emaill not exsisted",
+          detail: "Pls! fill Email and Password",
         };
       });
+      return;
     }
   };
+
   const handleChangeDetailUser = (event: ChangeEvent<HTMLInputElement>) => {
     setDetailLogin((pre) => {
       return { ...pre, [event.target.id]: event.target.value };
@@ -96,30 +87,28 @@ const LoginPage = () => {
 
           <div>
             <label
-              htmlFor="Name"
+              htmlFor="email"
               className="block text-900 text-xl font-medium mb-2">
-              Name
+              Email
             </label>
             <InputText
-              value={detailLogin.Name}
-              id="Name"
+              id="email"
               type="text"
-              placeholder="Name"
+              placeholder="email..."
               className="w-full md:w-30rem mb-5"
               style={{ padding: "1rem" }}
               onChange={handleChangeDetailUser}
             />
 
             <label
-              htmlFor="Email"
+              htmlFor="password"
               className="block text-900 font-medium text-xl mb-2">
-              Email
+              Password
             </label>
             <InputText
-              value={detailLogin.Email}
               onChange={handleChangeDetailUser}
-              id="Email"
-              placeholder="Email address"
+              id="password"
+              placeholder="password..."
               className="w-full mb-5"
               data-pr-classname="w-full p-3 md:w-30rem"></InputText>
 

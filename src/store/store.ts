@@ -6,7 +6,6 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import tabReducer from "./reducer/tabReducer";
 import taskReducer from "./reducer/taskReducer";
-import loginReducer from "./reducer/loginReducer";
 import userReducer from "./reducer/userReducer";
 import themeReducer from "./reducer/themeReducer";
 
@@ -22,7 +21,6 @@ const persistConfig = {
 const allReducer: Reducer = combineReducers({
   tabReducer: tabReducer,
   taskReducer: taskReducer,
-  loginReducer: loginReducer,
   userReducer: userReducer,
   themeReducer: themeReducer,
 });

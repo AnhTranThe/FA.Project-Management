@@ -1,7 +1,5 @@
-import { Navigate } from "react-router-dom";
-import { useAppSelector } from "../../hooks/ReduxHook";
-import { ILoginReducer } from "../../models/loginModel";
 import { useContext, useEffect } from "react";
+import { Navigate } from "react-router-dom";
 import {
   IToastValueContext,
   ToastContext,
@@ -15,37 +13,35 @@ export default function AdminPrivateRoute({
 }: IUserPrivateRouteProps) {
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
-  const { detailUser } = useAppSelector(
-    (state: ILoginReducer) => state.loginReducer
-  );
+  const loginDetail = JSON.parse(localStorage.getItem("Token")!);
 
   useEffect(() => {
-    if (!detailUser) {
-      console.log("admin");
+    if (!loginDetail) {
       setShowModelToast((pre) => ({
         ...pre,
         severity: "warn",
         summary: "Warning",
         detail: "Pls!! Login",
       }));
-      return;
-    } else if (detailUser && detailUser.Role !== 1) {
+    }
+
+    if (loginDetail && loginDetail.role !== 1) {
       setShowModelToast((pre) => ({
         ...pre,
         severity: "warn",
         summary: "Warning",
-        detail: "Client cann't Go To Page Admin",
+        detail: "User cannot go to page Admin",
       }));
-      return;
     }
-  }, [detailUser, setShowModelToast]);
+  }, []);
 
-  if (!detailUser) {
+  if (!loginDetail) {
     return <Navigate to={"/auth/login"} />;
   }
 
-  if (detailUser && detailUser.Role !== 1) {
-    return <Navigate to={"/client"} />;
+  if (loginDetail && loginDetail.role !== 1) {
+    return <Navigate to={"/client/projects"} />;
   }
+
   return <>{children}</>;
 }

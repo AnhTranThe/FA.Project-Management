@@ -7,15 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../hooks/ReduxHook";
 import { IMenuItem } from "../models/commonModel";
 import { LayoutContext } from "../pages/context/layoutcontext";
-import { logoutAction } from "../store/action/loginiAction";
 import { setTheme } from "../store/action/themeAction";
 import { useAppDispatch } from "../store/store";
 import { LayoutConfig } from "../types/layout";
+import { IThemReducer } from "../store/reducer/themeReducer";
 
 export default function HeaderClient() {
   const dispatch = useAppDispatch();
-  const { IsDarkTheme }: { IsDarkTheme: boolean } = useAppSelector(
-    (state) => state.themeReducer
+  const { IsDarkTheme } = useAppSelector(
+    (state: IThemReducer) => state.themeReducer
   );
 
   console.log(IsDarkTheme);
@@ -25,22 +25,37 @@ export default function HeaderClient() {
   const { changeTheme } = useContext(PrimeReactContext);
 
   const _changeTheme = (theme: string, colorScheme: string) => {
-    changeTheme?.(layoutConfig.theme, theme, 'theme-css', () => {
-      setLayoutConfig((prevState: LayoutConfig) => ({ ...prevState, theme, colorScheme }));
+    // changeTheme?.(layoutConfig.theme, theme, "theme-css", () => {
+    //   setLayoutConfig((prevState: LayoutConfig) => ({
+    //     ...prevState,
+    //     theme,
+    //     colorScheme,
+    //   }));
+    // });
+    setLayoutConfig((prevState: LayoutConfig) => {
+      return {
+        ...prevState,
+        theme,
+        colorScheme,
+      };
     });
   };
+  console.log(layoutConfig);
 
   useEffect(() => {
-    IsDarkTheme ? _changeTheme("lara-dark-indigo", 'dark') : _changeTheme("lara-light-indigo", "light");
-  }, [IsDarkTheme])
+    if (IsDarkTheme) {
+      IsDarkTheme
+        ? _changeTheme("lara-dark-indigo", "dark")
+        : _changeTheme("lara-light-indigo", "light");
+    }
+  }, [IsDarkTheme]);
 
   const menuRef = useRef<Menu>(null);
   const nav = useNavigate();
   const handleLogout = () => {
-    dispatch(logoutAction());
+    localStorage.removeItem("Token");
     nav("/auth/login");
   };
-
 
   const handleProfileButtonClick = (event: any) => {
     setProfileDropdownOpen(!profileDropdownOpen);
@@ -49,55 +64,58 @@ export default function HeaderClient() {
 
   const itemLeft: IMenuItem[] = [
     {
-      label: 'Jira',
-      icon: '/public/imgs/logo.png',
+      label: "Jira",
+      icon: "/public/imgs/logo.png",
       command: () => {
-        nav("/client/projects")
+        nav("/client/projects");
       },
-      class: "h-2rem p-button-light "
-    }
+      class: "h-2rem p-button-light ",
+    },
   ];
 
   const itemRights: IMenuItem[] = [
     {
-      label: 'Github',
-      icon: '/public/imgs/github-mark.png',
+      label: "Github",
+      icon: "/public/imgs/github-mark.png",
       class: `circle-button ${!IsDarkTheme ? "p-button-light" : ""}`,
       command: () => {
-        window.open("https://github.com/AnhTranThe/FA.Project-Management", "_blank");
-      }
-
+        window.open(
+          "https://github.com/AnhTranThe/FA.Project-Management",
+          "_blank"
+        );
+      },
     },
     {
-      class: `circle-button  pi ${!IsDarkTheme ? ("pi-sun p-button-light") : ("pi-sun p-button-dark")}`,
+      class: `circle-button  pi ${
+        !IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
+      }`,
       command: () => {
         dispatch(setTheme(!IsDarkTheme));
-
-      }
+      },
     },
     {
-      class: `circle-button  pi ${!IsDarkTheme ? ("pi-user p-button-light") : ("pi-user p-button-dark")}`,
+      class: `circle-button  pi ${
+        !IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
+      }`,
       command: handleProfileButtonClick,
       items: [
         {
           label: "Log out",
-          icon: 'pi pi-fw pi-sign-out'
-        }
-      ]
-    }
+          icon: "pi pi-fw pi-sign-out",
+        },
+      ],
+    },
   ];
   const profileMenuItems: IMenuItem[] = [
     {
-      label: 'Profile',
-      icon: 'pi pi-fw pi-user',
+      label: "Profile",
+      icon: "pi pi-fw pi-user",
       command: handleProfileButtonClick,
       items: [
         {
-          label: 'Log out',
-          icon: 'pi pi-fw pi-sign-out',
-          command: handleLogout
-
-          ,
+          label: "Log out",
+          icon: "pi pi-fw pi-sign-out",
+          command: handleLogout,
         },
       ],
     },
@@ -107,8 +125,15 @@ export default function HeaderClient() {
       <header className="flex relative w-full py-2 px-5  justify-content-between align-items-center shadow-3 surface-card  border-round-sm  align-items-center font-semibold">
         <div className="flex align-items-center">
           {itemLeft.map((item, index) => (
-            <Button key={index} onClick={item.command} className={item.class} aria-label={item.label}>
-              <img alt="logo" src="/public/imgs/logo.png" className="h-2rem"></img>
+            <Button
+              key={index}
+              onClick={item.command}
+              className={item.class}
+              aria-label={item.label}>
+              <img
+                alt="logo"
+                src="/public/imgs/logo.png"
+                className="h-2rem"></img>
               <label className="text-xl text-white">Jira</label>
             </Button>
           ))}
@@ -120,27 +145,17 @@ export default function HeaderClient() {
               onClick={item.command}
               className={item.class}
               aria-label={item.label}
-              severity="secondary"
-            >
-
-              {
-                item.icon && <img alt="logo" src={item.icon} className="icon" />
-
-              }
-              {
-                item.label && <label className="text-xl text-white">{item.label}</label>
-              }
-
+              severity="secondary">
+              {item.icon && <img alt="logo" src={item.icon} className="icon" />}
+              {item.label && (
+                <label className="text-xl text-white">{item.label}</label>
+              )}
             </Button>
           ))}
 
           <Menu model={profileMenuItems} popup ref={menuRef} />
         </div>
       </header>
-
     </>
-
   );
-
 }
-

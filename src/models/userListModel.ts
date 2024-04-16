@@ -5,7 +5,9 @@ export interface IUserReducer {
 }
 
 export interface IUserListModel {
-  Email: string;
-  Name: string;
-  Role: number;
+  id?: number;
+  email: string;
+  password: string;
+  name: string;
+  role: number;
 }

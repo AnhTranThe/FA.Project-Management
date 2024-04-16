@@ -1,7 +1,12 @@
-import { IUserListModel } from "./userModel";
+import { IUserModel } from "./userModel";
 
 export interface ILoginReducer {
   loginReducer: {
-    detailUser: IUserListModel;
+    detailUser: IUserModel;
   };
+}
+
+export interface ILoginDetail {
+  email: string;
+  password: string;
 }

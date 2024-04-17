@@ -20,7 +20,7 @@ import { ProductService } from "../../demo/service/ProductService";
 import { Toolbar } from "primereact/toolbar";
 import { useAppDispatch } from "../../store/store";
 import { useAppSelector } from "../../hooks/ReduxHook";
-import { getProjectAll, deleteProject } from "../../store/action/projectAction";
+import { getProjectAll } from "../../store/action/projectAction";
 import { Dialog } from "primereact/dialog";
 import { IProjectModel } from "../../models/projectModel";
 import { Toast } from "primereact/toast";

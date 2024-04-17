@@ -11,6 +11,7 @@ export default function App() {
           <Router />
         </ToastProvider>
       </LayoutProvider>
+      <link id="theme-css" href={`/themes/lara-light-indigo/theme.css`} rel="stylesheet"></link>
     </BrowserRouter>
   );
 }

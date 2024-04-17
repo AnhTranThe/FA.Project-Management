@@ -18,50 +18,35 @@ export default function HeaderClient() {
     (state: IThemReducer) => state.themeReducer
   );
 
-  console.log(IsDarkTheme);
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
   const { changeTheme } = useContext(PrimeReactContext);
 
   const _changeTheme = (theme: string, colorScheme: string) => {
-    // changeTheme?.(layoutConfig.theme, theme, "theme-css", () => {
-    //   setLayoutConfig((prevState: LayoutConfig) => ({
-    //     ...prevState,
-    //     theme,
-    //     colorScheme,
-    //   }));
-    // });
-    setLayoutConfig((prevState: LayoutConfig) => {
-      return {
+    changeTheme?.(layoutConfig.theme, theme, "theme-css", () => {
+      setLayoutConfig((prevState: LayoutConfig) => ({
         ...prevState,
         theme,
         colorScheme,
-      };
+      }));
     });
   };
-  console.log(layoutConfig);
-
   useEffect(() => {
-    if (IsDarkTheme) {
-      IsDarkTheme
-        ? _changeTheme("lara-dark-indigo", "dark")
-        : _changeTheme("lara-light-indigo", "light");
-    }
+    IsDarkTheme
+      ? _changeTheme("lara-dark-indigo", "dark")
+      : _changeTheme("lara-light-indigo", "light");
   }, [IsDarkTheme]);
-
   const menuRef = useRef<Menu>(null);
   const nav = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("Token");
     nav("/auth/login");
   };
-
   const handleProfileButtonClick = (event: any) => {
     setProfileDropdownOpen(!profileDropdownOpen);
     menuRef.current?.toggle(event);
   };
-
   const itemLeft: IMenuItem[] = [
     {
       label: "Jira",
@@ -69,8 +54,8 @@ export default function HeaderClient() {
       command: () => {
         nav("/client/projects");
       },
-      class: "h-2rem p-button-light ",
-    },
+      class: `h-2rem ${!IsDarkTheme ? "p-button-light" : "p-button-dark"}`
+    }
   ];
 
   const itemRights: IMenuItem[] = [
@@ -86,17 +71,15 @@ export default function HeaderClient() {
       },
     },
     {
-      class: `circle-button  pi ${
-        !IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
-      }`,
+      class: `circle-button  pi ${!IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
+        }`,
       command: () => {
         dispatch(setTheme(!IsDarkTheme));
       },
     },
     {
-      class: `circle-button  pi ${
-        !IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
-      }`,
+      class: `circle-button  pi ${!IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
+        }`,
       command: handleProfileButtonClick,
       items: [
         {
@@ -125,16 +108,9 @@ export default function HeaderClient() {
       <header className="flex relative w-full py-2 px-5  justify-content-between align-items-center shadow-3 surface-card  border-round-sm  align-items-center font-semibold">
         <div className="flex align-items-center">
           {itemLeft.map((item, index) => (
-            <Button
-              key={index}
-              onClick={item.command}
-              className={item.class}
-              aria-label={item.label}>
-              <img
-                alt="logo"
-                src="/public/imgs/logo.png"
-                className="h-2rem"></img>
-              <label className="text-xl text-white">Jira</label>
+            <Button key={index} onClick={item.command} className={item.class} aria-label={item.label}>
+              <img alt="logo" src="/public/imgs/logo.png" className="h-2rem"></img>
+              <label className="text-xl pl-2">Jira</label>
             </Button>
           ))}
         </div>

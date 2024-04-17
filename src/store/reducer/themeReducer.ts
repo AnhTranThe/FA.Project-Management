@@ -12,24 +12,22 @@ export interface IThemeModelResponse {
 }
 
 const initialState: IThemeModelResponse = {
-  IsDarkTheme: false,
+  IsDarkTheme: false, // Set initial value
 };
+
 const themeReducer = (
   state: IThemeModelResponse = initialState,
   { type, payload }: any
 ) => {
   switch (type) {
     case SET_THEME: {
-      console.log(payload);
       return {
         ...state,
         IsDarkTheme: payload.IsDarkTheme,
       };
     }
     default:
-      return {
-        ...state,
-      };
+      return state;
   }
 };
 export default themeReducer;

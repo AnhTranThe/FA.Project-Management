@@ -1,6 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "../constant/apiConstant";
-
+const BASE_URL = "https://api-github-mockproject-nodered.onrender.com/api";
 // Tạo một instance Axios
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

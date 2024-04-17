@@ -1,9 +1,9 @@
 export interface IProjectModel {
-  Id: number;
-  Name: string;
-  Payment: number;
-  TimeStart: Date | null;
-  TimeEnd: Date | null;
-  Note: string;
-  Priority: number;
+  id: string;
+  name: string;
+  payment: string;
+  time_start: string;
+  time_end: string;
+  note: string;
+  priority: number;
 }

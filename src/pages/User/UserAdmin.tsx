@@ -8,13 +8,10 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { IUserListModel } from "../../models/userListModel";
-import {
-  createNewUserService,
-  deleteUserService,
-  getListUserService,
-} from "../../serviceApi/userServiceApi";
+
 import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { createNewUserService, deleteUserService, getListUserService } from "../../Services/userServiceApi";
 
 export default function UserAdmin() {
   const [filters1, setFilters1] = useState(null);

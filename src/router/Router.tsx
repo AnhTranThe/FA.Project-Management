@@ -1,7 +1,7 @@
 import { useRoutes } from "react-router-dom";
 import ClientLayout from "../pages/ClientLayout";
 import DashboardLayout from "../pages/DashboardLayout";
-import ProjectAdmin from "../pages/Project/ProjectAmin";
+import ProjectAdmin from "../pages/Project/ProjectAdmin";
 import ProjectUser from "../pages/Project/ProjectUser";
 import TaskAdmin from "../pages/Task/TaskAdmin";
 import UserAdmin from "../pages/User/UserAdmin";

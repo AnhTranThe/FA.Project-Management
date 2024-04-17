@@ -1,0 +1,2 @@
+export const GET_PROJECT_ALL = "GET_PROJECT_ALL";
+export const DELETE_PROJECT = "DELETE_PROJECT";

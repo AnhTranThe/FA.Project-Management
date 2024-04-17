@@ -23,8 +23,8 @@ const allReducer: Reducer = combineReducers({
   tabReducer: tabReducer,
   taskReducer: taskReducer,
   userReducer: userReducer,
-  themeReducer: themeReducer,
   projectReducer: projectReducer,
+  themeReducer: themeReducer,
 });
 const persistedReducer = persistReducer(persistConfig, allReducer);
 

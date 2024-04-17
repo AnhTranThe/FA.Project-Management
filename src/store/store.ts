@@ -8,6 +8,7 @@ import tabReducer from "./reducer/tabReducer";
 import taskReducer from "./reducer/taskReducer";
 import userReducer from "./reducer/userReducer";
 import themeReducer from "./reducer/themeReducer";
+import projectReducer from "./reducer/projectReducer";
 
 const customizedMiddleware = {
   serializableCheck: false,
@@ -23,6 +24,7 @@ const allReducer: Reducer = combineReducers({
   taskReducer: taskReducer,
   userReducer: userReducer,
   themeReducer: themeReducer,
+  projectReducer: projectReducer,
 });
 const persistedReducer = persistReducer(persistConfig, allReducer);
 

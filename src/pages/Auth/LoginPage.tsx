@@ -1,18 +1,34 @@
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
+import { Dropdown } from "primereact/dropdown";
 import { InputSwitch } from "primereact/inputswitch";
-import { InputText } from "primereact/inputtext";
-import { ChangeEvent, useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginService } from "../../serviceApi/userServiceApi";
+import { loginService } from "../../Services/authServiceApi";
+import { getUserEmailAction } from "../../store/action/userAction";
+import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ email: "", password: "" });
   const [checked, setChecked] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
+  const [selectedEmail, setSelectedEmail] = useState<string>("");
+  const dispatch = useAppDispatch();
 
+
+  const emailOpts = [{
+    email: "admin@gmail.com"
+  },
+  {
+    email: "test1@gmail.com"
+  },
+  {
+    email: "test2@gmail.com"
+  }]
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+
+
 
   // const { layoutConfig } = useContext(LayoutContext);
 
@@ -23,6 +39,7 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
+        dispatch(getUserEmailAction(detailLogin.email))
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/");
@@ -44,7 +61,7 @@ const LoginPage = () => {
             ...pre,
             severity: "warn",
             summary: "Warning",
-            detail: "Name or Emaill not exsisted",
+            detail: "Name or Email not exsisted",
           };
         });
         return;
@@ -62,11 +79,12 @@ const LoginPage = () => {
     }
   };
 
-  const handleChangeDetailUser = (event: ChangeEvent<HTMLInputElement>) => {
-    setDetailLogin((pre) => {
-      return { ...pre, [event.target.id]: event.target.value };
-    });
-  };
+  // const handleChangeDetailUser = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setDetailLogin((pre) => {
+  //     return { ...pre, [event.target.id]: event.target.value };
+  //   });
+  // };
+
 
   return (
     <div className="flex flex-column align-items-center justify-content-center">
@@ -91,7 +109,21 @@ const LoginPage = () => {
               className="block text-900 text-xl font-medium mb-2">
               Email
             </label>
-            <InputText
+
+            <Dropdown value={selectedEmail}
+              onChange={(e) => {
+                const selectedEmailAddress = e.value.email; // Extract email address from the object
+                setSelectedEmail(e.value); // Update selectedEmail state
+                setDetailLogin((prev) => ({
+                  ...prev,
+                  email: selectedEmailAddress,
+                  password: "Admin@123"
+                }));
+
+              }}
+              options={emailOpts} optionLabel="email"
+              placeholder="Select Email" className="w-full md:w-30rem mb-5" />
+            {/* <InputText
               id="email"
               type="text"
               placeholder="email..."
@@ -99,7 +131,6 @@ const LoginPage = () => {
               style={{ padding: "1rem" }}
               onChange={handleChangeDetailUser}
             />
-
             <label
               htmlFor="password"
               className="block text-900 font-medium text-xl mb-2">
@@ -110,7 +141,7 @@ const LoginPage = () => {
               id="password"
               placeholder="password..."
               className="w-full mb-5"
-              data-pr-classname="w-full p-3 md:w-30rem"></InputText>
+              data-pr-classname="w-full p-3 md:w-30rem"></InputText> */}
 
             <div className="flex align-items-center justify-content-between mb-5 gap-5">
               <div className="flex align-items-center">

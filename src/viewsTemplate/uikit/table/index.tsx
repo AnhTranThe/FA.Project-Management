@@ -18,7 +18,7 @@ import { classNames } from "primereact/utils";
 import React, { Fragment, useEffect, useState } from "react";
 import { CustomerService } from "../../../demo/service/CustomerService";
 import { ProductService } from "../../../demo/service/ProductService";
-import { getListUserService } from "../../../serviceApi/userServiceApi";
+import { getListUserService } from "../../../Services/authServiceApi";
 
 const TableDemo = () => {
   const [customers1, setCustomers1] = useState(null);

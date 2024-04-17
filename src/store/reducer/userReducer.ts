@@ -1,9 +1,9 @@
 import { actionPayload } from "../../models/actionPayloadModel";
-import { IUserListModel } from "../../models/userModel";
+import { IUserModel } from "../../models/userModel";
 import { GET_LIST_USER } from "../type/userType";
 
 interface IInitialState {
-  listUser: IUserListModel[] | [];
+  listUser: IUserModel[] | [];
 }
 const initialState: IInitialState = {
   listUser: [],
@@ -11,7 +11,7 @@ const initialState: IInitialState = {
 const userReducer = (
   state = initialState,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  { type, payload }: actionPayload<IUserListModel[]>
+  { type, payload }: actionPayload<IUserModel[]>
 ) => {
   switch (type) {
     case GET_LIST_USER: {

@@ -10,6 +10,8 @@ import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import './styles/layout/layout.scss';
 import './styles/demo/Demos.scss';
+import './styles/style/style.scss'
+
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <PrimeReactProvider >

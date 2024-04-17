@@ -5,14 +5,15 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
-import { Fragment, useContext, useEffect, useState } from "react";
-import { useAppSelector } from "../../hooks/ReduxHook";
-import { ILoginReducer } from "../../models/loginModel";
-import { IUserListModel, IUserReducer } from "../../models/userListModel";
-import { getListUserService } from "../../serviceApi/userServiceApi";
-import { getListUserAction } from "../../store/action/userAction";
-import { useAppDispatch } from "../../store/store";
 import { InputText } from "primereact/inputtext";
+import { Fragment, useContext, useEffect, useState } from "react";
+import { IUserListModel } from "../../models/userListModel";
+import {
+  createNewUserService,
+  deleteUserService,
+  getListUserService,
+} from "../../serviceApi/userServiceApi";
+import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 export default function UserAdmin() {
@@ -26,67 +27,103 @@ export default function UserAdmin() {
   const dispatch = useAppDispatch();
 
   const [detailUserUpdate, setDetailUserUpdate] = useState<IUserListModel>({
-    Name: "",
-    Email: "",
-    Role: 0,
+    name: "",
+    email: "",
+    role: 0,
+    password: "",
   });
 
-  const { listUser } = useAppSelector(
-    (state: IUserReducer) => state.userReducer
-  );
-
-  const { detailUser } = useAppSelector(
-    (state: ILoginReducer) => state.loginReducer
-  );
+  const [listUser, setListUser] = useState<IUserListModel[]>([]);
+  const [idDelete, setIdDelete] = useState<string>("");
 
   // eslint-disable-line react-hooks/exhaustive-deps
-  const handleUpdateDataBase = async () => {
-    const data = await getListUserService();
-    dispatch(getListUserAction(data));
+
+  const getDataUser = async () => {
+    const data: IUserListModel[] = await getListUserService();
+    setListUser(data);
   };
 
-  const handleDelete = () => {
-    setDeleteDialogVisible(true);
-  };
-
-  const confirmDelete = () => {
-    setDeleteDialogVisible(false);
-  };
-
-  const handleCreateUser = (event: HTMLFormElement) => {
-    event?.preventDefault();
-    console.log(detailUserUpdate);
-    setDialogVisible(false);
-  };
-
-  const handleUpdateUser = (event: HTMLFormElement) => {
-    event?.preventDefault();
-    console.log(detailUserUpdate);
-    setDialogVisible(false);
-  };
+  useEffect(() => {
+    getDataUser();
+  }, []);
 
   const handleOpenCreate = () => {
     setDetailUserUpdate((pre) => {
       return {
         ...pre,
-        Name: "",
-        Email: "",
-        Role: 2,
+        name: "",
+        email: "",
+        role: 2,
+        password: "",
+        id: "",
       };
     });
     setDialogVisible(true);
     setIsCreate(true);
   };
 
+  const handleCreateUser = async (event: HTMLFormElement) => {
+    event?.preventDefault();
+    let data = await createNewUserService(detailUserUpdate);
+    if (data?.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: data?.message || "Create User Succes",
+      });
+      getDataUser();
+      setDialogVisible(false);
+      return;
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: data?.message || "Create User False",
+      });
+      return;
+    }
+  };
+
+  const handleDelete = (rowData) => {
+    setIdDelete(rowData.id);
+    setDeleteDialogVisible(true);
+  };
+
+  const confirmDelete = async () => {
+    if (idDelete) {
+      let res = await deleteUserService(idDelete);
+      if (res.code === 200) {
+        setShowModelToast({
+          severity: "success",
+          summary: "Success",
+          detail: "Detele User Success",
+        });
+        getDataUser();
+        setDeleteDialogVisible(false);
+        setIdDelete("");
+        return;
+      }
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: res.message,
+      });
+    }
+  };
+
+  const handleUpdateUser = (event: HTMLFormElement) => {
+    event?.preventDefault();
+    setDialogVisible(false);
+  };
+
   const handleUpdateDetailUser = (detail: IUserListModel) => {
-    console.log(detail);
     setDetailUserUpdate(detail);
     setDialogVisible(true);
     setIsCreate(false);
   };
 
   const handleChangeUpdate = (event) => {
-    if (event.target.name === "Role") {
+    if (event.target.name === "role") {
       setDetailUserUpdate((pre) => {
         return {
           ...pre,
@@ -102,9 +139,10 @@ export default function UserAdmin() {
       });
     }
   };
+
   const actionBodyTemplate = (rowData) => {
     return (
-      <Fragment key={rowData.name}>
+      <Fragment key={rowData.id}>
         <Button
           icon="pi pi-pencil"
           label="Update"
@@ -124,15 +162,8 @@ export default function UserAdmin() {
   };
 
   const roleBodyTemplate = (rowData) => {
-    return <p key={rowData.name}>{rowData.Role === 1 ? "Admin" : "User"}</p>;
+    return <p key={rowData.id}>{rowData.role === 1 ? "Admin" : "User"}</p>;
   };
-
-  useEffect(() => {
-    (async () => {
-      const data: IUserListModel[] = await getListUserService();
-      dispatch(getListUserAction(data));
-    })();
-  }, []);
 
   const content = (
     <>
@@ -151,10 +182,10 @@ export default function UserAdmin() {
         expandedRows={expandedRows}
         onRowToggle={(e) => setExpandedRows(e.data)}
         responsiveLayout="scroll"
-        dataKey="Name">
-        <Column field="Name" header="Name" sortable />
-        <Column field="Email" header="Email" sortable />
-        <Column field="Role" header="Role" body={roleBodyTemplate} />
+        dataKey="id">
+        <Column field="name" header="Name" sortable />
+        <Column field="email" header="Email" sortable />
+        <Column field="role" header="Role" body={roleBodyTemplate} />
         <Column field="Action" header="Action" body={actionBodyTemplate} />
       </DataTable>
     </>
@@ -176,8 +207,8 @@ export default function UserAdmin() {
             <div className="p-field mb-4">
               <label>Name</label>
               <InputText
-                name="Name"
-                value={detailUserUpdate.Name}
+                name="name"
+                value={detailUserUpdate.name}
                 onChange={handleChangeUpdate}
                 className="mt-2"
                 placeholder="name..."
@@ -187,9 +218,9 @@ export default function UserAdmin() {
             <div className="p-field mb-4">
               <label>Email</label>
               <InputText
-                name="Email"
+                name="email"
                 type="email"
-                value={detailUserUpdate.Email}
+                value={detailUserUpdate.email}
                 onChange={handleChangeUpdate}
                 className="mt-2"
                 placeholder="email..."
@@ -197,11 +228,23 @@ export default function UserAdmin() {
               />
             </div>
             <div className="p-field mb-4">
+              <label>Password</label>
+              <InputText
+                name="password"
+                type="text"
+                value={detailUserUpdate.password}
+                onChange={handleChangeUpdate}
+                className="mt-2"
+                placeholder="password..."
+                required={true}
+              />
+            </div>
+            <div className="p-field mb-4">
               <label className="mr-2">Role:</label>
               <select
                 className="px-3 py-2"
-                defaultValue={detailUserUpdate.Role + ""}
-                name="Role"
+                defaultValue={detailUserUpdate.role + ""}
+                name="role"
                 onChange={handleChangeUpdate}>
                 <option value="1">Admin</option>
                 <option value="2">User</option>

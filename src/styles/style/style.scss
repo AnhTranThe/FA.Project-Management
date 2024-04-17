@@ -1,0 +1,70 @@
+.circle-button {
+  border-radius: 50%; /* Make the button circular */
+  padding: 0; /* Remove padding to make the image fit perfectly */
+  width: 2.5rem; /* Set the desired width */
+  height: 2.5rem; /* Set the desired height */
+  overflow: hidden; /* Hide overflow content */
+}
+
+.icon {
+  width: 100%; /* Make the image fill the button */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.menu {
+  background: #ffffff;
+  border-radius: 8px;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 300px;
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px);
+  transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+
+.menu.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu li {
+  border-bottom: 1px solid #dddddd;
+}
+
+.menu li a {
+  text-decoration: none;
+  color: #333333;
+  padding: 15px 20px;
+  display: block;
+}
+.p-button-light {
+  color: black;
+  background: #ffffff;
+  border: 1px solid black;
+}
+.p-button-light:hover {
+  color: #05c;
+  background: #e9f2ff;
+  border: none;
+}
+.p-button-dark {
+  color: white;
+  background: #333333;
+  border: none;
+}
+
+.p-button-dark:hover {
+  color: #05c;
+  background: #1a1a1a;
+  border: none;
+}

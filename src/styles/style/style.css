@@ -48,14 +48,26 @@
   display: block;
 }
 
-.p-button-white {
+.p-button-light {
   color: black;
   background: #ffffff;
+  border: 1px solid black;
+}
+
+.p-button-light:hover {
+  color: #05c;
+  background: #e9f2ff;
   border: none;
 }
 
-.p-button-white:hover {
+.p-button-dark {
+  color: white;
+  background: #333333;
+  border: none;
+}
+
+.p-button-dark:hover {
   color: #05c;
-  background: #e9f2ff;
+  background: #1a1a1a;
   border: none;
 }/*# sourceMappingURL=style.css.map */

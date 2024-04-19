@@ -19,8 +19,9 @@ export default function HeaderClient() {
   const { IsDarkTheme } = useAppSelector(
     (state: IThemReducer) => state.themeReducer
   );
-  const { loginUserEmail }: { loginUserEmail: string } = useAppSelector((state) => state.userReducer);
-
+  const { loginUserEmail }: { loginUserEmail: string } = useAppSelector(
+    (state) => state.userReducer
+  );
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
@@ -44,7 +45,7 @@ export default function HeaderClient() {
   const nav = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("Token");
-    nav("/auth/login")
+    nav("/auth/login");
   };
   const handleProfileButtonClick = (event: any) => {
     setProfileDropdownOpen(!profileDropdownOpen);
@@ -57,8 +58,8 @@ export default function HeaderClient() {
       command: () => {
         nav("/client/projects");
       },
-      class: `h-2rem ${!IsDarkTheme ? "p-button-light" : "p-button-dark"}`
-    }
+      class: `h-2rem ${!IsDarkTheme ? "p-button-light" : "p-button-dark"}`,
+    },
   ];
 
   const itemRights: IMenuItem[] = [
@@ -74,15 +75,17 @@ export default function HeaderClient() {
       },
     },
     {
-      class: `circle-button  pi ${!IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
-        }`,
+      class: `circle-button  pi ${
+        !IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
+      }`,
       command: () => {
         dispatch(setTheme(!IsDarkTheme));
       },
     },
     {
-      class: `circle-button  pi ${!IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
-        }`,
+      class: `circle-button  pi ${
+        !IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
+      }`,
       command: handleProfileButtonClick,
       items: [
         {
@@ -97,37 +100,57 @@ export default function HeaderClient() {
       template: () => {
         return (
           <div className="flex justify-content-center align-items-center text-xl">
-            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" size="xlarge" className="mr-2" shape="circle" />
+            <Avatar
+              image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png"
+              size="xlarge"
+              className="mr-2"
+              shape="circle"
+            />
             <div className="flex flex-column align">
               <span className="font-bold">{loginUserEmail}</span>
-              <span className="text-sm">{loginUserEmail !== 'admin@gmail.com' ? "customer" : "admin"}</span>
+              <span className="text-sm">
+                {loginUserEmail !== "admin@gmail.com" ? "customer" : "admin"}
+              </span>
             </div>
           </div>
         );
-      }
+      },
     },
 
     {
       template: () => {
         return (
-          // <Button className="w-full" label="Log out" icon="pi pi-fw pi-sign-out" />
-          <Button onClick={handleLogout} className="w-full mt-3" icon="pi pi-fw pi-sign-out" label="Log out" severity="danger" />
+          <Button
+            onClick={handleLogout}
+            className="w-full mt-3"
+            icon="pi pi-fw pi-sign-out"
+            label="Log out"
+            severity="danger"
+          />
+          //   <Link to={"/auth/login"} onClick={handleLogout}>
+          //   <button type="button" className="p-link layout-topbar-button">
+          //     <i className="pi pi-sign-out"></i>
+          //     <span>Logout</span>
+          //   </button>
+          // </Link>
         );
-      }
-
-
-
-
-    }
-
+      },
+    },
   ];
   return (
     <>
       <header className="flex relative w-full py-2 px-5  justify-content-between align-items-center shadow-3 surface-card  border-round-sm  align-items-center font-semibold">
         <div className="flex align-items-center">
           {itemLeft.map((item, index) => (
-            <Button key={index} onClick={item.command} className={item.class} aria-label={item.label}>
-              <img alt="logo" src="/public/imgs/logo.png" className="h-2rem"></img>
+            <Button
+              key={index}
+              onClick={item.command}
+              className={item.class}
+              aria-label={item.label}>
+              <img
+                alt="logo"
+                src="/public/imgs/logo.png"
+                className="h-2rem"></img>
               <label className="text-xl pl-2">Jira</label>
             </Button>
           ))}
@@ -147,7 +170,12 @@ export default function HeaderClient() {
             </Button>
           ))}
 
-          <Menu className="w-auto p-3 mt-3" model={profileMenuItems} popup ref={menuRef} />
+          <Menu
+            className="w-auto p-3 mt-3"
+            model={profileMenuItems}
+            popup
+            ref={menuRef}
+          />
         </div>
       </header>
     </>

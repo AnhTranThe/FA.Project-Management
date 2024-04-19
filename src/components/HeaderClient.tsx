@@ -1,22 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PrimeReactContext } from "primereact/api";
+import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
+import { MenuItem } from "primereact/menuitem";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../hooks/ReduxHook";
 import { IMenuItem } from "../models/commonModel";
 import { LayoutContext } from "../pages/context/layoutcontext";
 import { setTheme } from "../store/action/themeAction";
+import { IThemReducer } from "../store/reducer/themeReducer";
 import { useAppDispatch } from "../store/store";
 import { LayoutConfig } from "../types/layout";
-import { IThemReducer } from "../store/reducer/themeReducer";
 
 export default function HeaderClient() {
   const dispatch = useAppDispatch();
   const { IsDarkTheme } = useAppSelector(
     (state: IThemReducer) => state.themeReducer
   );
+  const { loginUserEmail }: { loginUserEmail: string } = useAppSelector((state) => state.userReducer);
 
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
@@ -41,7 +44,7 @@ export default function HeaderClient() {
   const nav = useNavigate();
   const handleLogout = () => {
     localStorage.removeItem("Token");
-    nav("/auth/login");
+    nav("/auth/login")
   };
   const handleProfileButtonClick = (event: any) => {
     setProfileDropdownOpen(!profileDropdownOpen);
@@ -89,19 +92,34 @@ export default function HeaderClient() {
       ],
     },
   ];
-  const profileMenuItems: IMenuItem[] = [
+  const profileMenuItems: MenuItem[] = [
     {
-      label: "Profile",
-      icon: "pi pi-fw pi-user",
-      command: handleProfileButtonClick,
-      items: [
-        {
-          label: "Log out",
-          icon: "pi pi-fw pi-sign-out",
-          command: handleLogout,
-        },
-      ],
+      template: () => {
+        return (
+          <div className="flex justify-content-center align-items-center text-xl">
+            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" size="xlarge" className="mr-2" shape="circle" />
+            <div className="flex flex-column align">
+              <span className="font-bold">{loginUserEmail}</span>
+              <span className="text-sm">{loginUserEmail !== 'admin@gmail.com' ? "customer" : "admin"}</span>
+            </div>
+          </div>
+        );
+      }
     },
+
+    {
+      template: () => {
+        return (
+          // <Button className="w-full" label="Log out" icon="pi pi-fw pi-sign-out" />
+          <Button onClick={handleLogout} className="w-full mt-3" icon="pi pi-fw pi-sign-out" label="Log out" severity="danger" />
+        );
+      }
+
+
+
+
+    }
+
   ];
   return (
     <>
@@ -129,7 +147,7 @@ export default function HeaderClient() {
             </Button>
           ))}
 
-          <Menu model={profileMenuItems} popup ref={menuRef} />
+          <Menu className="w-auto p-3 mt-3" model={profileMenuItems} popup ref={menuRef} />
         </div>
       </header>
     </>

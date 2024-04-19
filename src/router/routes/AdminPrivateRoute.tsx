@@ -42,6 +42,5 @@ export default function AdminPrivateRoute({
   if (loginDetail && loginDetail.role !== 1) {
     return <Navigate to={"/client/projects"} />;
   }
-
   return <>{children}</>;
 }

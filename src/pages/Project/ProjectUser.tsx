@@ -56,14 +56,14 @@ export default function ProjectUser() {
                         }}
                       >
                         <i className="pi pi-fw pi-users text-2xl text-yellow-700"></i>
-
                       </div>
 
                       <Button icon="pi pi-times" rounded severity="danger" aria-label="Cancel" />
                     </div>
 
                     <h5 className="mb-2 text-900">{project.name}</h5>
-                    <span className="text-600">{formatDateTime(project.time_start)}</span>
+                    <span className="text-600">Start: {formatDateTime(project.time_start)} -</span>
+                    <span className="text-600"> End: {formatDateTime(project.time_end)}</span>
                   </div>
                 </div>
               </div>

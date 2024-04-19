@@ -117,7 +117,7 @@ const LoginPage = () => {
                 setDetailLogin((prev) => ({
                   ...prev,
                   email: selectedEmailAddress,
-                  password: "Admin@123"
+                  password: "admin"
                 }));
 
               }}

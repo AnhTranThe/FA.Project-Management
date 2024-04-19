@@ -21,19 +21,21 @@ const AppTopbar = forwardRef((_props, ref) => {
 
   return (
     <div className="layout-topbar">
-      <Link to="/" className="layout-topbar-logo">
-        <>
-          <span>MockProject</span>
-        </>
-      </Link>
+      <div className="flex">
+        <Link to="/" className="layout-topbar-logo">
+          <>
+            <span>Jira Clone</span>
+          </>
+        </Link>
 
-      <button
-        ref={menubuttonRef}
-        type="button"
-        className="p-link layout-menu-button layout-topbar-button"
-        onClick={onMenuToggle}>
-        <i className="pi pi-bars" />
-      </button>
+        <button
+          ref={menubuttonRef}
+          type="button"
+          className="p-link layout-menu-button layout-topbar-button"
+          onClick={onMenuToggle}>
+          <i className="pi pi-bars" />
+        </button>
+      </div>
 
       <button
         ref={topbarmenubuttonRef}
@@ -48,17 +50,19 @@ const AppTopbar = forwardRef((_props, ref) => {
         className={classNames("layout-topbar-menu", {
           "layout-topbar-menu-mobile-active": layoutState.profileSidebarVisible,
         })}>
-        <button type="button" className="p-link layout-topbar-button">
-          <i className="pi pi-calendar"></i>
-          <span>Calendar</span>
-        </button>
+        <Link to={"/client/projects"}>
+          <button type="button" className="p-link layout-topbar-button">
+            <i className="pi pi-home"></i>
+            <span>Home</span>
+          </button>
+        </Link>
         <Link to={"/auth/login"} onClick={handleLogout}>
           <button type="button" className="p-link layout-topbar-button">
             <i className="pi pi-sign-out"></i>
             <span>Logout</span>
           </button>
         </Link>
-        <Link to="/documentation">
+        <Link to="/">
           <button type="button" className="p-link layout-topbar-button">
             <i className="pi pi-cog"></i>
             <span>Settings</span>

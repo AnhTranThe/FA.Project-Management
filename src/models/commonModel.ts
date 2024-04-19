@@ -9,8 +9,9 @@ export interface IMenuItem {
   url?: string;
   target?: string;
   severity?: string | undefined;
-  items?: IMenuItem[] | IMenuItem[][];
+  items?: IMenuItem | IMenuItem[];
   command?: (event?: React.MouseEvent | MenuItemCommandEvent) => void;
+  template?: () => void;
 }
 
 export interface IModel {

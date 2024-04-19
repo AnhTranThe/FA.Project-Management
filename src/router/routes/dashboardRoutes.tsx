@@ -4,14 +4,15 @@ import ProjectAdmin from "../../pages/Project/ProjectAdmin";
 import TaskAdmin from "../../pages/Task/TaskAdmin";
 import UserAdmin from "../../pages/User/UserAdmin";
 import Dashboard from "../../viewsTemplate";
-import UserPrivateRoute from "./userPrivateRouter";
+import AdminPrivateRoute from "./AdminPrivateRoute";
+
 
 const dashboardRoutes: IRouteModel = {
   path: "/",
   element: (
-    <UserPrivateRoute>
+    <AdminPrivateRoute>
       <DashboardLayout />
-    </UserPrivateRoute>
+    </AdminPrivateRoute>
   ),
   children: [
     {

@@ -14,6 +14,7 @@
     "axios": "^1.6.8",
     "chart.js": "^4.4.2",
     "dayjs": "^1.11.10",
+    "formik": "^2.4.5",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
     "primereact": "^10.6.2",
@@ -25,7 +26,8 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "redux-thunk": "^3.1.0",
-    "sass": "^1.74.1"
+    "sass": "^1.74.1",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

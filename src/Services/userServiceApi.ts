@@ -31,3 +31,16 @@ export const deleteUserService = async (id: string) => {
     return response;
   }
 };
+
+export const updateUserService = async (data: {
+  email: string;
+  name: string;
+}) => {
+  try {
+    const res = await axiosInstance.put(`/user`, data);
+    return res.data;
+  } catch (error: any) {
+    const response = await error.response.data;
+    return response;
+  }
+};

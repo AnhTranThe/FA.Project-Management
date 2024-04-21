@@ -1,9 +1,10 @@
 export interface ITaskModel {
-  Id: number | null;
-  UserMail: string;
-  ProjectId: number;
-  TimeStart: Date | null;
-  TimeEnd: Date | null;
-  Status: number;
-  Note: string;
+  id?: string | null;
+  project_id: string | "";
+  user_mail: string | "";
+  user_name?: string | "";
+  time_start: string | "";
+  time_end: string | "";
+  status: number;
+  note: string | "";
 }

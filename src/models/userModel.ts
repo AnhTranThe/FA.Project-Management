@@ -9,5 +9,5 @@ export interface IUserModel {
   name: string;
   role: number;
   password: string;
-  id: string;
+  id?: string;
 }

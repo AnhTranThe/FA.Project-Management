@@ -10,3 +10,13 @@ export const getProjectByUserService = async (email: string) => {
     return;
   }
 };
+
+export const getListProjectService = async () => {
+  try {
+    const res = await axiosInstance.get(`/project`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+};

@@ -11,7 +11,12 @@ import { IUserListModel } from "../../models/userListModel";
 
 import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
-import { createNewUserService, deleteUserService, getListUserService } from "../../Services/userServiceApi";
+import {
+  createNewUserService,
+  deleteUserService,
+  getListUserService,
+  updateUserService,
+} from "../../Services/userServiceApi";
 
 export default function UserAdmin() {
   const [filters1, setFilters1] = useState(null);
@@ -108,9 +113,28 @@ export default function UserAdmin() {
     }
   };
 
-  const handleUpdateUser = (event: HTMLFormElement) => {
+  const handleUpdateUser = async (event: HTMLFormElement) => {
     event?.preventDefault();
-    setDialogVisible(false);
+    const newData = {
+      name: detailUserUpdate.name,
+      email: detailUserUpdate.email,
+    };
+    const res = await updateUserService(newData);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Update User Success",
+      });
+      await getDataUser();
+      setDialogVisible(false);
+      return;
+    }
+    setShowModelToast({
+      severity: "warn",
+      summary: "Warning",
+      detail: res.message,
+    });
   };
 
   const handleUpdateDetailUser = (detail: IUserListModel) => {
@@ -159,7 +183,7 @@ export default function UserAdmin() {
   };
 
   const roleBodyTemplate = (rowData) => {
-    return <p key={rowData.id}>{rowData.role === 1 ? "Admin" : "User"}</p>;
+    return <p key={rowData.id}>{rowData.role !== 1 ? "User" : "Admin"}</p>;
   };
 
   const content = (
@@ -222,6 +246,7 @@ export default function UserAdmin() {
                 className="mt-2"
                 placeholder="email..."
                 required={true}
+                disabled={isCreate ? false : true}
               />
             </div>
             <div className="p-field mb-4">
@@ -234,6 +259,7 @@ export default function UserAdmin() {
                 className="mt-2"
                 placeholder="password..."
                 required={true}
+                disabled={isCreate ? false : true}
               />
             </div>
             <div className="p-field mb-4">
@@ -242,6 +268,7 @@ export default function UserAdmin() {
                 className="px-3 py-2"
                 defaultValue={detailUserUpdate.role + ""}
                 name="role"
+                disabled={isCreate ? false : true}
                 onChange={handleChangeUpdate}>
                 <option value="1">Admin</option>
                 <option value="2">User</option>
@@ -250,6 +277,7 @@ export default function UserAdmin() {
             <div className="p-field mb-4 flex justify-content-end">
               <div className="flex w-6">
                 <Button
+                  type="button"
                   label="Cancel"
                   className="p-button-text underline"
                   onClick={() => setDialogVisible(false)}
@@ -272,6 +300,7 @@ export default function UserAdmin() {
           footer={
             <div className="text-right">
               <Button
+                type="button"
                 label="No! thanks"
                 onClick={() => setDeleteDialogVisible(false)}
                 className="p-button-text underline"

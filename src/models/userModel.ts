@@ -11,3 +11,8 @@ export interface IUserModel {
   password: string;
   id: string;
 }
+export interface IUserLogInInfoModel {
+  id: string;
+  email: string;
+  role: number;
+}

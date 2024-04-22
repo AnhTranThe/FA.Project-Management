@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Ripple } from 'primereact/ripple';
 import { classNames } from 'primereact/utils';
 import React, { useEffect, useContext } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
-import { MenuContext } from '../context/menucontext';
+import { MenuContext } from '../../pages/context/menucontext';
 
 const AppMenuitem = (props: any) => {
   const { activeMenu, setActiveMenu } = useContext(MenuContext);

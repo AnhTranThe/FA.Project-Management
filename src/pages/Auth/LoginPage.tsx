@@ -5,7 +5,7 @@ import { InputSwitch } from "primereact/inputswitch";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginService } from "../../Services/authServiceApi";
-import { getUserEmailAction } from "../../store/action/userAction";
+import { getUserLoginInfo } from "../../store/action/userAction";
 import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 
@@ -15,10 +15,11 @@ const LoginPage = () => {
   const [switchValue, setSwitchValue] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const dispatch = useAppDispatch();
-
-
   const emailOpts = [{
     email: "admin@gmail.com"
+  },
+  {
+    email: "test@gmail.com"
   },
   {
     email: "test1@gmail.com"
@@ -39,7 +40,7 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
-        dispatch(getUserEmailAction(detailLogin.email))
+        dispatch(getUserLoginInfo(data.id, detailLogin.email, data.role))
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/");

@@ -2,7 +2,7 @@ import { useRoutes } from "react-router-dom";
 import ClientLayout from "../pages/ClientLayout";
 import DashboardLayout from "../pages/DashboardLayout";
 import ProjectAdmin from "../pages/Project/ProjectAdmin";
-import ProjectUser from "../pages/Project/ProjectUser";
+import ProjectsUser from "../pages/Project/ProjectsUser";
 import TaskAdmin from "../pages/Task/TaskAdmin";
 import UserAdmin from "../pages/User/UserAdmin";
 import Dashboard from "../viewsTemplate";
@@ -11,6 +11,7 @@ import AdminPrivateRoute from "./routes/AdminPrivateRoute";
 import authRoutes from "./routes/authRoutes";
 import errorRoutes from "./routes/errorRoutes";
 import UserPrivateRoute from "./routes/userPrivateRouter";
+import ProjectUserBoard from "../pages/Project/ProjectUserBoard";
 
 const Router = () => {
   // eslint-disable-next-line no-constant-condition
@@ -53,8 +54,12 @@ const Router = () => {
       children: [
         {
           path: "/client/projects",
-          element: <ProjectUser />,
+          element: <ProjectsUser />,
         },
+        {
+          path: "/client/projects/:id/board",
+          element: <ProjectUserBoard />,
+        }
       ],
     },
     {

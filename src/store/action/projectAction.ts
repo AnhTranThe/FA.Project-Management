@@ -1,6 +1,7 @@
+import { IProjectModel } from "../../models/projectModel";
 import axiosInstance from "../../Services/configAxiosService";
 import { AppDispatch } from "../store";
-import { GET_PROJECT_ALL } from "../type/actionType";
+import { GET_PROJECT_ALL, SELECTED_PROJECT } from "../type/actionType";
 
 export const getProjectAll = () => async (dispatch: AppDispatch) => {
   const res = await axiosInstance.get("/project");
@@ -11,6 +12,13 @@ export const getProjectAll = () => async (dispatch: AppDispatch) => {
     });
   }
 };
+export const selectedProjectItem =
+  (project: IProjectModel) => async (dispatch: AppDispatch) => {
+    dispatch({
+      type: SELECTED_PROJECT,
+      payload: project,
+    });
+  };
 
 // export const getProductById =
 //   (currProduct: IProduct) => async (dispatch: AppDispatch) => {

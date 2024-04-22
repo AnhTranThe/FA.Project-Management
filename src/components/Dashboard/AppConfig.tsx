@@ -7,7 +7,7 @@ import { RadioButton, RadioButtonChangeEvent } from "primereact/radiobutton";
 import { Sidebar } from "primereact/sidebar";
 import { classNames } from "primereact/utils";
 import { useContext, useEffect, useState } from "react";
-import { LayoutContext } from "../context/layoutcontext";
+import { LayoutContext } from "../../pages/context/layoutcontext";
 import { AppConfigProps, LayoutConfig, LayoutState } from "../../types/layout";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { IThemReducer } from "../../store/reducer/themeReducer";

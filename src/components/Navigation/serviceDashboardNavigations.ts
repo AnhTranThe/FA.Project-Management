@@ -1,6 +1,6 @@
-import { IModel } from "../models/commonModel";
+import { IModel } from "../../models/commonModel";
 
-const serviceNavigations: IModel[] = [
+const serviceDashboardNavigations: IModel[] = [
   {
     label: "Service",
     items: [
@@ -23,4 +23,4 @@ const serviceNavigations: IModel[] = [
   },
 ];
 
-export default serviceNavigations;
+export default serviceDashboardNavigations;

@@ -1,6 +1,6 @@
-import { IModel } from "../models/commonModel";
+import { IModel } from "../../models/commonModel";
 
-const pagesNavigations: IModel[] = [
+const pagesDashboardNavigations: IModel[] = [
   {
     label: "Pages",
     items: [
@@ -49,4 +49,4 @@ const pagesNavigations: IModel[] = [
   },
 ];
 
-export default pagesNavigations;
+export default pagesDashboardNavigations;

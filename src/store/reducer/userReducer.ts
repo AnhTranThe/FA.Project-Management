@@ -1,14 +1,22 @@
 import { actionPayload } from "../../models/actionPayloadModel";
 import { IUserModel } from "../../models/userModel";
-import { GET_USER_ALL, GET_USER_EMAIL } from "../type/actionType";
+import { GET_USER_ALL, GET_USER_LOGIN_INFO } from "../type/actionType";
+import { IUserLogInInfoModel } from "./../../models/userModel";
 
 interface IInitialState {
   listUser: IUserModel[] | [];
-  loginUserEmail: string;
+  userLoginInfo: IUserLogInInfoModel;
 }
+
+const emptyUserLogInInfo: IUserLogInInfoModel = {
+  id: "",
+  email: "",
+  role: 0,
+};
+
 const initialState: IInitialState = {
   listUser: [],
-  loginUserEmail: "",
+  userLoginInfo: emptyUserLogInInfo,
 };
 const userReducer = (
   state = initialState,
@@ -22,10 +30,10 @@ const userReducer = (
         listUser: payload,
       };
     }
-    case GET_USER_EMAIL: {
+    case GET_USER_LOGIN_INFO: {
       return {
         ...state,
-        loginUserEmail: payload,
+        userLoginInfo: payload,
       };
     }
     default:

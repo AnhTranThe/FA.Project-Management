@@ -18,4 +18,8 @@ export interface IModel {
   label: string;
   items?: IMenuItem[];
   separator?: boolean;
+  disable?: boolean;
+}
+export interface IProjectProps {
+  projectName: string;
 }

@@ -1,6 +1,6 @@
-import { IModel } from "../models/commonModel";
+import { IModel } from "../../models/commonModel";
 
-const uiComponentsNavigations: IModel[] = [
+const uiComponentsDashboardNavigations: IModel[] = [
   {
     label: "UI Components",
     items: [
@@ -47,4 +47,4 @@ const uiComponentsNavigations: IModel[] = [
   },
 ];
 
-export default uiComponentsNavigations;
+export default uiComponentsDashboardNavigations;

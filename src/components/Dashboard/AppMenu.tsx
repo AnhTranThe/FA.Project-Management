@@ -1,9 +1,8 @@
 
 import { IModel } from '../../models/commonModel';
-import allNavigations from '../../navigation/allNavigations';
-import { MenuProvider } from '../context/menucontext';
+import allNavigations from '../Navigation/allDashboardNavigations';
+import { MenuProvider } from '../../pages/context/menucontext';
 import AppMenuitem from './AppMenuitem';
-
 
 const AppMenu = () => {
   const model: IModel[] = [...allNavigations];

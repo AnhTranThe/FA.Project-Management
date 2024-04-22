@@ -6,15 +6,15 @@ import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../hooks/ReduxHook";
-import { IMenuItem } from "../models/commonModel";
-import { LayoutContext } from "../pages/context/layoutcontext";
-import { setTheme } from "../store/action/themeAction";
-import { IThemReducer } from "../store/reducer/themeReducer";
-import { useAppDispatch } from "../store/store";
-import { LayoutConfig } from "../types/layout";
+import { useAppSelector } from "../../hooks/ReduxHook";
+import { IMenuItem } from "../../models/commonModel";
+import { LayoutContext } from "../../pages/context/layoutcontext";
+import { setTheme } from "../../store/action/themeAction";
+import { IThemReducer } from "../../store/reducer/themeReducer";
+import { useAppDispatch } from "../../store/store";
+import { LayoutConfig } from "../../types/layout";
 
-export default function HeaderClient() {
+export default function ClientAppTopbar() {
   const dispatch = useAppDispatch();
   const { IsDarkTheme } = useAppSelector(
     (state: IThemReducer) => state.themeReducer
@@ -58,7 +58,7 @@ export default function HeaderClient() {
       command: () => {
         nav("/client/projects");
       },
-      class: `h-2rem ${!IsDarkTheme ? "p-button-light" : "p-button-dark"}`,
+      class: `h-2rem border-none ${!IsDarkTheme ? "p-button-light" : "p-button-dark"}`,
     },
   ];
 
@@ -75,17 +75,15 @@ export default function HeaderClient() {
       },
     },
     {
-      class: `circle-button  pi ${
-        !IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
-      }`,
+      class: `circle-button  pi ${!IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
+        }`,
       command: () => {
         dispatch(setTheme(!IsDarkTheme));
       },
     },
     {
-      class: `circle-button  pi ${
-        !IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
-      }`,
+      class: `circle-button  pi ${!IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
+        }`,
       command: handleProfileButtonClick,
       items: [
         {
@@ -127,19 +125,14 @@ export default function HeaderClient() {
             label="Log out"
             severity="danger"
           />
-          //   <Link to={"/auth/login"} onClick={handleLogout}>
-          //   <button type="button" className="p-link layout-topbar-button">
-          //     <i className="pi pi-sign-out"></i>
-          //     <span>Logout</span>
-          //   </button>
-          // </Link>
+
         );
       },
     },
   ];
   return (
     <>
-      <header className="flex relative w-full py-2 px-5  justify-content-between align-items-center shadow-3 surface-card  border-round-sm  align-items-center font-semibold">
+      <header className="flex z-5 relative w-full py-2 px-5  justify-content-between align-items-center shadow-3 surface-card  border-round-sm  align-items-center font-semibold">
         <div className="flex align-items-center">
           {itemLeft.map((item, index) => (
             <Button

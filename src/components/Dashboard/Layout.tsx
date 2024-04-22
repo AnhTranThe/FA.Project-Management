@@ -8,7 +8,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import AppFooter from './AppFooter';
 import AppSidebar from './AppSidebar';
 import AppTopbar from './AppTopbar';
-import { LayoutContext } from '../context/layoutcontext';
+import { LayoutContext } from '../../pages/context/layoutcontext';
 import PrimeReact from 'primereact/api';
 import { useLocation } from 'react-router-dom';
 import AppConfig from './AppConfig';

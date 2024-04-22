@@ -6,6 +6,7 @@ import {
   DELETE_PROJECT,
   GET_PROJECT_ALL,
   GET_PROJECT_BY_ID,
+  SELECTED_PROJECT,
   UPDATE_PROJECT,
 } from "../type/actionType";
 
@@ -51,6 +52,9 @@ const projectReducer = (
     case DELETE_PROJECT: {
       const filteredData = state.data.filter((ele) => ele.id !== payload.id);
       return { ...state, data: filteredData };
+    }
+    case SELECTED_PROJECT: {
+      return { ...state, selectedProject: payload };
     }
     default:
       return state;

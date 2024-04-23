@@ -89,17 +89,54 @@
 }
 
 .client-layout-sidebar {
-  position: absolute;
   overflow-y: auto;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  user-select: none;
   left: 0;
   height: inherit;
-  transition: transform 0.3s ease, left 0.3s ease;
+  transition: all 0.5s ease-in;
   background-color: var(--highlight-bg);
   border-radius: 5px;
   padding: 0.5rem 1.5rem;
   box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.02), 0px 0px 2px rgba(0, 0, 0, 0.05), 0px 1px 4px rgba(0, 0, 0, 0.08);
   width: 20rem;
+  opacity: 1;
+}
+.client-layout-sidebar .client-layout-sidebar-content {
+  min-width: 18rem;
+}
+
+.hidden__navbarClient {
+  transform: translateX(-100%);
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+.layout-main .right-content {
+  border-left: 2px solid #e5e7eb;
+  height: 100vh;
+  padding: 0 2rem;
+}
+.layout-main .right-content .button__navClient {
+  left: -15px;
+  top: 10px;
+  z-index: 4;
+  background-color: white;
+  border-radius: 50%;
+  color: black;
+  transition: all 0.2s linear;
+}
+.layout-main .right-content .button__navClient button {
+  margin: -10px;
+}
+.layout-main .right-content .button__navClient:hover {
+  background-color: #05c;
+}
+.layout-main .right-content .button__navClient:hover span {
+  color: white;
+}
+.layout-main .right-content .button__navClient .p-button:active, .layout-main .right-content .button__navClient .p-button:focus {
+  border: none;
+  background-color: none;
+  box-shadow: none;
 }/*# sourceMappingURL=style.css.map */

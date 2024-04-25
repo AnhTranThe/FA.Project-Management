@@ -39,6 +39,7 @@ export default function TaskAdmin() {
     status: 0,
     note: "",
   });
+  console.log(listTask)
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   const handleGetListUser = async () => {
@@ -142,6 +143,7 @@ export default function TaskAdmin() {
 
   const handleDeleteTask = (rowData: ITaskModel) => {
     setDeleteDialogVisible(true);
+    console.log(rowData.id);
     if (rowData.id) {
       setTaskID(rowData.id);
     }

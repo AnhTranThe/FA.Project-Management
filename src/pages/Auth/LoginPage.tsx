@@ -3,7 +3,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Dropdown } from "primereact/dropdown";
 import { InputSwitch } from "primereact/inputswitch";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginService } from "../../Services/authServiceApi";
 import { getUserLoginInfo } from "../../store/action/userAction";
 import { useAppDispatch } from "../../store/store";
@@ -15,21 +15,22 @@ const LoginPage = () => {
   const [switchValue, setSwitchValue] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const dispatch = useAppDispatch();
-  const emailOpts = [{
-    email: "admin@gmail.com"
-  },
-  {
-    email: "test@gmail.com"
-  },
-  {
-    email: "test1@gmail.com"
-  },
-  {
-    email: "test2@gmail.com"
-  }]
+
+  const emailOpts = [
+    {
+      email: "admin@gmail.com",
+    },
+    {
+      email: "test@gmail.com",
+    },
+    {
+      email: "test1@gmail.com",
+    },
+    {
+      email: "test2@gmail.com",
+    },
+  ];
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
-
-
 
   // const { layoutConfig } = useContext(LayoutContext);
 
@@ -40,7 +41,7 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
-        dispatch(getUserLoginInfo(data.id, detailLogin.email, data.role))
+        dispatch(getUserLoginInfo(data.id, detailLogin.email, data.role));
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/");
@@ -86,7 +87,6 @@ const LoginPage = () => {
   //   });
   // };
 
-
   return (
     <div className="flex flex-column align-items-center justify-content-center">
       <div
@@ -111,19 +111,22 @@ const LoginPage = () => {
               Email
             </label>
 
-            <Dropdown value={selectedEmail}
+            <Dropdown
+              value={selectedEmail}
               onChange={(e) => {
                 const selectedEmailAddress = e.value.email; // Extract email address from the object
                 setSelectedEmail(e.value); // Update selectedEmail state
                 setDetailLogin((prev) => ({
                   ...prev,
                   email: selectedEmailAddress,
-                  password: "admin"
+                  password: "admin",
                 }));
-
               }}
-              options={emailOpts} optionLabel="email"
-              placeholder="Select Email" className="w-full md:w-30rem mb-5" />
+              options={emailOpts}
+              optionLabel="email"
+              placeholder="Select Email"
+              className="w-full md:w-30rem mb-5"
+            />
             {/* <InputText
               id="email"
               type="text"
@@ -159,12 +162,20 @@ const LoginPage = () => {
                 Forgot password?
               </a>
             </div>
-            <div className="flex align-items-center mb-5 gap-2">
-              <InputSwitch
-                checked={switchValue}
-                onChange={(e) => setSwitchValue(e.value)}
-              />
-              <label htmlFor="rememberme1">Switch dark/light</label>
+            <div className="flex align-items-center justify-content-between mb-5 gap-2">
+              <div className="flex align-items-center">
+                <InputSwitch
+                  checked={switchValue}
+                  onChange={(e) => setSwitchValue(e.value)}
+                  className="mr-2"
+                />
+                <label htmlFor="rememberme1">Switch dark/light</label>
+              </div>
+              <Link to={"/auth/signup"}>
+                <p className="p-3 text-sm font-bold underline text-blue-400 cursor-pointer">
+                  Sign Up
+                </p>
+              </Link>
             </div>
 
             <Button

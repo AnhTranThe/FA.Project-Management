@@ -44,3 +44,15 @@ export const updateUserService = async (data: {
     return response;
   }
 };
+
+export const changeRoleService = async (data: {
+  email: string;
+  role: number;
+}) => {
+  try {
+    const res = await axiosInstance.put("/user/changerole", data);
+    return res.data;
+  } catch (error: any) {
+    return error.response.data;
+  }
+};

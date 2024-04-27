@@ -12,11 +12,13 @@ import { IUserListModel } from "../../models/userListModel";
 import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 import {
+  changeRoleService,
   createNewUserService,
   deleteUserService,
   getListUserService,
   updateUserService,
 } from "../../Services/userServiceApi";
+import { Checkbox } from "primereact/checkbox";
 
 export default function UserAdmin() {
   const [filters1, setFilters1] = useState(null);
@@ -37,6 +39,7 @@ export default function UserAdmin() {
 
   const [listUser, setListUser] = useState<IUserListModel[]>([]);
   const [idDelete, setIdDelete] = useState<string>("");
+  const [checked, setChecked] = useState(false);
 
   // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -182,8 +185,40 @@ export default function UserAdmin() {
     );
   };
 
+  const handleChangeRole = async (event, rowData) => {
+    const newData = {
+      email: rowData.email,
+      role: +event.target.value,
+    };
+    const res = await changeRoleService(newData);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Change Role Success",
+      });
+      return;
+    }
+    setShowModelToast({
+      severity: "warn",
+      summary: "Warning",
+      detail: res.message,
+    });
+  };
   const roleBodyTemplate = (rowData) => {
-    return <p key={rowData.id}>{rowData.role !== 1 ? "User" : "Admin"}</p>;
+    return (
+      <select
+        key={rowData.id}
+        defaultValue={rowData.role + ""}
+        onChange={(event) => handleChangeRole(event, rowData)}>
+        <option value="1">Admin</option>
+        <option value="2">User</option>
+        {/* <p>{rowData.role !== 1 ? "User" : "Admin"}</p>
+        <Checkbox
+          onChange={() => handleChangeRole(rowData)}
+          checked={checked}></Checkbox> */}
+      </select>
+    );
   };
 
   const content = (

@@ -83,22 +83,21 @@ export default function ProjectUserBoard() {
           <div>
             <DndProvider backend={HTML5Backend}>
               <div className=" gap-3 grid mt-6 w-full">
-                {listTaskByProjectId.length && <><TaskBoardColumn title="TO DO"
-                  tasks={listTaskByProjectId.filter(task => {
+                <TaskBoardColumn title="TO DO"
+                  tasks={listTaskByProjectId.length ? listTaskByProjectId?.filter(task => {
                     return task.status === 1 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
-                  })}
+                  }) : []}
                   onDrop={(taskId: string) => handleMoveTask(taskId, TO_DO_TASK_STATUS)} />
-
-                  <TaskBoardColumn title="IN PROGRESS"
-                    tasks={listTaskByProjectId.filter(task => {
-                      return task.status === 2 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
-                    })}
-                    onDrop={(taskId: string) => handleMoveTask(taskId, IN_PROGRESS_TASK_STATUS)} />
-                  <TaskBoardColumn title="DONE"
-                    tasks={listTaskByProjectId.filter(task => {
-                      return task.status === 3 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
-                    })}
-                    onDrop={(taskId: string) => handleMoveTask(taskId, DONE_TASK_STATUS)} /></>}
+                <TaskBoardColumn title="IN PROGRESS"
+                  tasks={listTaskByProjectId.length ? listTaskByProjectId?.filter(task => {
+                    return task.status === 2 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
+                  }) : []}
+                  onDrop={(taskId: string) => handleMoveTask(taskId, IN_PROGRESS_TASK_STATUS)} />
+                <TaskBoardColumn title="DONE"
+                  tasks={listTaskByProjectId.length ? listTaskByProjectId?.filter(task => {
+                    return task.status === 3 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
+                  }) : []}
+                  onDrop={(taskId: string) => handleMoveTask(taskId, DONE_TASK_STATUS)} />
               </div>
 
 

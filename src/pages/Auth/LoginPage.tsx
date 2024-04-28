@@ -8,6 +8,8 @@ import { loginService } from "../../Services/authServiceApi";
 import { getUserLoginInfo } from "../../store/action/userAction";
 import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { decodeJwtToken } from "../../utils/Utilities";
+import { IDecodeAccessTokenModel, ILoginResponseModel } from "../../models/loginModel";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ email: "", password: "" });
@@ -33,8 +35,9 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
-
-        dispatch(getUserLoginInfo(data.id, detailLogin.email, data.role))
+        const decodeAccessToken = decodeJwtToken(data.access_token) as IDecodeAccessTokenModel;
+        data.role = decodeAccessToken.role;
+        dispatch(getUserLoginInfo(decodeAccessToken.id, decodeAccessToken.email, decodeAccessToken.role))
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/");

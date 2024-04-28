@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "primereact/button";
 import { ITaskModel } from "../../models/taskModel";
+import { useState } from "react";
 
 export default function TaskBoardColumn({ title, tasks, onDrop }: { title: string, tasks: ITaskModel[], onDrop: any }) {
+    const [isDrag, setIsDrag] = useState<boolean>(false);
 
     console.log(onDrop);
 

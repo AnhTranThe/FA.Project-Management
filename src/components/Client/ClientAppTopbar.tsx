@@ -13,15 +13,17 @@ import { setTheme } from "../../store/action/themeAction";
 import { IThemReducer } from "../../store/reducer/themeReducer";
 import { useAppDispatch } from "../../store/store";
 import { LayoutConfig } from "../../types/layout";
+import { IUserLogInInfoModel } from "../../models/userModel";
 
 export default function ClientAppTopbar() {
   const dispatch = useAppDispatch();
   const { IsDarkTheme } = useAppSelector(
     (state: IThemReducer) => state.themeReducer
   );
-  const { loginUserEmail }: { loginUserEmail: string } = useAppSelector(
+  const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } = useAppSelector(
     (state) => state.userReducer
   );
+  console.log(userLoginInfo);
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
@@ -105,9 +107,9 @@ export default function ClientAppTopbar() {
               shape="circle"
             />
             <div className="flex flex-column align">
-              <span className="font-bold">{loginUserEmail}</span>
+              <span className="font-bold">{userLoginInfo.email}</span>
               <span className="text-sm">
-                {loginUserEmail !== "admin@gmail.com" ? "customer" : "admin"}
+                {userLoginInfo.role !== 1 ? "customer" : "admin"}
               </span>
             </div>
           </div>

@@ -59,7 +59,7 @@ export default function ProjectsUser() {
       <div id="features" className="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8">
         <div className="grid justify-content-center">
           {
-            projectByUserLs.map((project) => (
+            projectByUserLs?.map((project) => (
               <div onClick={handleSelectedProjectItem(project)} key={project.id} className="col-12 md:col-12 lg:col-4 p-0 lg:pr-5 lg:pb-5 mt-4 lg:mt-0 ">
                 <div
                   style={{

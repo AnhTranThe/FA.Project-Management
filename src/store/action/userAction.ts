@@ -8,7 +8,7 @@ import {
 export const getListUserJoinInProjectAction =
   (projectId: string) => async (dispatch: AppDispatch) => {
     const res = await axiosInstance.get(
-      `/user/GetUsersJoinInProjectId/${projectId}`
+      `/user/GetUsersJoinInProject/${projectId}`
     );
 
     if (res) {

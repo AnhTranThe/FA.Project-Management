@@ -10,3 +10,15 @@ export const validateTask = yup.object().shape({
     .required("(*) value Should be from 1 to 5"),
   note: yup.string().required("(*) Value not empty"),
 });
+
+export const validateSignUp = yup.object().shape({
+  email: yup
+    .string()
+    .email("Invailid email")
+    .required("(*) Pls!! Fill your email"),
+  name: yup
+    .string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
+});

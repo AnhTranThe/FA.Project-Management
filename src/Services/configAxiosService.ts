@@ -13,7 +13,7 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem("Token");
     if (token) {
       const parseToken = JSON.parse(token);
-      config.headers.Authorization = "Bearer " + `${parseToken.access_token}`;
+      config.headers.Authorization = "Bearer " + `${parseToken.refresh_token}`;
     }
     return config;
   },

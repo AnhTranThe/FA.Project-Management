@@ -1,15 +1,24 @@
 import { AppDispatch } from "../../hooks/ReduxHook";
-import { IUserModel } from "../../models/userModel";
-import { GET_USER_ALL, GET_USER_LOGIN_INFO } from "../type/actionType";
+import axiosInstance from "../../Services/configAxiosService";
+import {
+  GET_USER_LOGIN_INFO,
+  GET_USERS_J0IN_IN_PROJECT,
+} from "../type/actionType";
 
-export const getListUserAction = (listUser: IUserModel[]) => {
-  return (dispatch: AppDispatch) => {
-    dispatch({
-      type: GET_USER_ALL,
-      payload: listUser,
-    });
+export const getListUserJoinInProjectAction =
+  (projectId: string) => async (dispatch: AppDispatch) => {
+    const res = await axiosInstance.get(
+      `/user/GetUsersJoinInProjectId/${projectId}`
+    );
+
+    if (res) {
+      dispatch({
+        type: GET_USERS_J0IN_IN_PROJECT,
+        payload: res.data,
+      });
+    }
   };
-};
+
 export const getUserLoginInfo = (id: string, email: string, role: number) => {
   return (dispatch: AppDispatch) => {
     dispatch({

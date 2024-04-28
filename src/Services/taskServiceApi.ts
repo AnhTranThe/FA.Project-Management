@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ITaskModel } from "../models/taskModel";
 import axiosInstance from "./configAxiosService";
 

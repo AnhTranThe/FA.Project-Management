@@ -1,6 +1,9 @@
 import { actionPayload } from "../../models/actionPayloadModel";
 import { IUserModel } from "../../models/userModel";
-import { GET_USER_ALL, GET_USER_LOGIN_INFO } from "../type/actionType";
+import {
+  GET_USER_LOGIN_INFO,
+  GET_USERS_J0IN_IN_PROJECT,
+} from "../type/actionType";
 import { IUserLogInInfoModel } from "./../../models/userModel";
 
 interface IInitialState {
@@ -24,7 +27,7 @@ const userReducer = (
   { type, payload }: actionPayload<IUserModel[]>
 ) => {
   switch (type) {
-    case GET_USER_ALL: {
+    case GET_USERS_J0IN_IN_PROJECT: {
       return {
         ...state,
         listUser: payload,

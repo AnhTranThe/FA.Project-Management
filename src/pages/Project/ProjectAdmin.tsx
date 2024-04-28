@@ -1,29 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
-import { FilterMatchMode, FilterOperator } from "primereact/api";
+
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
+
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { Dropdown } from "primereact/dropdown";
-import { InputNumber } from "primereact/inputnumber";
-import { InputText } from "primereact/inputtext";
-import { MultiSelect } from "primereact/multiselect";
-import { ProgressBar } from "primereact/progressbar";
-import { Slider } from "primereact/slider";
-import { TriStateCheckbox } from "primereact/tristatecheckbox";
-import { classNames } from "primereact/utils";
-import { Fragment, useEffect, useState, useRef } from "react";
-import { CustomerService } from "../../demo/service/CustomerService";
-import { ProductService } from "../../demo/service/ProductService";
-import { Toolbar } from "primereact/toolbar";
-import { useAppDispatch } from "../../store/store";
-import { useAppSelector } from "../../hooks/ReduxHook";
-import { getProjectAll } from "../../store/action/projectAction";
+
 import { Dialog } from "primereact/dialog";
-import { IProjectModel } from "../../models/projectModel";
 import { Toast } from "primereact/toast";
+import { useAppSelector } from "../../hooks/ReduxHook";
+import { IProjectModel } from "../../models/projectModel";
+import { getProjectAll } from "../../store/action/projectAction";
+import { useAppDispatch } from "../../store/store";
 
 export default function ProjectAdmin() {
   const dispatch = useAppDispatch();
@@ -98,7 +87,7 @@ export default function ProjectAdmin() {
                       icon="pi pi-pencil"
                       label="Update"
                       className="p-button-rounded p-button-success p-mr-2 "
-                      // onClick={() => openDialogForUpdate(rowData)}
+                    // onClick={() => openDialogForUpdate(rowData)}
                     />
                     {/* Delete Button */}
                     <Button

@@ -9,7 +9,9 @@ import { IProjectModel } from "../../models/projectModel";
 import { IUserLogInInfoModel } from "../../models/userModel";
 import { getProjectByUserService } from "../../Services/projectServiceApi";
 import { selectedProjectItem } from "../../store/action/projectAction";
-import { formatDateTime } from "../../utils/Utilities";
+import { getTasksByProjectId } from "../../store/action/taskAction";
+import { getListUserJoinInProjectAction } from "../../store/action/userAction";
+import { formatDateTime, generateRandomImageProject } from "../../utils/Utilities";
 
 export default function ProjectsUser() {
   const dispatch = useAppDispatch();
@@ -17,22 +19,33 @@ export default function ProjectsUser() {
   const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } = useAppSelector((state) => state.userReducer);
   const [projectByUserLs, setProjectByUserLs] = useState<IProjectModel[]>([]);
   const nav = useNavigate();
+  console.log(userLoginInfo);
+
   const handleReloadData = async () => {
     const result = await getProjectByUserService(userLoginInfo.email);
     setProjectByUserLs(result)
   }
-  console.log(selectedProject);
-
-  console.log(userLoginInfo);
-  console.log(projectByUserLs);
   useEffect(() => { handleReloadData() }, [])
   const handleSelectedProjectItem = (project: IProjectModel) => (event: React.MouseEvent<HTMLDivElement>) => {
     dispatch(selectedProjectItem(project));
+    dispatch(getTasksByProjectId(project.id))
+    dispatch(getListUserJoinInProjectAction(project.id))
     nav(`/client/projects/${project.id}/board`)
   }
   return <>
     <div className="p-6">
       <h1 className="font-primary-black text-2xl font-bold">PROJECTS</h1>
+      {userLoginInfo.role === 1 ? (
+        <div className="mt-5">
+          <Link to="new" className="flex w-fit">
+            <Button color="neutral" className="py-3 pl-3 pr-4">
+              <span className="pi pi-plus"></span>
+              <span className="pl-2">Add Project</span>
+            </Button>
+          </Link>
+        </div>
+      ) : null}
+
       {userLoginInfo.role === 1 ? (
         <div className="mt-5">
           <Link to="new" className="flex w-fit">
@@ -58,14 +71,15 @@ export default function ProjectsUser() {
                   <div className="p-3 surface-card h-full cursor-pointer hover-effect" style={{ borderRadius: '8px' }}>
                     <div className="flex justify-content-between">
                       <div
-                        className="flex align-items-center justify-content-center bg-yellow-200 mb-3"
+                        className="flex align-items-center justify-content-center  mb-3"
                         style={{
                           width: '3.5rem',
                           height: '3.5rem',
-                          borderRadius: '10px'
+                          borderRadius: '10px',
+                          backgroundImage: `url(${generateRandomImageProject()})`
                         }}
                       >
-                        <i className="pi pi-fw pi-users text-2xl text-yellow-700"></i>
+
                       </div>
                       {userLoginInfo.role === 1 ? (
                         <Button icon="pi pi-times" rounded severity="danger" aria-label="Cancel" />

@@ -19,14 +19,9 @@ const LoginPage = () => {
     email: "admin@gmail.com"
   },
   {
-    email: "test@gmail.com"
-  },
-  {
-    email: "test1@gmail.com"
-  },
-  {
-    email: "test2@gmail.com"
-  }]
+    email: "tester@gmail.com"
+  }
+  ]
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
 
@@ -40,6 +35,7 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
+
         dispatch(getUserLoginInfo(data.id, detailLogin.email, data.role))
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {

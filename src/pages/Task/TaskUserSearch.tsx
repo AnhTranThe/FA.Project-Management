@@ -1,25 +1,26 @@
-import { InputText } from "primereact/inputtext";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 
-export default function TaskUserSearch() {
-    const [search, setSearch] = useState("");
+
+export default function TaskUserSearch({ onSearchChange }: { onSearchChange: (searchValue: string) => void }) {
     const [expanded, setExpanded] = useState(false);
-    const handleChange = (e: { target: { value: SetStateAction<string>; }; }) => {
-        setSearch(e.target.value);
-    };
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const newValue = event.currentTarget.value;
+        onSearchChange(newValue);
+    }
     return (
         <span className="p-input-icon-left">
             <i className="pi pi-search" />
-
-            <InputText
-                value={search}
-                onChange={handleChange}
+            <input
+                className={`p-inputtext p-component w-10rem ${expanded ? ('w-15rem') : ("")}`}
+                type="text"
                 placeholder="Filter Issuses"
+                onKeyDown={(e) => { handleKeyDown(e) }}
+
                 onFocus={() => { setExpanded(true) }}
                 onBlur={() => { setExpanded(false) }}
-                className={`w-10rem ${expanded ? ('w-15rem') : ('')}`}
                 style={{ transition: 'width 0.3s ease-in-out' }}
-            ></InputText>
+            />
         </span>
     )
 }
+

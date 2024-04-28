@@ -164,7 +164,8 @@ export default function ClientAppTopbar() {
           ))}
 
           <Menu
-            className="w-auto p-3 mt-3"
+            className="w-auto p-3 mt-3 surface-card"
+            style={{ boxShadow: '0 1px 10px #818CF8' }}
             model={profileMenuItems}
             popup
             ref={menuRef}

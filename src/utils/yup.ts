@@ -11,6 +11,31 @@ export const validateTask = yup.object().shape({
   note: yup.string().required("(*) Value not empty"),
 });
 
+export const validateProject = yup.object().shape({
+  name: yup
+    .string()
+    .min(1, "(*) min name is 1 character")
+    .max(50, "(*) max name is 50 character")
+    .required("(*) pls!! field value"),
+  payment: yup
+    .number()
+    .min(0, "(*) min payment is 0")
+    .max(1000000, "(*) max payment is 1,000,000")
+    .required("(*) pls field Value"),
+  note: yup
+    .string()
+    .min(1, "min note is 1 character")
+    .max(50, "(*) max note is 100 character")
+    .required("(*) pls!! field value"),
+  priority: yup
+    .number()
+    .min(1, "(*) value should form 1")
+    .max(3, "(*) value max is 3")
+    .required("(*) pls field Value"),
+  time_start: yup.string().required("(*) date should not empty"),
+  time_end: yup.string().required("(*) date should not empty"),
+});
+
 export const validateSignUp = yup.object().shape({
   email: yup
     .string()

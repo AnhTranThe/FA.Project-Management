@@ -39,7 +39,7 @@ export default function TaskAdmin() {
     status: 0,
     note: "",
   });
-  console.log(listTask)
+  console.log(listTask);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   const handleGetListUser = async () => {
@@ -217,9 +217,14 @@ export default function TaskAdmin() {
     });
   };
 
-  const bodyTimeTemplate = (rowData: ITaskModel) => {
+  const bodyTimeStartTemplate = (rowData: ITaskModel) => {
     return (
       <p key={rowData.id}>{dayjs(rowData.time_start).format("DD/MM/YYYY")}</p>
+    );
+  };
+  const bodyTimeEndTemplate = (rowData: ITaskModel) => {
+    return (
+      <p key={rowData.id}>{dayjs(rowData.time_end).format("DD/MM/YYYY")}</p>
     );
   };
 
@@ -284,11 +289,11 @@ export default function TaskAdmin() {
               <Column
                 field="time_start"
                 header="Time Start"
-                body={bodyTimeTemplate}></Column>
+                body={bodyTimeStartTemplate}></Column>
               <Column
                 field="time_end"
                 header="Time End"
-                body={bodyTimeTemplate}></Column>
+                body={bodyTimeEndTemplate}></Column>
 
               <Column header="Actions" body={bodyActionTemplate} />
             </DataTable>
@@ -313,7 +318,7 @@ export default function TaskAdmin() {
               name="user_mail"
               onChange={handleChangeSelectTask}>
               <option value="">pls choose email</option>
-              {listUser.map((ele: { email: string }) => {
+              {listUser?.map((ele: { email: string }) => {
                 return (
                   <option value={ele.email} key={ele.email}>
                     {ele.email}
@@ -333,7 +338,7 @@ export default function TaskAdmin() {
               name="project_id"
               onChange={handleChangeSelectTask}>
               <option value="">pls choose project</option>
-              {listProject.map((ele: { id: string; name: string }) => {
+              {listProject?.map((ele: { id: string; name: string }) => {
                 return (
                   <option value={ele.id} key={ele.id}>
                     {ele.name}

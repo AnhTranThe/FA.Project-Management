@@ -10,22 +10,22 @@ import {
   UPDATE_PROJECT,
 } from "../type/actionType";
 
-const emptyProject: IProjectModel = {
-  id: "",
-  name: "",
-  payment: "",
-  time_start: "",
-  time_end: "",
-  note: "",
-  priority: 0,
-};
+// const emptyProject: IProjectModel = {
+//   id: "",
+//   name: "",
+//   payment: "",
+//   time_start: "",
+//   time_end: "",
+//   note: "",
+//   priority: 0,
+// };
 export interface IProjectResponseModel {
   data: IProjectModel[];
-  selectedProject: IProjectModel;
+  selectedProject: IProjectModel | null;
 }
 const initialState: IProjectResponseModel = {
   data: [],
-  selectedProject: emptyProject,
+  selectedProject: null,
 };
 const projectReducer = (
   state: IProjectResponseModel = initialState,

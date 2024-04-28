@@ -1,9 +1,15 @@
 export interface IProjectModel {
-  id: string;
+  id?: string;
   name: string;
-  payment: string;
+  payment: number;
   time_start: string;
   time_end: string;
   note: string;
   priority: number;
+  arrSelectedUser?: IDetailArraySelect[];
+}
+
+interface IDetailArraySelect {
+  email: string;
+  is_host: boolean;
 }

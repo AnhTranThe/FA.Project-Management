@@ -3,15 +3,16 @@ import { Button } from "primereact/button";
 import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUpService } from "../../Services/authServiceApi";
 import { ISignUpModel } from "../../models/loginModel";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { validateSignUp } from "../../utils/yup";
 
 export default function SignupPage() {
   const [switchValue, setSwitchValue] = useState(false);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
-
+  const nav = useNavigate();
   const handleSignUp = async (detaiSignUp: ISignUpModel) => {
     const res = await signUpService(detaiSignUp);
     if (res && res.code === 200) {
@@ -20,6 +21,7 @@ export default function SignupPage() {
         summary: "Success",
         detail: "Sign Up Success",
       });
+      nav("/auth/login")
     } else {
       setShowModelToast({
         severity: "warn",
@@ -29,13 +31,14 @@ export default function SignupPage() {
     }
   };
 
-  const { values, handleChange, handleBlur, handleSubmit } = useFormik({
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       email: "",
       name: "",
       password: "",
-      role: 0,
+      role: 2,
     },
+    validationSchema: validateSignUp,
     onSubmit: (value) => {
       handleSignUp(value);
     },
@@ -62,6 +65,28 @@ export default function SignupPage() {
           <form onSubmit={handleSubmit}>
             <div className="item-form mb-3">
               <label
+                htmlFor="name"
+                className="block text-900 font-medium text-sm ml-1 mb-2">
+                Name
+              </label>
+              <InputText
+                id="name"
+                placeholder="name..."
+                required
+                className="w-full"
+                data-pr-classname="w-full p-3 md:w-30rem"
+                defaultValue={values.name}
+                onChange={handleChange}
+                onBlur={handleBlur}></InputText>
+              <br />
+              <div className="my-3 pl-2">
+                {errors.name && touched.name && (
+                  <span className="text-red-500 my-3">{errors.name}</span>
+                )}
+              </div>
+            </div>
+            <div className="item-form mb-3">
+              <label
                 htmlFor="email"
                 className="block text-900 text-sm ml-1 font-medium mb-2">
                 Email
@@ -69,8 +94,8 @@ export default function SignupPage() {
 
               <InputText
                 id="email"
-                type="email"
-                required
+                type="text"
+
                 placeholder="email..."
                 className="w-full md:w-30rem"
                 style={{ padding: "1rem" }}
@@ -78,7 +103,16 @@ export default function SignupPage() {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
+              <br />
+
+              <div className="my-3 pl-2">
+                {errors.email && touched.email && (
+                  <span className="text-red-500 my-3">{errors.email}</span>
+                )}
+              </div>
+
             </div>
+
             <div className="item-form mb-3">
               <label
                 htmlFor="password"
@@ -94,41 +128,11 @@ export default function SignupPage() {
                 defaultValue={values.password}
                 onChange={handleChange}
                 onBlur={handleBlur}></InputText>
+
             </div>
-            <div className="item-form mb-3">
-              <label
-                htmlFor="name"
-                className="block text-900 font-medium text-sm ml-1 mb-2">
-                Name
-              </label>
-              <InputText
-                id="name"
-                placeholder="name..."
-                required
-                className="w-full"
-                data-pr-classname="w-full p-3 md:w-30rem"
-                defaultValue={values.name}
-                onChange={handleChange}
-                onBlur={handleBlur}></InputText>
-            </div>
-            <div className="item-form mb-3">
-              <label
-                htmlFor="role"
-                className="block text-900 font-medium text-sm ml-1 mb-2">
-                Role
-              </label>
-              <input
-                type="number"
-                id="role"
-                placeholder="role..."
-                required
-                className="p-inputtext p-component p-filled w-full"
-                data-pr-classname="w-full p-3 md:w-30rem"
-                value={values.role}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-            </div>
+
+
+
             <div className="flex align-items-center justify-content-between mb-5 gap-2">
               <div className="flex align-items-center">
                 <InputSwitch
@@ -151,6 +155,6 @@ export default function SignupPage() {
           </form>
         </div>
       </div>
-    </div>
+    </div >
   );
 }

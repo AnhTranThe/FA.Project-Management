@@ -17,3 +17,9 @@ export interface ISignUpModel {
   name: string;
   role: number;
 }
+export interface IDecodeAccessTokenModel {
+  id: string;
+  email: string;
+  user_name: string;
+  role: number;
+}

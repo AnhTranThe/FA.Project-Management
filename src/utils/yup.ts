@@ -11,42 +11,6 @@ export const validateTask = yup.object().shape({
   note: yup.string().required("(*) Value not empty"),
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const validateProject = yup.object().shape({
   name: yup
     .string()
@@ -70,4 +34,16 @@ export const validateProject = yup.object().shape({
     .required("(*) pls field Value"),
   time_start: yup.string().required("(*) date should not empty"),
   time_end: yup.string().required("(*) date should not empty"),
+});
+
+export const validateSignUp = yup.object().shape({
+  email: yup
+    .string()
+    .email("Invailid email")
+    .required("(*) Pls!! Fill your email"),
+  name: yup
+    .string()
+    .min(2, "Too Short!")
+    .max(50, "Too Long!")
+    .required("Required"),
 });

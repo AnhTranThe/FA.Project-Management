@@ -8,6 +8,8 @@ import { loginService } from "../../Services/authServiceApi";
 import { getUserLoginInfo } from "../../store/action/userAction";
 import { useAppDispatch } from "../../store/store";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { decodeJwtToken } from "../../utils/Utilities";
+import { IDecodeAccessTokenModel, ILoginResponseModel } from "../../models/loginModel";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ email: "", password: "" });
@@ -15,21 +17,13 @@ const LoginPage = () => {
   const [switchValue, setSwitchValue] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const dispatch = useAppDispatch();
-
-  const emailOpts = [
-    {
-      email: "admin@gmail.com",
-    },
-    {
-      email: "test@gmail.com",
-    },
-    {
-      email: "test1@gmail.com",
-    },
-    {
-      email: "test2@gmail.com",
-    },
-  ];
+  const emailOpts = [{
+    email: "admin@gmail.com"
+  },
+  {
+    email: "tester@gmail.com"
+  }
+  ]
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   // const { layoutConfig } = useContext(LayoutContext);
@@ -41,7 +35,9 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
-        dispatch(getUserLoginInfo(data.id, detailLogin.email, data.role));
+        const decodeAccessToken = decodeJwtToken(data.access_token) as IDecodeAccessTokenModel;
+        data.role = decodeAccessToken.role;
+        dispatch(getUserLoginInfo(decodeAccessToken.id, decodeAccessToken.email, decodeAccessToken.role))
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/");

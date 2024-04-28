@@ -90,10 +90,12 @@
 
 .client-layout-sidebar {
   overflow-y: auto;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   left: 0;
   height: inherit;
-  transition: all 0.5s ease-in;
+  transition: all 0.3s ease-in;
   background-color: var(--highlight-bg);
   border-radius: 5px;
   padding: 0.5rem 1.5rem;
@@ -103,6 +105,17 @@
 }
 .client-layout-sidebar .client-layout-sidebar-content {
   min-width: 18rem;
+}
+
+.client-board-column {
+  background-color: var(--highlight-bg);
+}
+.client-board-column .overflow-y-scroll::-webkit-scrollbar {
+  display: none; /* Hide the scrollbar */
+}
+
+.client-board-column-item {
+  background-color: var(--surface-card);
 }
 
 .hidden__navbarClient {
@@ -139,4 +152,8 @@
   border: none;
   background-color: none;
   box-shadow: none;
+}
+
+.avatar-link .p-avatar-text:hover {
+  text-decoration: underline; /* Apply text decoration to the label when hovering */
 }/*# sourceMappingURL=style.css.map */

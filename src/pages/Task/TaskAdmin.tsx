@@ -12,7 +12,7 @@ import {
   deteleTaskService,
   getListTaskService,
   updateTaskService,
-} from "../../Services/taskService";
+} from "../../Services/taskServiceApi";
 import { getListUserService } from "../../Services/userServiceApi";
 import { IProjectModel } from "../../models/projectModel";
 import { ITaskModel } from "../../models/taskModel";
@@ -89,7 +89,7 @@ export default function TaskAdmin() {
       validationSchema: validateTask,
       onSubmit: async (value) => {
         console.log(value);
-        let newData = {
+        const newData = {
           ...value,
           status: +value.status,
         };

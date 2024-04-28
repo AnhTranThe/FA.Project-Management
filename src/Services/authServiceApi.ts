@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ILoginDetail, ISignUpModel } from "../models/loginModel";
 import axiosInstance from "./configAxiosService";
 

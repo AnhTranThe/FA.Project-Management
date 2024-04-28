@@ -3,7 +3,7 @@ import { Checkbox } from "primereact/checkbox";
 import { Dropdown } from "primereact/dropdown";
 import { InputSwitch } from "primereact/inputswitch";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginService } from "../../Services/authServiceApi";
 import { getUserLoginInfo } from "../../store/action/userAction";
 import { useAppDispatch } from "../../store/store";
@@ -23,8 +23,6 @@ const LoginPage = () => {
   }
   ]
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
-
-
 
   // const { layoutConfig } = useContext(LayoutContext);
 
@@ -82,7 +80,6 @@ const LoginPage = () => {
   //   });
   // };
 
-
   return (
     <div className="flex flex-column align-items-center justify-content-center">
       <div
@@ -107,19 +104,22 @@ const LoginPage = () => {
               Email
             </label>
 
-            <Dropdown value={selectedEmail}
+            <Dropdown
+              value={selectedEmail}
               onChange={(e) => {
                 const selectedEmailAddress = e.value.email; // Extract email address from the object
                 setSelectedEmail(e.value); // Update selectedEmail state
                 setDetailLogin((prev) => ({
                   ...prev,
                   email: selectedEmailAddress,
-                  password: "admin"
+                  password: "admin",
                 }));
-
               }}
-              options={emailOpts} optionLabel="email"
-              placeholder="Select Email" className="w-full md:w-30rem mb-5" />
+              options={emailOpts}
+              optionLabel="email"
+              placeholder="Select Email"
+              className="w-full md:w-30rem mb-5"
+            />
             {/* <InputText
               id="email"
               type="text"
@@ -155,12 +155,20 @@ const LoginPage = () => {
                 Forgot password?
               </a>
             </div>
-            <div className="flex align-items-center mb-5 gap-2">
-              <InputSwitch
-                checked={switchValue}
-                onChange={(e) => setSwitchValue(e.value)}
-              />
-              <label htmlFor="rememberme1">Switch dark/light</label>
+            <div className="flex align-items-center justify-content-between mb-5 gap-2">
+              <div className="flex align-items-center">
+                <InputSwitch
+                  checked={switchValue}
+                  onChange={(e) => setSwitchValue(e.value)}
+                  className="mr-2"
+                />
+                <label htmlFor="rememberme1">Switch dark/light</label>
+              </div>
+              <Link to={"/auth/signup"}>
+                <p className="p-3 text-sm font-bold underline text-blue-400 cursor-pointer">
+                  Sign Up
+                </p>
+              </Link>
             </div>
 
             <Button

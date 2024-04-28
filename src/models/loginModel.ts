@@ -10,3 +10,10 @@ export interface ILoginDetail {
   email: string;
   password: string;
 }
+
+export interface ISignUpModel {
+  email: string;
+  password: string;
+  name: string;
+  role: number;
+}

@@ -32,7 +32,7 @@ export const updateTaskService = async (data: ITaskModel) => {
 
 export const deteleTaskService = async (id: string) => {
   try {
-    const res = await axiosInstance.put("/task", { id });
+    const res = await axiosInstance.delete("/task",{ data: { id: id }});
     return res.data;
   } catch (error: any) {
     return error.response.data;

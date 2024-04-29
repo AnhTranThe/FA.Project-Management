@@ -1,26 +1,23 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-nocheck
 
+import dayjs from "dayjs";
+import { useFormik } from "formik";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
+import { MultiSelect } from "primereact/multiselect";
+import { RadioButton } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
 import React, { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { IProjectModel } from "../../models/projectModel";
-import { getProjectAll } from "../../store/action/projectAction";
-import { useAppDispatch } from "../../store/store";
-import dayjs from "dayjs";
-import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
-import { Calendar } from "primereact/calendar";
-import { useFormik } from "formik";
-import { MultiSelect } from "primereact/multiselect";
 import { IUserListModel } from "../../models/userListModel";
 import { getListUserService } from "../../Services/userServiceApi";
-import { RadioButton } from "primereact/radiobutton";
+import { getProjectAll } from "../../store/action/projectAction";
+import { useAppDispatch } from "../../store/store";
 import { validateProject } from "../../utils/yup";
 
 export default function ProjectAdmin() {
@@ -49,7 +46,8 @@ export default function ProjectAdmin() {
 
   const handleGetListUser = async () => {
     const res = await getListUserService();
-    setListUser(res);
+    const filterRes = res.filter(user => user.email !== 'admin@gmail.com')
+    setListUser(filterRes);
   };
   useEffect(() => {
     dispatch(getProjectAll());
@@ -83,7 +81,8 @@ export default function ProjectAdmin() {
     setDialogVisible(false);
   };
 
-  const handleDeleteProject = (task: IProjectModel) => {
+  const handleDeleteProject = (project: IProjectModel) => {
+    console.log(project);
     setDeleteDialogVisible(true); // Open the confirmation dialog
   };
 

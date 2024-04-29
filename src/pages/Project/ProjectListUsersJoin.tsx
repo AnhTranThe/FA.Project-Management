@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { Menu } from "primereact/menu";
 import { MenuItem } from "primereact/menuitem";
 
-export default function ProjectListUsersJoin({ projectId }: { projectId: string }) {
+export default function ProjectListUsersJoin({ projectId }: { projectId?: string }) {
   console.log(projectId);
   const { listUser }: { listUser: IUserModel[] } = useAppSelector((state) => state.userReducer);
   console.log(listUser);

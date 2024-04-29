@@ -15,6 +15,7 @@ const emptyUserLogInInfo: IUserLogInInfoModel = {
   id: "",
   email: "",
   role: 0,
+  user_name: "",
 };
 
 const initialState: IInitialState = {

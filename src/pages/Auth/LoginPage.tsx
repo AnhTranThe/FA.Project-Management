@@ -4,12 +4,12 @@ import { Dropdown } from "primereact/dropdown";
 import { InputSwitch } from "primereact/inputswitch";
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { IDecodeAccessTokenModel } from "../../models/loginModel";
 import { loginService } from "../../Services/authServiceApi";
 import { getUserLoginInfo } from "../../store/action/userAction";
 import { useAppDispatch } from "../../store/store";
-import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { decodeJwtToken } from "../../utils/Utilities";
-import { IDecodeAccessTokenModel, ILoginResponseModel } from "../../models/loginModel";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ email: "", password: "" });
@@ -37,7 +37,7 @@ const LoginPage = () => {
       if (data) {
         const decodeAccessToken = decodeJwtToken(data.access_token) as IDecodeAccessTokenModel;
         data.role = decodeAccessToken.role;
-        dispatch(getUserLoginInfo(decodeAccessToken.id, decodeAccessToken.email, decodeAccessToken.role))
+        dispatch(getUserLoginInfo(decodeAccessToken.id, decodeAccessToken.email, decodeAccessToken.user_name, decodeAccessToken.role))
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/");

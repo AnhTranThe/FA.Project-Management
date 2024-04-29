@@ -28,13 +28,13 @@ export default function ProjectsUser() {
   useEffect(() => { handleReloadData() }, [])
   const handleSelectedProjectItem = (project: IProjectModel) => (event: React.MouseEvent<HTMLDivElement>) => {
     dispatch(selectedProjectItem(project));
-    dispatch(getTasksByProjectId(project.id))
-    dispatch(getListUserJoinInProjectAction(project.id))
+    dispatch(getTasksByProjectId(project.id ?? ""))
+    dispatch(getListUserJoinInProjectAction(project.id ?? ""))
     nav(`/client/projects/${project.id}/board`)
   }
   return <>
     <div className="p-6">
-      <h1 className="font-primary-black text-2xl font-bold">PROJECTS</h1>
+      <h1 className="font-primary-black text-2xl font-bold">{(userLoginInfo.user_name).toUpperCase()} 'S PROJECTS</h1>
       {userLoginInfo.role === 1 ? (
         <div className="mt-5">
           <Link to="new" className="flex w-fit">

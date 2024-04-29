@@ -19,11 +19,16 @@ export const getListUserJoinInProjectAction =
     }
   };
 
-export const getUserLoginInfo = (id: string, email: string, role: number) => {
+export const getUserLoginInfo = (
+  id: string,
+  email: string,
+  user_name: string,
+  role: number
+) => {
   return (dispatch: AppDispatch) => {
     dispatch({
       type: GET_USER_LOGIN_INFO,
-      payload: { id, email, role },
+      payload: { id, email, user_name, role },
     });
   };
 };

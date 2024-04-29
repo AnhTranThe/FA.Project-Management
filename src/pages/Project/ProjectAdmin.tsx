@@ -9,44 +9,50 @@ import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
 import { RadioButton } from "primereact/radiobutton";
-import { Toast } from "primereact/toast";
 import { Toolbar } from "primereact/toolbar";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import {
+  createProjectService,
+  deleteProjectService,
+  updateProjectService,
+} from "../../Services/projectServiceApi";
+import { getListUserService } from "../../Services/userServiceApi";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { IProjectModel } from "../../models/projectModel";
 import { IUserListModel } from "../../models/userListModel";
-import { getListUserService } from "../../Services/userServiceApi";
 import { getProjectAll } from "../../store/action/projectAction";
 import { useAppDispatch } from "../../store/store";
 import { validateProject } from "../../utils/yup";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 export default function ProjectAdmin() {
   const [isNewProject, setIsNewProject] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [colorSelect, setColoSelect] = useState("");
   const dispatch = useAppDispatch();
-  const toast = useRef<Toast>(null);
   const { data }: { data: IProjectModel[] } = useAppSelector(
     (state) => state.projectReducer
   );
   const [listUser, setListUser] = useState<IUserListModel[] | []>([]);
   const [ingredient, setIngredient] = useState("");
+  const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+  const [idProject, setIDProject] = useState("");
 
-  const emptyProject: IProjectModel = {
+  const [detailProject, setDetailProject] = useState<IProjectModel>({
+    id: "",
     name: "",
     payment: 0,
     note: "",
-    priority: 1,
+    priority: 0,
     time_start: "",
     time_end: "",
-  };
-  const [detailProject, setDetailProject] =
-    useState<IProjectModel>(emptyProject);
+  });
 
   const handleGetListUser = async () => {
     const res = await getListUserService();
-    const filterRes = res.filter(user => user.email !== 'admin@gmail.com')
+    const filterRes = res.filter((user) => user.email !== "admin@gmail.com");
     setListUser(filterRes);
   };
   useEffect(() => {
@@ -54,59 +60,188 @@ export default function ProjectAdmin() {
     handleGetListUser();
   }, []);
 
-  const { values, touched, errors, handleChange, handleBlur, handleSubmit } =
-    useFormik({
-      initialValues: detailProject,
-      validationSchema: validateProject,
-      onSubmit: (value) => {
-        console.log(value);
-      },
+  useEffect(() => {
+    setValues({
+      id: detailProject?.id,
+      name: detailProject?.name,
+      payment: +detailProject?.payment,
+      note: detailProject?.note,
+      priority: detailProject?.priority,
+      time_start: detailProject?.time_start,
+      time_end: detailProject?.time_end,
     });
+  }, [detailProject]);
 
-  const openDialogForUpdate = (rowData) => {
-    setDialogVisible(true);
-    setIsNewProject(false);
-  };
+  const {
+    values,
+    touched,
+    errors,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+    setValues,
+    resetForm,
+  } = useFormik({
+    initialValues: {
+      id: detailProject?.id,
+      name: detailProject?.name,
+      payment: +detailProject?.payment,
+      note: detailProject?.note,
+      priority: detailProject?.priority,
+      time_start: detailProject?.time_start,
+      time_end: detailProject?.time_end,
+    },
+    validationSchema: validateProject,
+    onSubmit: (value) => {
+      if (selectedUsers.length === 0 && isNewProject) {
+        setShowModelToast({
+          severity: "warn",
+          summary: "Warning",
+          detail: "pls!! add user in project",
+        });
+        return;
+      }
 
-  const handleAddProject = () => {
-    setDialogVisible(false);
-  };
+      if (ingredient === "" && isNewProject) {
+        setShowModelToast({
+          severity: "warn",
+          summary: "Warning",
+          detail: "pls!! choose host for project",
+        });
+        return;
+      }
 
-  const openDialogForCreate = (rowData) => {
+      const changeArray = selectedUsers.map((ele: IProjectModel) => {
+        if (ele.name === ingredient) {
+          return { user_id: ele.id, is_host: true };
+        } else {
+          return { user_id: ele.id, is_host: false };
+        }
+      });
+
+      let newData;
+      if (isNewProject) {
+        newData = {
+          ...value,
+          time_start: dayjs(value.time_start).format("YYYY-MM-DD"),
+          time_end: dayjs(value.time_end).format("YYYY-MM-DD"),
+          arrSelectedUser: changeArray,
+        };
+      } else {
+        newData = {
+          ...value,
+          priority: +value.priority,
+          time_start: dayjs(value.time_start).format("YYYY-MM-DD"),
+          time_end: dayjs(value.time_end).format("YYYY-MM-DD"),
+        };
+      }
+      isNewProject ? handleAddProject(newData) : handleUpdateProject(newData);
+    },
+  });
+
+  useEffect(() => {
+    switch (values.priority + "") {
+      case "1":
+        setColoSelect("#22C55E");
+        break;
+      case "2":
+        setColoSelect("#f97316");
+        break;
+      case "3":
+        setColoSelect("#EF4444");
+        break;
+      default:
+        setColoSelect("white");
+        break;
+    }
+  }, [values.priority]);
+
+  const openDialogForCreate = () => {
+    resetForm();
+    setIngredient("");
+    setSelectedUsers([]);
     setDialogVisible(true);
     setIsNewProject(true);
   };
 
-  const handleUpdateProject = () => {
-    setDialogVisible(false);
+  const handleAddProject = async (data: IProjectModel) => {
+    const res = await createProjectService(data);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Create Project Success",
+      });
+      dispatch(getProjectAll());
+      setDialogVisible(false);
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: `${res?.message || "Something Wrong"}`,
+      });
+    }
+  };
+
+  const openDialogForUpdate = (rowData) => {
+    const newData = {
+      id: rowData.id,
+      name: rowData.name,
+      payment: Math.round(+rowData.payment),
+      note: rowData.note,
+      priority: rowData.priority,
+      time_start: dayjs(rowData.time_start).format("YYYY-MM-DD"),
+      time_end: dayjs(rowData.time_end).format("YYYY-MM-DD"),
+    };
+    setDetailProject(newData);
+    setDialogVisible(true);
+    setIsNewProject(false);
+  };
+
+  const handleUpdateProject = async (data: IProjectModel) => {
+    const res = await updateProjectService(data);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Update Project Success",
+      });
+      dispatch(getProjectAll());
+      setDialogVisible(false);
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: `${res?.message || "Something Wrong"}`,
+      });
+    }
   };
 
   const handleDeleteProject = (project: IProjectModel) => {
-    console.log(project);
+    setIDProject(project.id);
     setDeleteDialogVisible(true); // Open the confirmation dialog
   };
 
-  const confirmDelete = () => {
-    // if (ProjectToDelete) {
-    //   try {
-    //     // dispatch(deleteProject(ProjectToDelete?.Id ?? 0));
-    //     toast.current?.show({
-    //       severity: "success",
-    //       summary: "Successful",
-    //       detail: "task deleted permanently",
-    //       life: 2000,
-    //     });
-    //   } catch (error) {
-    //     toast.current?.show({
-    //       severity: "error",
-    //       summary: "Error",
-    //       detail: "Failed to delete task",
-    //       life: 2000,
-    //     });
-    //   }
-    //   setDeleteDialogVisible(false);
-    // }
-    setDeleteDialogVisible(false);
+  const confirmDelete = async () => {
+    if (!idProject) {
+      return;
+    }
+    const res = await deleteProjectService(idProject);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Update Project Success",
+      });
+      dispatch(getProjectAll());
+      setDeleteDialogVisible(false);
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: `${res?.message || "Something Wrong"}`,
+      });
+    }
   };
 
   const bodyPaymentTemple = (rowData) => {
@@ -172,6 +307,15 @@ export default function ProjectAdmin() {
     return (
       <p key={rowData.id}>{dayjs(rowData.time_end).format("DD/MM/YYYY")}</p>
     );
+  };
+
+  const handleChangeSelectPriority = (event) => {
+    setValues((value) => {
+      return {
+        ...value,
+        priority: +event.target.value,
+      };
+    });
   };
   return (
     <>
@@ -244,9 +388,10 @@ export default function ProjectAdmin() {
               <input
                 className="px-3 py-2 w-full mt-2"
                 type="text"
-                id="name"
                 name="name"
+                defaultValue={values.name}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="project name..."
               />
               {errors.name && touched.name && (
@@ -254,13 +399,14 @@ export default function ProjectAdmin() {
               )}
             </div>
             <div className="w-full">
-              <label htmlFor="name">Payment</label> <br />
+              <label htmlFor="payment">Payment</label> <br />
               <input
                 className="px-3 py-2 w-full mt-2"
                 type="number"
-                id="payment"
                 name="payment"
+                defaultValue={values.payment}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="payment..."
               />
               {errors.payment && touched.payment && (
@@ -268,15 +414,16 @@ export default function ProjectAdmin() {
               )}
             </div>
           </div>
-          <div className="flex justify-content-center gap-5 mb-3">
+          <div className="flex justify-content-center align-items-center gap-5 mb-3">
             <div className="w-full">
               <label htmlFor="note">Note</label> <br />
               <input
                 className="px-3 py-2 w-full mt-2"
                 type="text"
-                id="note"
                 name="note"
+                defaultValue={values.note}
                 onChange={handleChange}
+                onBlur={handleBlur}
                 placeholder="note..."
               />
               {errors.note && touched.note && (
@@ -284,15 +431,25 @@ export default function ProjectAdmin() {
               )}
             </div>
             <div className="w-full">
-              <label htmlFor="note">Priority</label> <br />
-              <input
+              <label htmlFor="priority">Priority</label> <br />
+              <select
                 className="px-3 py-2 w-full mt-2"
-                type="number"
-                id="priority"
                 name="priority"
-                onChange={handleChange}
-                placeholder="priority..."
-              />
+                id="priority"
+                value={values.priority + "" || "0"}
+                style={{ backgroundColor: `${colorSelect}`, color: "black" }}
+                onChange={handleChangeSelectPriority}>
+                <option value="0">pls Choose priority</option>
+                <option value="1" className="p-button p-button-success">
+                  LOW
+                </option>
+                <option value="2" className="p-button p-button-warning">
+                  MEDIUM
+                </option>
+                <option value="3" className="p-button p-button-danger">
+                  HIGH
+                </option>
+              </select>
               {errors.priority && touched.priority && (
                 <p className="text-red-500 mt-1">{errors.priority}</p>
               )}
@@ -300,11 +457,12 @@ export default function ProjectAdmin() {
           </div>
           <div className="flex justify-content-center gap-5 mb-3">
             <div className="w-full">
-              <label htmlFor="note">Note</label> <br />
+              <label htmlFor="time_start">Time Start</label> <br />
               <input
                 className="px-3 py-2 w-full mt-2"
                 type="date"
                 name="time_start"
+                value={values.time_start}
                 onChange={handleChange}
               />
               {errors.time_start && touched.time_start && (
@@ -312,11 +470,12 @@ export default function ProjectAdmin() {
               )}
             </div>
             <div className="w-full">
-              <label htmlFor="note">Priority</label> <br />
+              <label htmlFor="time_end">Time End</label> <br />
               <input
                 className="px-3 py-2 w-full mt-2"
                 type="date"
                 name="time_end"
+                value={values.time_end}
                 onChange={handleChange}
               />
               {errors.time_end && touched.time_end && (
@@ -324,50 +483,59 @@ export default function ProjectAdmin() {
               )}
             </div>
           </div>
-          <div className="flex flex-column justify-content-center mb-3">
-            <label htmlFor="arrSelectedUser" className="ml-1 mb-2">
-              Add User In Project
-            </label>
-            <MultiSelect
-              value={selectedUsers}
-              onChange={(e) => setSelectedUsers(e.value)}
-              options={listUser}
-              optionLabel="name"
-              placeholder="Select User In Project"
-              maxSelectedLabels={4}
-              className="w-full md:w-30rem"
-            />
-          </div>
-          <div className="flex flex-column mb-3 mt-2">
-            <label htmlFor="arrSelectedUser" className="ml-1 mb-2">
-              Choose Host For Project
-            </label>
-            <div className="flex flex-wrap gap-3 mt-2">
-              {selectedUsers.length === 0 ? (
-                <p>No User In Project</p>
-              ) : (
-                selectedUsers.map((ele) => {
-                  return (
-                    <div className="flex align-items-center" key={ele.id}>
-                      <RadioButton
-                        inputId={ele.id}
-                        name="pizza"
-                        value={ele.name}
-                        onChange={(e) => setIngredient(e.value)}
-                        checked={ingredient === ele.name}
-                      />
-                      <label htmlFor="ingredient1" className="ml-2">
-                        {ele.name}
-                      </label>
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
+          {isNewProject ? (
+            <>
+              <div className="flex flex-column justify-content-center mb-3">
+                <label htmlFor="arrSelectedUser" className="ml-1 mb-2">
+                  Add User In Project
+                </label>
+                <MultiSelect
+                  value={selectedUsers}
+                  onChange={(e) => setSelectedUsers(e.value)}
+                  options={listUser}
+                  optionLabel="name"
+                  placeholder="Select User In Project"
+                  maxSelectedLabels={4}
+                  className="w-full md:w-30rem"
+                />
+              </div>
+              <div className="flex flex-column mb-3 mt-2">
+                <label htmlFor="arrSelectedUser" className="ml-1 mb-2">
+                  Choose Host For Project
+                </label>
+                <div className="flex flex-wrap gap-3 mt-2">
+                  {selectedUsers.length === 0 ? (
+                    <p className="pl-4">....</p>
+                  ) : (
+                    selectedUsers.map((ele) => {
+                      return (
+                        <div
+                          className="flex align-items-center pl-2"
+                          key={ele.id}>
+                          <RadioButton
+                            inputId={ele.id}
+                            name="pizza"
+                            value={ele.name}
+                            onChange={(e) => setIngredient(e.value)}
+                            checked={ingredient === ele.name}
+                          />
+                          <label htmlFor="ingredient1" className="ml-2">
+                            {ele.name}
+                          </label>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
           <div className="flex text-right mt-4">
             <Button
               label="Cancel"
+              type="button"
               className="p-button-text"
               onClick={() => setDialogVisible(false)}
             />

@@ -19,7 +19,7 @@ export const validateProject = yup.object().shape({
     .required("(*) pls!! field value"),
   payment: yup
     .number()
-    .min(0, "(*) min payment is 0")
+    .min(1, "(*) min payment is 1")
     .max(1000000, "(*) max payment is 1,000,000")
     .required("(*) pls field Value"),
   note: yup
@@ -29,7 +29,7 @@ export const validateProject = yup.object().shape({
     .required("(*) pls!! field value"),
   priority: yup
     .number()
-    .min(1, "(*) value should form 1")
+    .min(1, "(*) pls! choose priority")
     .max(3, "(*) value max is 3")
     .required("(*) pls field Value"),
   time_start: yup.string().required("(*) date should not empty"),

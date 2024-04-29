@@ -39,7 +39,6 @@ export default function TaskAdmin() {
     status: 0,
     note: "",
   });
-  console.log(listTask);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   const handleGetListUser = async () => {
@@ -88,7 +87,6 @@ export default function TaskAdmin() {
       },
       validationSchema: validateTask,
       onSubmit: async (value) => {
-        console.log(value);
         const newData = {
           ...value,
           status: +value.status,

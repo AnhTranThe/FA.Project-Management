@@ -12,8 +12,12 @@ import { RadioButton } from "primereact/radiobutton";
 import { Toolbar } from "primereact/toolbar";
 import React, { useContext, useEffect, useState } from "react";
 import {
+  addUserInProjectByIDService,
+  changeHostInProjectService,
   createProjectService,
   deleteProjectService,
+  deleteUserInprojectByIDService,
+  getUserInProjectByIDService,
   updateProjectService,
 } from "../../Services/projectServiceApi";
 import { getListUserService } from "../../Services/userServiceApi";
@@ -28,7 +32,11 @@ import { IToastValueContext, ToastContext } from "../context/toastContext";
 export default function ProjectAdmin() {
   const [isNewProject, setIsNewProject] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [listUserDialog, setListUserDialog] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [controlUserDialogVisible, setControlUserDialogVisible] =
+    useState(false);
+  const [isChangeHost, setIsChangeHost] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [colorSelect, setColoSelect] = useState("");
   const dispatch = useAppDispatch();
@@ -39,6 +47,7 @@ export default function ProjectAdmin() {
   const [ingredient, setIngredient] = useState("");
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
   const [idProject, setIDProject] = useState("");
+  const [idUser, setIDUser] = useState("");
 
   const [detailProject, setDetailProject] = useState<IProjectModel>({
     id: "",
@@ -50,9 +59,15 @@ export default function ProjectAdmin() {
     time_end: "",
   });
 
+  const [selectedUserUpdate, setSelectedUserUpdate] = useState([]);
+  const [listUserInProject, setListUserInProject] = useState([]);
+  const [listUserUpdate, setListUserUpdate] = useState<IUserListModel[] | []>(
+    []
+  );
+
   const handleGetListUser = async () => {
     const res = await getListUserService();
-    const filterRes = res.filter((user) => user.email !== "admin@gmail.com");
+    const filterRes = res.filter((user) => user.role !== 1);
     setListUser(filterRes);
   };
   useEffect(() => {
@@ -219,7 +234,7 @@ export default function ProjectAdmin() {
 
   const handleDeleteProject = (project: IProjectModel) => {
     setIDProject(project.id);
-    setDeleteDialogVisible(true); // Open the confirmation dialog
+    setDeleteDialogVisible(true);
   };
 
   const confirmDelete = async () => {
@@ -250,6 +265,98 @@ export default function ProjectAdmin() {
         {Math.round(rowData.payment).toLocaleString("vi-VN")} vnđ
       </p>
     );
+  };
+
+  const handleOpenDiablogUpdateUser = async (rowData) => {
+    const res = await getUserInProjectByIDService(rowData.id);
+    if (res.length > 0) {
+      const newData = listUser.filter((ele) => {
+        const checkUserExsisteInproject = res.filter((user) => {
+          return ele.email === user.email;
+        });
+        if (checkUserExsisteInproject.length === 0) {
+          return ele;
+        }
+      });
+      setIDProject(rowData.id);
+      setListUserInProject(res);
+      setListUserUpdate(newData);
+      setSelectedUserUpdate([]);
+      setListUserDialog(true);
+    }
+  };
+
+  const handleAddUserInproject = async () => {
+    if (selectedUserUpdate.length === 0) {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: "No User for add project",
+      });
+      return;
+    }
+    const changeArray = selectedUserUpdate.map((ele: IProjectModel) => {
+      return { id: ele.id, is_host: false };
+    });
+
+    const res = await addUserInProjectByIDService(idProject, changeArray);
+
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Add User Inproject Success",
+      });
+      setListUserDialog(false);
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: `${res?.message || "Something Wrong"}`,
+      });
+    }
+  };
+
+  const handleChangeHost = async () => {
+    const newData = {
+      project_id: idProject,
+      new_host_user_id: idUser,
+    };
+    const res = await changeHostInProjectService(newData);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Change Host Success",
+      });
+      setControlUserDialogVisible(false);
+      setListUserDialog(false);
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: `${res?.message || "Something Wrong"}`,
+      });
+    }
+  };
+
+  const handleDeleteUserInProject = async () => {
+    const res = await deleteUserInprojectByIDService(idProject, idUser);
+    if (res.code === 200) {
+      setShowModelToast({
+        severity: "success",
+        summary: "Success",
+        detail: "Delete User Inproject Success",
+      });
+      setControlUserDialogVisible(false);
+      setListUserDialog(false);
+    } else {
+      setShowModelToast({
+        severity: "warn",
+        summary: "Warning",
+        detail: `${res?.message || "Something Wrong"}`,
+      });
+    }
   };
   const bodyPriorityTemple = (rowData) => {
     let content;
@@ -353,17 +460,21 @@ export default function ProjectAdmin() {
                 header="Actions"
                 body={(rowData: IProjectModel) => (
                   <div className="flex-nowrap flex">
-                    {/* Update Button */}
                     <Button
                       icon="pi pi-pencil"
-                      label="Update"
                       className="p-button-rounded p-button-success p-mr-2 "
                       onClick={() => openDialogForUpdate(rowData)}
                     />
-                    {/* Delete Button */}
+
+                    <Button
+                      icon="pi pi-user-edit"
+                      style={{ marginLeft: ".5rem" }}
+                      className="p-button-rounded p-button-warning p-mr-2 "
+                      onClick={() => handleOpenDiablogUpdateUser(rowData)}
+                    />
+
                     <Button
                       icon="pi pi-trash"
-                      label="Delete"
                       className="p-button-rounded p-button-danger"
                       style={{ marginLeft: ".5rem" }}
                       onClick={() => handleDeleteProject(rowData)}
@@ -549,6 +660,90 @@ export default function ProjectAdmin() {
       </Dialog>
 
       <Dialog
+        header="Detail User In Project"
+        style={{ width: "500px" }}
+        visible={listUserDialog}
+        onHide={() => setListUserDialog(false)}
+        footer={
+          <div className="text-right mt-3">
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              onClick={() => setListUserDialog(false)}
+              className="p-button-text"
+            />
+            <Button
+              label="Update"
+              icon="pi pi-check"
+              severity="success"
+              onClick={handleAddUserInproject}
+              autoFocus
+            />
+          </div>
+        }>
+        <div>
+          <div className="mb-5">
+            <h6 className="font-bold">List User Add Project</h6>
+            <MultiSelect
+              value={selectedUserUpdate}
+              onChange={(e) => setSelectedUserUpdate(e.value)}
+              options={listUserUpdate}
+              optionLabel="email"
+              placeholder="Select User In Project"
+              maxSelectedLabels={4}
+              className="w-full "
+            />
+          </div>
+          <div>
+            <h6 className="font-bold">User In Project</h6>
+            <div className="flex gap-3 flex-wrap">
+              {listUserInProject.length > 0 &&
+                listUserInProject.map((ele) => {
+                  return (
+                    <div
+                      key={ele.id}
+                      className="bg-gray-200 text-black-alpha-90 px-2 py-2 border-round min-w-full">
+                      <p>
+                        <span className="font-bold">Email:</span> {ele.email}
+                      </p>
+                      <p>
+                        <span className="font-bold">Position: </span>
+                        {ele.is_host ? "Host" : "User"}
+                      </p>
+                      <div className="flex align-items-center justify-content-end">
+                        {!ele.is_host && (
+                          <Button
+                            severity="success"
+                            className="mr-2 text-white"
+                            onClick={() => {
+                              setControlUserDialogVisible(true);
+                              setIsChangeHost(true);
+                              setIDUser(ele.id);
+                            }}>
+                            Change Host
+                          </Button>
+                        )}
+                        {!ele.is_host && (
+                          <div
+                            className="flex align-items-center cursor-pointer p-button p-button-danger text-white"
+                            onClick={() => {
+                              setControlUserDialogVisible(true);
+                              setIsChangeHost(false);
+                              setIDUser(ele.id);
+                            }}>
+                            <i className="pi pi-times mr-2"></i>
+                            <span>Delete</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        </div>
+      </Dialog>
+      <Dialog
         header="Confirm Delete"
         visible={deleteDialogVisible}
         style={{ width: "30vw" }}
@@ -571,6 +766,35 @@ export default function ProjectAdmin() {
           </div>
         }>
         <p>Are you sure you want to delete this project?</p>
+      </Dialog>
+      <Dialog
+        header="Confirm Controll User"
+        visible={controlUserDialogVisible}
+        style={{ width: "40vw" }}
+        onHide={() => setControlUserDialogVisible(false)}
+        footer={
+          <div className="text-right">
+            <Button
+              label="No"
+              icon="pi pi-times"
+              onClick={() => setControlUserDialogVisible(false)}
+              className="p-button-text"
+            />
+            <Button
+              label="Yes"
+              icon="pi pi-check"
+              severity="success"
+              onClick={
+                isChangeHost ? handleChangeHost : handleDeleteUserInProject
+              }
+              autoFocus
+            />
+          </div>
+        }>
+        <p>
+          Are you sure you want to{" "}
+          {isChangeHost ? "Change Host for" : "Delete user in "} this project?
+        </p>
       </Dialog>
     </>
   );

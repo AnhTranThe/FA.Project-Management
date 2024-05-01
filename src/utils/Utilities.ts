@@ -1,5 +1,7 @@
+import { Active, DataRef, Over } from "@dnd-kit/core";
 import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
+import { IColumnDragData, ITaskDragData } from "../models/commonModel";
 
 export const formatDateTime = (dateTimeOffet: string) => {
   const currentDate = dayjs(dateTimeOffet); // Get current date with dayjs
@@ -65,3 +67,20 @@ export const decodeJwtToken = (token: string) => {
   const decoded = jwtDecode(token);
   return decoded;
 };
+type DraggableData = IColumnDragData | ITaskDragData;
+export function hasDraggableData<T extends Active | Over>(
+  entry: T | null | undefined
+): entry is T & {
+  data: DataRef<DraggableData>;
+} {
+  if (!entry) {
+    return false;
+  }
+  const data = entry.data.current;
+
+  if (data?.type === "Column" || data?.type === "Task") {
+    return true;
+  }
+
+  return false;
+}

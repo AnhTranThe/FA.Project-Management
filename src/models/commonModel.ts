@@ -1,4 +1,6 @@
 import { MenuItemCommandEvent } from "primereact/menuitem";
+import { ITaskModel } from "./taskModel";
+import { UniqueIdentifier } from "@dnd-kit/core";
 
 export interface IMenuItem {
   label?: string;
@@ -22,4 +24,17 @@ export interface IModel {
 }
 export interface IProjectProps {
   projectName: string;
+}
+export interface IColumnTaskBoardModel {
+  id: string;
+  title: string;
+  status: number;
+  taskItems: ITaskModel[];
+}
+
+export type ColumnType = "Column";
+
+export interface IColumnDragData {
+  type: ColumnType;
+  column: IColumnTaskBoardModel;
 }

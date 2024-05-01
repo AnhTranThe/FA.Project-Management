@@ -1,14 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import { combineReducers, Reducer } from "redux";
-import { thunk } from "redux-thunk";
-import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
-import tabReducer from "./reducer/tabReducer";
-import taskReducer from "./reducer/taskReducer";
-import userReducer from "./reducer/userReducer";
-import themeReducer from "./reducer/themeReducer";
+import storage from "redux-persist/lib/storage";
+import { thunk } from "redux-thunk";
 import projectReducer from "./reducer/projectReducer";
+import taskReducer from "./reducer/taskReducer";
+import themeReducer from "./reducer/themeReducer";
+import userReducer from "./reducer/userReducer";
 
 const customizedMiddleware = {
   serializableCheck: false,
@@ -20,7 +19,6 @@ const persistConfig = {
 };
 
 const allReducer: Reducer = combineReducers({
-  tabReducer: tabReducer,
   taskReducer: taskReducer,
   userReducer: userReducer,
   projectReducer: projectReducer,

@@ -9,17 +9,17 @@ import { IProjectModel } from "../../models/projectModel";
 import { IUserLogInInfoModel } from "../../models/userModel";
 import { getProjectByUserService } from "../../Services/projectServiceApi";
 import { selectedProjectItem } from "../../store/action/projectAction";
-import { getTasksByProjectId } from "../../store/action/taskAction";
+import { getTasksByProject } from "../../store/action/taskAction";
 import { getListUserJoinInProjectAction } from "../../store/action/userAction";
 import { formatDateTime, generateRandomImageProject } from "../../utils/Utilities";
 
 export default function ProjectsUser() {
   const dispatch = useAppDispatch();
-  const { selectedProject }: { selectedProject: IProjectModel } = useAppSelector((state) => state.projectReducer);
+  const { IsDarkTheme }: { IsDarkTheme: boolean } = useAppSelector((state) => state.themeReducer);
   const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } = useAppSelector((state) => state.userReducer);
   const [projectByUserLs, setProjectByUserLs] = useState<IProjectModel[]>([]);
   const nav = useNavigate();
-  console.log(userLoginInfo);
+
 
   const handleReloadData = async () => {
     const result = await getProjectByUserService(userLoginInfo.email);
@@ -28,7 +28,7 @@ export default function ProjectsUser() {
   useEffect(() => { handleReloadData() }, [])
   const handleSelectedProjectItem = (project: IProjectModel) => (event: React.MouseEvent<HTMLDivElement>) => {
     dispatch(selectedProjectItem(project));
-    dispatch(getTasksByProjectId(project.id ?? ""))
+    dispatch(getTasksByProject(project.id ?? ""))
     dispatch(getListUserJoinInProjectAction(project.id ?? ""))
     nav(`/client/projects/${project.id}/board`)
   }
@@ -68,7 +68,7 @@ export default function ProjectsUser() {
                     background: 'linear-gradient(90deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2)), linear-gradient(180deg, rgba(253, 228, 165, 0.2), rgba(187, 199, 205, 0.2))'
                   }}
                 >
-                  <div className="p-3 surface-card h-full cursor-pointer hover-effect" style={{ borderRadius: '8px' }}>
+                  <div className={`p-3 surface-card h-full cursor-pointer  ${IsDarkTheme ? ("hover-item-dark-effect") : ("hover-item-light-effect")} `} style={{ borderRadius: '8px' }}>
                     <div className="flex justify-content-between">
                       <div
                         className="flex align-items-center justify-content-center  mb-3"

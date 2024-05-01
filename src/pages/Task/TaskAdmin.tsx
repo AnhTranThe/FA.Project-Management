@@ -39,7 +39,6 @@ export default function TaskAdmin() {
     status: 0,
     note: "",
   });
-  console.log(listTask);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   const handleGetListUser = async () => {

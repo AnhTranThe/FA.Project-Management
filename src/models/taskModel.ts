@@ -1,5 +1,5 @@
 export interface ITaskModel {
-  id?: string | null;
+  id: string | "";
   project_id: string | "";
   user_mail: string | "";
   user_name?: string | "";

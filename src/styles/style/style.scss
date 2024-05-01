@@ -68,7 +68,14 @@
   background: #092957;
   border: none;
 }
-.hover-effect:hover {
+.hover-item-light-effect:hover {
+  /* Add your hover styles here */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease;
+  outline: 2px solid #579dff;
+  background-color: #cce0ff !important;
+}
+.hover-item-dark-effect:hover {
   /* Add your hover styles here */
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   transition: box-shadow 0.3s ease;

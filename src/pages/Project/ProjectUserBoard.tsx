@@ -1,23 +1,30 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DndContext, DragOverlay, DragStartEvent, KeyboardSensor, MouseSensor, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
+
+import { closestCorners, DndContext, DragOverEvent, DragOverlay, DragStartEvent, KeyboardSensor, MouseSensor, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { Button } from "primereact/button";
 import { MenuItem } from "primereact/menuitem";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import ClientAppSidebar from "../../components/Client/ClientAppSidebar";
 import { useAppSelector } from "../../hooks/ReduxHook";
-import { IColumnTaskBoardModel } from '../../models/commonModel';
+
+import { IColumnData, IColumnTaskBoardModel } from '../../models/dndModel';
 import { IProjectModel } from "../../models/projectModel";
 import { ITaskModel } from '../../models/taskModel';
+
+
+import { updateTaskService } from "../../Services/taskServiceApi";
+import { getTasksByProject } from '../../store/action/taskAction';
+import { useAppDispatch } from "../../store/store";
 import TaskBoardColumn from "../Task/TaskBoardColumn";
 import TaskBoardItem from "../Task/TaskBoardItem";
 import TaskUserSearch from "../Task/TaskUserSearch";
 import ProjectListUsersJoin from "./ProjectListUsersJoin";
 
 const emptyColumnsBoard = [{
-  id: "todo",
+  id: "to-do",
   title: "TO DO",
   status: 1,
   taskItems: []
@@ -29,8 +36,8 @@ const emptyColumnsBoard = [{
   taskItems: []
 },
 {
-  id: "done",
-  title: "DONE",
+  id: "is-done",
+  title: "IS DONE",
   status: 3,
   taskItems: []
 }
@@ -43,6 +50,7 @@ export default function ProjectUserBoard() {
   const sidebarRef = useRef(null);
   const [isOpen, setIsOpen] = useState(true);
   const [searchKeyValue, setSearchKeyValue] = useState<string>("");
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -51,14 +59,21 @@ export default function ProjectUserBoard() {
   };
   const { selectedProject }: { selectedProject: IProjectModel } = useAppSelector((state) => state.projectReducer);
   const { listTasksByProject }: { listTasksByProject: ITaskModel[] } = useAppSelector((state) => state.taskReducer);
-  console.log(listTasksByProject);
+  console.log("initial", listTasksByProject);
 
 
   const [columns, setColumns] = useState<IColumnTaskBoardModel[]>([]);
-  const [isDraggingId, setIsDraggingId] = useState<UniqueIdentifier>('');
+  const [updatedColumns, setUpdatedColumns] = useState<IColumnTaskBoardModel[]>([]);
+  const [columnsData, setColumnsData] = useState<IColumnData[]>([]);
+  const dispatch = useAppDispatch();
+  const [isDraggingId, setIsDraggingId] = useState<UniqueIdentifier | null>(null);
+  // console.log("columns", columns);
+  // console.log("columnsData", columnsData);
+
+
 
   const columnsBoard = [{
-    id: "todo",
+    id: "to-do",
     title: "TO DO",
     status: 1,
     taskItems: listTasksByProject.length ? listTasksByProject?.filter(task => {
@@ -74,7 +89,7 @@ export default function ProjectUserBoard() {
     }) : []
   },
   {
-    id: "done",
+    id: "is-done",
     title: "DONE",
     status: 3,
     taskItems: listTasksByProject.length ? listTasksByProject?.filter(task => {
@@ -82,11 +97,17 @@ export default function ProjectUserBoard() {
     }) : []
   }
   ];
+
   useEffect(() => {
     setColumns(columnsBoard);
+    //   id: column.id,
+    //   taskItems: column.taskItems
+    // }));
+    const simplifiedColumnsData: IColumnData[] = columnsBoard.map(column => ({
+      [column.id]: column.taskItems
+    }));
+    setColumnsData(simplifiedColumnsData);
   }, [listTasksByProject, searchKeyValue]);
-
-  console.log(isDraggingId);
 
 
   const sensors = useSensors(
@@ -97,157 +118,192 @@ export default function ProjectUserBoard() {
     })
   );
 
-  const findColumn = (id: string) => {
-    for (const column of columns) {
-      for (const taskItem of column.taskItems) {
-        if (taskItem.id === id) {
-          return column;
+  const findBoardColumn = (columnsData: any[], id: string): string | undefined => {
+    for (const columnData of columnsData) {
+      for (const columnKey in columnData) {
+        if (columnData[columnKey].find((item: { id: string }) => item.id === id)) {
+          return columnKey;
         }
       }
     }
-    return null; // Return null if the taskItemId is not found in any column
+    return undefined;
   }
 
-  const handleDragStart = (event: DragStartEvent) => {
-
-    const { active } = event;
-    const { id } = active;
-
-    setIsDraggingId(id);
+  const getColumnItems = (data: any[], column: string) => {
+    for (const item of data) {
+      if (Object.prototype.hasOwnProperty.call(item, column)) {
+        return item[column];
+      }
+    }
+    return []; // Return an empty array if column is not found
   }
-  const handleDragOver = (event: any) => {
-    const { active, over } = event;
-    if (!over) return;
-    const activeId = active.id;
-    console.log(over);
 
 
-    const overId = over.id;
-    if (activeId === overId) return;
-    const activeData = active.data.current;
-    const overData = over.data.current;
-    console.log(activeData);
-    console.log(overData);
+  const handleDragStart = useCallback(({ active }: DragStartEvent) => {
 
-    setColumns(prev => {
+    setIsDraggingId(active.id);
+  }, [columnsData])
+  const handleDragOver = ({ active, over }: DragOverEvent) => {
+    console.log("active", active);
+    console.log("over", over);
 
-      const activeColumnData = active.data.current?.sortable.items
+    // Find the column
+    const activeColumn = findBoardColumn(
+      columnsData,
+      active.id as string
+    );
+    const overColumn = findBoardColumn(
+      columnsData,
+      over?.id as string
+    );
+    // console.log("activeColumn", activeColumn);
+    // console.log("overColumn", overColumn);
 
-      const overColumnData = over.data.current?.sortable.items
-      console.log(activeColumnData);
-      console.log(overColumnData);
+    if (!activeColumn || !overColumn || activeColumn === overColumn) {
+      return;
+    }
+    const activeItems = getColumnItems(columnsData, activeColumn);
+    const overItems = getColumnItems(columnsData, overColumn);
+
+    // console.log("activeItems", activeItems);
+    // console.log("overItems", overItems);
+
+    if (overItems.length == 0) {
+      console.log("0");
 
 
-      // const overColumnData = prev[overData];
-
-
-      console.log(activeId);
-
-      // // Find the indexes for the items
-      // const activeItemIndex = activeColumnData[0].taskItems.indexOf(activeId);
-      // const overItemIndex = overColumnData[0].taskItems.indexOf(overId);
+    }
+    const activeIndex = activeItems.findIndex((item: { id: UniqueIdentifier; }) => item.id === active.id);
+    const overIndex = overItems?.findIndex((item: { id: UniqueIdentifier; }) => item.id === over?.id);
 
 
 
-
+    setColumns((prevColumns) => {
       // let newIndex;
-      // if (overId in prev) {
-      //   // We're at the root droppable of a Column
-      //   newIndex = overColumnData.length + 1;
-      // } else {
+      // if (over?.id && over?.id in prevColumns) {
+      //   newIndex = overItems.length + 1
+
+      // }
+      // else{
       //   const isBelowLastItem =
       //     over &&
-      //     overItemIndex === overColumnData.length - 1 &&
+      //     overIndex === overItems.length - 1 &&
       //     draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
 
       //   const modifier = isBelowLastItem ? 1 : 0;
 
-      //   newIndex = overItemIndex >= 0 ? overItemIndex + modifier : overColumnData.length + 1;
+      //   newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
       // }
 
+      const updatedColumns = prevColumns.map((col) => {
+        if (col.id === activeColumn) {
+
+          const updateActiveCol = {
+            ...col,
+            taskItems: activeItems.filter(
+              (item: { id: UniqueIdentifier }) => item.id !== active.id
+            )
+          }
+          console.log("updateActiveCol", updateActiveCol);
+
+          return updateActiveCol
+        }
+        if (col.id === overColumn) {
+          const updateOverCol = {
+            ...col,
+            taskItems: [
+              ...overItems.slice(0, overIndex),
+              activeItems[activeIndex],
+              ...overItems.slice(overIndex)
+            ]
+          }
+          console.log("updateOverCol", updateOverCol);
+          return updateOverCol
+        }
+        console.log("othetCol", col);
+        return col;
+      }
+
+
+      );
+      console.log("updatedColumns", updatedColumns);
+
+
+
+      setUpdatedColumns(updatedColumns);
+      return updatedColumns;
+
+    });
 
 
 
 
-      // Find the containers
 
-      // const activeColumn = findColumn(id);
-      // const overColumn = findColumn(overId);
+  };
 
 
-      // const indexActiveColumn = activeColumn?.taskItems.findIndex((taskItem) => { return taskItem.id === id })
-      // const indexOverColumn = overColumn?.taskItems.findIndex((taskItem) => { return taskItem.id === id })
+  const handleDragEnd = async () => {
 
 
 
 
+    const shadowCopyUpdatedColumns = updatedColumns.map(column => ({
+      ...column,
+      taskItems: column.taskItems.map(item => ({ ...item })) // Ensure taskItems are also copied immutably
+    }));
+
+    shadowCopyUpdatedColumns.forEach(column => {
+      if (column.id === "to-do") {
+        column.status = 1;
+        column.taskItems.forEach(col => {
+          col.status = 1;
+        });
+      }
+      if (column.id === "in-progress") {
+        column.status = 2;
+        column.taskItems.forEach(col => {
+          col.status = 2;
+        });
+      }
+      if (column.id === "is-done") {
+        column.status = 3;
+        column.taskItems.forEach(col => {
+          col.status = 3;
+        });
+      }
+    });
+    // const newMapUpdatedColumns = updatedColumns.map((col) => {
+    //   return col.taskItems
+    // }).reduce((acc, val) => acc.concat(val), []);
 
 
-    })
-  }
+    const newMapUpdatedColumns = shadowCopyUpdatedColumns.flatMap(col => col.taskItems);
+
+    const updateTaskItem = newMapUpdatedColumns.find(col => col.id === isDraggingId);
+
+    // console.log("newMapUpdatedColumns", newMapUpdatedColumns);
+    // console.log("updateTaskItem", updateTaskItem);
 
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    const { id } = active;
-    const { id: overId } = over;
-
-    const activeColumn = findColumn(id);
-    const overConlumn = findColumn(overId);
-
-    if (
-      !activeColumn?.id ||
-      !overConlumn?.id ||
-      activeColumn.id !== overConlumn.id
-    ) {
-      return;
+    //  updateTaskItem && dispatch(updateTasksByProject(updateTaskItem))
+    const res = updateTaskItem && await updateTaskService(updateTaskItem);
+    if (res && res.code === 200) {
+      if (selectedProject.id) {
+        dispatch(getTasksByProject(selectedProject.id));
+      }
     }
-
-    //   const activeIndex = items[activeContainer].indexOf(active.id);
-    //   const overIndex = items[overContainer].indexOf(overId);
-
-
-    //   if (activeIndex !== overIndex) {
-    //     setItems((items) => ({
-    //       ...items,
-    //       [overContainer]: arrayMove(
-    //         items[overContainer],
-    //         activeIndex,
-    //         overIndex
-    //       ),
-    //     }));
-    //   }
-
-    //   setActiveId(null);
-    // }
-
-
-    // // using dnd kit to handle drag and drop
-
-
-
-    // const columnsId = useMemo(() => columns.map((col) => col.id), [columns]);
-    // const [activeColumn, setActiveColumn] = useState<IColumnTaskBoardModel | null>(null);
-    // const [activeTask, setActiveTask] = useState<ITaskModel | null>(null);
-
-
-    // const onDragStart = (event: DragStartEvent) => {
-    //   if (!hasDraggableData(event.active)) return;
-    //   const data = event.active.data.current;
-    //   if (data?.type === "Column") {
-    //     setActiveColumn(data.column);
-    //     return;
-    //   }
-
-    //   if (data?.type === "Task") {
-    //     setActiveTask(data.task);
-    //     return;
-    //   }
   }
 
 
+  // Function called when a drag operation is cancelled
+  const handleDragCancel = useCallback(() => {
+    const simplifiedColumnsData: IColumnData[] = columnsBoard.map(column => ({
+      [column.id]: column.taskItems
+    }));
+    setColumnsData(simplifiedColumnsData);
+    setIsDraggingId(null);
+  }, []);
   const BreadCumbItems: MenuItem[] = [
-
     {
       template: () => {
         return (
@@ -299,19 +355,22 @@ export default function ProjectUserBoard() {
               sensors={sensors}
               onDragStart={handleDragStart}
               onDragOver={handleDragOver}
-              onDragEnd={handleDragEnd}>
+              onDragEnd={handleDragEnd}
+              collisionDetection={closestCorners}
+            // onDragCancel={handleDragCancel}
+            >
+
               <div className=" gap-3 flex overflow-x-auto mt-6 w-full">
                 {columns.map((col) => (
                   <TaskBoardColumn
                     id={col.id}
                     key={col.id}
                     title={col.title}
-                    column={col}
                     tasks={col.taskItems}
-                    taskIds={col.taskItems.map(task => task.id)}
+
                   />
                 ))}
-                <DragOverlay>{isDraggingId ? <TaskBoardItem id={isDraggingId} /> : null}</DragOverlay>
+                <DragOverlay>{isDraggingId ? <TaskBoardItem id={String(isDraggingId)} /> : null}</DragOverlay>
               </div>
 
 
@@ -327,3 +386,7 @@ export default function ProjectUserBoard() {
     </div>
   );
 }
+
+
+
+

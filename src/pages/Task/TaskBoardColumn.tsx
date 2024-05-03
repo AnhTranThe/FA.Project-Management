@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
+import { useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { Button } from "primereact/button";
 import { useContext, useState } from "react";
 import { useAppSelector } from "../../hooks/ReduxHook";
-import { IColumnTaskBoardModel } from "../../models/commonModel";
+
 import { IProjectModel } from "../../models/projectModel";
 import { ITaskModel } from "../../models/taskModel";
-import { createTask, getTasksByProject, updateTask } from "../../store/action/taskAction";
+import { createNewTaskService, updateTaskService } from "../../Services/taskServiceApi";
+import { getTasksByProject } from "../../store/action/taskAction";
 import { useAppDispatch } from "../../store/store";
 import { validateTask } from "../../utils/yup";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 import TaskBoardAddEditDialog from "./TaskBoardAddEditDialog";
 import TaskBoardItem from "./TaskBoardItem";
 
-export default function TaskBoardColumn({ title, tasks, column, id, taskIds }: { title?: string, tasks: ITaskModel[], column: IColumnTaskBoardModel, id: string, taskIds: UniqueIdentifier[] }) {
+export default function TaskBoardColumn({ title, tasks, id }: { title?: string, tasks: ITaskModel[], id: string }) {
     const [isNewTask, setIsNewTask] = useState(true);
     const [dialogVisible, setDialogVisible] = useState(false);
     const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -75,7 +76,7 @@ export default function TaskBoardColumn({ title, tasks, column, id, taskIds }: {
             },
         });
     const handleCreateNewTask = async (data: ITaskModel) => {
-        const res = await dispatch(createTask(data));
+        const res = await createNewTaskService(data);
         if (res?.success) {
             setShowModelToast({
                 severity: "success",
@@ -93,7 +94,7 @@ export default function TaskBoardColumn({ title, tasks, column, id, taskIds }: {
         }
     };
     const handleUpdateTask = async (data: ITaskModel) => {
-        const res = await dispatch(updateTask(data));
+        const res = await updateTaskService(data);
         if (res?.success) {
             setShowModelToast({
                 severity: "success",
@@ -112,6 +113,7 @@ export default function TaskBoardColumn({ title, tasks, column, id, taskIds }: {
     };
     const handleCancel = () => {
         setDetailTask({
+            id: "",
             user_mail: "",
             project_id: "",
             time_start: "",
@@ -158,20 +160,22 @@ export default function TaskBoardColumn({ title, tasks, column, id, taskIds }: {
                     ))}
 
                 </div> */}
-                <div className="h-full flex flex-column gap-3 mx-1 pb-3 overflow-hidden max-h-30rem overflow-y-scroll overflow-x-hidden">
-                    <SortableContext
-                        id={id}
-                        items={tasks}
-                        strategy={verticalListSortingStrategy}
-                    >
-                        <div ref={setNodeRef} >
+                <SortableContext
+                    id={id}
+                    items={tasks}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <div ref={setNodeRef} >
+
+                        <div className="h-full flex flex-column gap-3 mx-1 pb-3 overflow-hidden max-h-30rem overflow-y-scroll overflow-x-hidden">
+
+
                             {tasks.map((task) => (
                                 <TaskBoardItem task={task} key={task.id} id={task.id} />
                             ))}
                         </div>
-                    </SortableContext>
-
-                </div>
+                    </div>
+                </SortableContext>
 
 
                 <TaskBoardAddEditDialog isNewTask={isNewTask} dialogVisible={dialogVisible} onHide={() => {

@@ -11,6 +11,15 @@ export const getListTaskService = async () => {
   }
 };
 
+export const getListTaskByProjectService = async (projectId: string) => {
+  try {
+    const res = await axiosInstance.get(`/gettaskbyprojectid/${projectId}`);
+    return res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const createNewTaskService = async (data: ITaskModel) => {
   try {
     console.log(data);
@@ -32,7 +41,7 @@ export const updateTaskService = async (data: ITaskModel) => {
 
 export const deteleTaskService = async (id: string) => {
   try {
-    const res = await axiosInstance.delete("/task",{ data: { id: id }});
+    const res = await axiosInstance.delete("/task", { data: { id: id } });
     return res.data;
   } catch (error: any) {
     return error.response.data;

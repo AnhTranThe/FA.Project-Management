@@ -23,6 +23,7 @@ export const GET_TASK_ALL = "GET_TASK_ALL";
 export const GET_TASK_BY_USER = "GET_TASK_BY_USER";
 export const GET_TASK_BY_ID = "GET_TASK_BY_ID";
 export const GET_TASK_BY_PROJECT_ID = "GET_TASK_BY_PROJECT_ID";
+export const UPDATE_TASK_BY_PROJECT = "UPDATE_TASK_BY_PROJECT";
 export const CREATE_TASK = "CREATE_TASK";
 export const UPDATE_TASK = "UPDATE_TASK";
 export const DELETE_TASK = "DELETE_TASK";

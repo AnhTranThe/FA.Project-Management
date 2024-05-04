@@ -26,6 +26,7 @@ export default function TaskAdmin() {
   const [listUser, setListUser] = useState<{ email: string }[]>([]);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [colorSelect, setColoSelect] = useState("");
   const [taskID, setTaskID] = useState("");
   const [listProject, setListProject] = useState<
     { id: string; name: string }[]
@@ -87,16 +88,11 @@ export default function TaskAdmin() {
       },
       validationSchema: validateTask,
       onSubmit: async (value) => {
-        const newData = {
-          ...value,
-          status: +value.status,
-        };
-
         if (isNewTask) {
-          await handleCreateNewTask(newData);
+          await handleCreateNewTask(value);
           return;
         } else {
-          await handleUpdateTask(newData);
+          await handleUpdateTask(value);
           return;
         }
       },
@@ -206,6 +202,7 @@ export default function TaskAdmin() {
 
   const handleCancel = () => {
     setDetailTask({
+      id: "",
       user_mail: "",
       project_id: "",
       time_start: "",
@@ -214,6 +211,31 @@ export default function TaskAdmin() {
       note: "",
     });
   };
+
+  const hanldeSelectStatus = (event: ChangeEvent<HTMLSelectElement>) => {
+    setDetailTask((pre) => {
+      return {
+        ...pre,
+        status: +event.target.value,
+      };
+    });
+  };
+  useEffect(() => {
+    switch (values.status + "") {
+      case "1":
+        setColoSelect("#22C55E");
+        break;
+      case "2":
+        setColoSelect("#f97316");
+        break;
+      case "3":
+        setColoSelect("#EF4444");
+        break;
+      default:
+        setColoSelect("white");
+        break;
+    }
+  }, [values.status]);
 
   const bodyTimeStartTemplate = (rowData: ITaskModel) => {
     return (
@@ -266,6 +288,39 @@ export default function TaskAdmin() {
     );
   };
 
+  const bodyStatusTemplate = (rowData: ITaskModel) => {
+    let content;
+    if (rowData.status === 1) {
+      content = (
+        <Button
+          className="text-xs cursor-auto"
+          key={rowData.id}
+          label="To-do"
+          severity="success"
+        />
+      );
+    } else if (rowData.status === 2) {
+      content = (
+        <Button
+          className="text-xs cursor-auto"
+          key={rowData.id}
+          label="In-Progress"
+          severity="warning"
+        />
+      );
+    } else {
+      content = (
+        <Button
+          className="text-xs cursor-auto"
+          key={rowData.id}
+          label="Done"
+          severity="danger"
+        />
+      );
+    }
+    return content;
+  };
+
   const openDialogForCreate = () => {
     handleCancel();
     setDialogVisible(true);
@@ -279,19 +334,31 @@ export default function TaskAdmin() {
           <div className="card">
             <Toolbar className="mb-4" left={bodyleftToolbarTemplate}></Toolbar>
             <DataTable value={listTask}>
-              <Column field="user_name" header="User Name"></Column>
-              <Column field="user_mail" header="User Email"></Column>
-              <Column field="project_name" header="Project Name"></Column>
-              <Column field="status" header="Status"></Column>
-              <Column field="note" header="Note"></Column>
+              <Column field="user_name" header="User Name" />
+              <Column field="user_mail" header="User Email" />
+              <Column
+                field="project_name"
+                header="Project Name"
+                style={{ minWidth: "10rem", textAlign: "center" }}
+              />
+              <Column
+                headerStyle={{ justifyContent: "center" }}
+                field="status"
+                header="Status"
+                body={bodyStatusTemplate}
+                style={{ minWidth: "10rem", textAlign: "center" }}
+              />
+              <Column field="note" header="Note" />
               <Column
                 field="time_start"
                 header="Time Start"
-                body={bodyTimeStartTemplate}></Column>
+                body={bodyTimeStartTemplate}
+              />
               <Column
                 field="time_end"
                 header="Time End"
-                body={bodyTimeEndTemplate}></Column>
+                body={bodyTimeEndTemplate}
+              />
 
               <Column header="Actions" body={bodyActionTemplate} />
             </DataTable>
@@ -351,15 +418,24 @@ export default function TaskAdmin() {
           <div className="p-field  my-4">
             <label>Status</label>
             <br />
-            <input
-              defaultValue={values.status}
-              className="px-3 py-2 w-full"
-              type="number"
-              name="status"
-              required
-              onChange={handleChangeInput}
-              onBlur={handleBlur}
-            />
+            <select
+              className="px-3 py-2 ư-3 mt-2"
+              name="priority"
+              id="priority"
+              value={values.status + "" || "1"}
+              style={{ backgroundColor: `${colorSelect}`, color: "black" }}
+              onChange={hanldeSelectStatus}>
+              <option value="0">pls choose status</option>
+              <option value="1" className="p-button p-button-success">
+                To-do
+              </option>
+              <option value="2" className="p-button p-button-warning">
+                In-Progress
+              </option>
+              <option value="3" className="p-button p-button-danger">
+                Done
+              </option>
+            </select>
             {errors.status && touched.status && (
               <span className="text-red-500">{errors.status}</span>
             )}

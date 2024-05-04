@@ -9,8 +9,6 @@ import { InputText } from "primereact/inputtext";
 import { Fragment, useContext, useEffect, useState } from "react";
 import { IUserListModel } from "../../models/userListModel";
 
-import { useAppDispatch } from "../../store/store";
-import { IToastValueContext, ToastContext } from "../context/toastContext";
 import {
   changeRoleService,
   createNewUserService,
@@ -18,17 +16,14 @@ import {
   getListUserService,
   updateUserService,
 } from "../../Services/userServiceApi";
-import { Checkbox } from "primereact/checkbox";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 export default function UserAdmin() {
-  const [filters1, setFilters1] = useState(null);
-  const [globalFilterValue1, setGlobalFilterValue1] = useState("");
   const [expandedRows, setExpandedRows] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
-  const dispatch = useAppDispatch();
 
   const [detailUserUpdate, setDetailUserUpdate] = useState<IUserListModel>({
     name: "",
@@ -39,7 +34,6 @@ export default function UserAdmin() {
 
   const [listUser, setListUser] = useState<IUserListModel[]>([]);
   const [idDelete, setIdDelete] = useState<string>("");
-  const [checked, setChecked] = useState(false);
 
   // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -213,10 +207,6 @@ export default function UserAdmin() {
         onChange={(event) => handleChangeRole(event, rowData)}>
         <option value="1">Admin</option>
         <option value="2">User</option>
-        {/* <p>{rowData.role !== 1 ? "User" : "Admin"}</p>
-        <Checkbox
-          onChange={() => handleChangeRole(rowData)}
-          checked={checked}></Checkbox> */}
       </select>
     );
   };
@@ -296,18 +286,6 @@ export default function UserAdmin() {
                 required={true}
                 disabled={isCreate ? false : true}
               />
-            </div>
-            <div className="p-field mb-4">
-              <label className="mr-2">Role:</label>
-              <select
-                className="px-3 py-2"
-                defaultValue={detailUserUpdate.role + ""}
-                name="role"
-                disabled={isCreate ? false : true}
-                onChange={handleChangeUpdate}>
-                <option value="1">Admin</option>
-                <option value="2">User</option>
-              </select>
             </div>
             <div className="p-field mb-4 flex justify-content-end">
               <div className="flex w-6">

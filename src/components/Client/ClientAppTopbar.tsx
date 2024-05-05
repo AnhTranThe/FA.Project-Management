@@ -23,7 +23,6 @@ export default function ClientAppTopbar() {
   const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } = useAppSelector(
     (state) => state.userReducer
   );
-  console.log(userLoginInfo);
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);

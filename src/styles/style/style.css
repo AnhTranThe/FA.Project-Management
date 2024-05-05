@@ -98,9 +98,7 @@
 
 .client-layout-sidebar {
   overflow-y: auto;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  user-select: none;
   left: 0;
   height: inherit;
   transition: all 0.3s ease-in;
@@ -164,4 +162,33 @@
 
 .avatar-link .p-avatar-text:hover {
   text-decoration: underline; /* Apply text decoration to the label when hovering */
+}
+
+.p-dialog-mask #pr_id_2 .form__project .card__container {
+  padding: 0.75rem !important;
+}
+.p-dialog-mask #pr_id_2 .form__project .card__container .card__item .p-checkbox {
+  width: 35px !important;
+  height: 35px !important;
+}
+.p-dialog-mask #pr_id_2 .form__project .card__container .card__item .p-checkbox .p-checkbox-box {
+  width: 35px !important;
+  height: 35px !important;
+}
+.p-dialog-mask #pr_id_2 .form__project .card__container .card__item:hover {
+  border: 2px solid #579dff;
+  background-color: #092957;
+  border-radius: 0.5rem;
+}
+
+.ProjectUser #features .button__delete {
+  top: 15px;
+  right: 15px;
+}
+
+@media screen and (min-width: 993px) {
+  .ProjectUser #features .button__delete {
+    top: 16px;
+    right: 45px;
+  }
 }/*# sourceMappingURL=style.css.map */

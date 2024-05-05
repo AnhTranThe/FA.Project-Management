@@ -7,6 +7,7 @@ import {
   GET_PROJECT_ALL,
   GET_PROJECT_BY_ID,
   SELECTED_PROJECT,
+  UPDATE_ALL_PROJECT,
   UPDATE_PROJECT,
 } from "../type/actionType";
 
@@ -55,6 +56,9 @@ const projectReducer = (
     }
     case SELECTED_PROJECT: {
       return { ...state, selectedProject: payload };
+    }
+    case UPDATE_ALL_PROJECT: {
+      return { ...state, data: payload };
     }
     default:
       return state;

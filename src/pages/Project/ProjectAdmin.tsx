@@ -24,10 +24,14 @@ import { getListUserService } from "../../Services/userServiceApi";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { IProjectModel } from "../../models/projectModel";
 import { IUserListModel } from "../../models/userListModel";
-import { getProjectAll } from "../../store/action/projectAction";
+import {
+  getProjectAll,
+  updateListProjectAction,
+} from "../../store/action/projectAction";
 import { useAppDispatch } from "../../store/store";
 import { validateProject } from "../../utils/yup";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { Dropdown } from "primereact/dropdown";
 
 export default function ProjectAdmin() {
   const [isNewProject, setIsNewProject] = useState(false);
@@ -64,6 +68,8 @@ export default function ProjectAdmin() {
   const [listUserUpdate, setListUserUpdate] = useState<IUserListModel[] | []>(
     []
   );
+  const [selectedNameProject, setSelectedCity] = useState<IProjectModel | null>(null);
+  const [disableSearch, setDisableSearch] = useState(false);
 
   const handleGetListUser = async () => {
     const res = await getListUserService();
@@ -424,12 +430,55 @@ export default function ProjectAdmin() {
       };
     });
   };
+  
+  const handleSearchProjectByName = () => {
+    if (selectedNameProject !== null) {
+      const newList = data.filter((ele: IProjectModel) => {
+        return (
+          ele.name.toLowerCase().trim() ===
+          selectedNameProject.name.toLowerCase().trim()
+        );
+      });
+      dispatch(updateListProjectAction(newList));
+      setDisableSearch(true);
+    }
+  };
+  const handleResetSearch = () => {
+    dispatch(getProjectAll());
+    setDisableSearch(false);
+  };
+  
   return (
     <>
       <div className="grid crud-demo">
         <div className="col-12">
           <div className="card">
             <Toolbar className="mb-4" left={bodyleftToolbarTemplate}></Toolbar>
+            <div className="flex align-items-center mb-4">
+              <Dropdown
+                value={selectedNameProject}
+                onChange={(e) => setSelectedCity(e.value)}
+                options={data}
+                optionLabel="name"
+                placeholder="Select a project"
+                className="w-5"
+                disabled={disableSearch}
+              />
+              <Button
+                label="Search"
+                icon="pi pi-search"
+                severity="secondary"
+                className="ml-2"
+                onClick={handleSearchProjectByName}
+              />{" "}
+              <Button
+                label="Reset"
+                icon="pi pi-undo"
+                severity="secondary"
+                className="ml-2"
+                onClick={handleResetSearch}
+              />
+            </div>
             <DataTable value={data}>
               <Column field="name" header="Name" />
               <Column

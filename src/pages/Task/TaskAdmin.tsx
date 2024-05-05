@@ -19,6 +19,7 @@ import { ITaskModel } from "../../models/taskModel";
 import { IUserListModel } from "../../models/userListModel";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { validateTask } from "../../utils/yup";
+import { Dropdown } from "primereact/dropdown";
 
 export default function TaskAdmin() {
   const [isNewTask, setIsNewTask] = useState(true);
@@ -41,6 +42,10 @@ export default function TaskAdmin() {
     note: "",
   });
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+  const [selectedNameProject, setSelectedCity] = useState<ITaskModel | null>(
+    null
+  );
+  const [disableSearch, setDisableSearch] = useState(false);
 
   const handleGetListUser = async () => {
     const resUser = await getListUserService();
@@ -64,6 +69,7 @@ export default function TaskAdmin() {
     const res: ITaskModel[] = await getListTaskService();
     setListTask(res);
   };
+
   useEffect(() => {
     handleGetListTask();
     handleGetListUser();
@@ -321,10 +327,28 @@ export default function TaskAdmin() {
     return content;
   };
 
+  const bodyIdTaskTemplate = (rowData: ITaskModel) => {
+    return <p>{rowData.id.substring(0, 8)}</p>;
+  };
+
   const openDialogForCreate = () => {
     handleCancel();
     setDialogVisible(true);
     setIsNewTask(true);
+  };
+
+  const handleSearchProjectByName = () => {
+    const newList = listTask.filter((ele: ITaskModel) => {
+      if (ele) {
+        return ele.project_name === selectedNameProject?.project_name;
+      }
+    });
+    setListTask(newList);
+    setDisableSearch(true);
+  };
+  const handleResetSearch = async () => {
+    await handleGetListTask();
+    setDisableSearch(false);
   };
 
   return (
@@ -333,8 +357,37 @@ export default function TaskAdmin() {
         <div className="col-12">
           <div className="card">
             <Toolbar className="mb-4" left={bodyleftToolbarTemplate}></Toolbar>
+            <div className="flex align-items-center mb-4">
+              <Dropdown
+                value={selectedNameProject}
+                onChange={(e) => setSelectedCity(e.value)}
+                options={[
+                  ...new Set(listTask.map((ele) => ele.project_name)),
+                ].map((string) => {
+                  return { project_name: string };
+                })}
+                optionLabel="project_name"
+                placeholder="Select a name project"
+                className="w-5"
+                disabled={disableSearch}
+              />
+              <Button
+                label="Search"
+                icon="pi pi-search"
+                severity="secondary"
+                className="ml-2"
+                onClick={handleSearchProjectByName}
+              />{" "}
+              <Button
+                label="Reset"
+                icon="pi pi-undo"
+                severity="secondary"
+                className="ml-2"
+                onClick={handleResetSearch}
+              />
+            </div>
             <DataTable value={listTask}>
-              <Column field="user_name" header="User Name" />
+              <Column field="id" header="ID Task" body={bodyIdTaskTemplate} />
               <Column field="user_mail" header="User Email" />
               <Column
                 field="project_name"

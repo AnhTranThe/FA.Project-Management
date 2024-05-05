@@ -1,0 +1,44 @@
+.p-dialog-mask {
+  #pr_id_2 {
+    .form__project {
+      .card__container {
+        padding: 0.75rem !important;
+        .card__item {
+          .p-checkbox {
+            width: 35px !important;
+            height: 35px !important;
+            .p-checkbox-box {
+              width: 35px !important;
+              height: 35px !important;
+            }
+          }
+          &:hover {
+            border: 2px solid #579dff;
+            background-color: #092957;
+            border-radius: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+.ProjectUser {
+  #features {
+    .button__delete {
+      top: 15px;
+      right: 15px;
+    }
+  }
+}
+
+@media screen and (min-width: 993px) {
+  .ProjectUser {
+    #features {
+      .button__delete {
+        top: 16px;
+        right: 45px;
+      }
+    }
+  }
+}

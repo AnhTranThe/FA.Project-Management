@@ -10,6 +10,6 @@ export interface IProjectModel {
 }
 
 interface IDetailArraySelect {
-  email: string;
+  user_id: string;
   is_host: boolean;
 }

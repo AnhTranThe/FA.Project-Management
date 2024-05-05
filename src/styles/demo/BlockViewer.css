@@ -30,9 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-          user-select: none;
+  user-select: none;
   margin-left: 1rem;
 }
 .block-viewer .block-header .block-actions a,

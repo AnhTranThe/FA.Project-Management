@@ -66,10 +66,8 @@ export default function ProjectUserBoard() {
   const [updatedColumns, setUpdatedColumns] = useState<IColumnTaskBoardModel[]>([]);
   const [columnsData, setColumnsData] = useState<IColumnData[]>([]);
   const dispatch = useAppDispatch();
-  const [isDraggingId, setIsDraggingId] = useState<UniqueIdentifier | null>(null);
-  // console.log("columns", columns);
-  // console.log("columnsData", columnsData);
-
+  const [DraggingId, setDraggingId] = useState<UniqueIdentifier | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
 
   const columnsBoard = [{
@@ -118,15 +116,23 @@ export default function ProjectUserBoard() {
     })
   );
 
-  const findBoardColumn = (columnsData: any[], id: string): string | undefined => {
+  const findBoardColumn = (columnsData: IColumnData[], id: string): string | undefined => {
     for (const columnData of columnsData) {
+      // Check if the column ID matches
+      if (Object.keys(columnData).includes(id)) {
+        return id;
+      }
       for (const columnKey in columnData) {
-        if (columnData[columnKey].find((item: { id: string }) => item.id === id)) {
-          return columnKey;
+        if (columnKey !== id) { // Skip checking if the property is 'id'
+          if (columnData[columnKey].find((item: { id: string }) => item.id === id)) {
+            return columnKey;
+          }
         }
       }
     }
     return undefined;
+
+
   }
 
   const getColumnItems = (data: any[], column: string) => {
@@ -138,14 +144,14 @@ export default function ProjectUserBoard() {
     return []; // Return an empty array if column is not found
   }
 
-
   const handleDragStart = useCallback(({ active }: DragStartEvent) => {
+    if (!isDragging) {
+      setDraggingId(active.id);
+    }
 
-    setIsDraggingId(active.id);
   }, [columnsData])
+
   const handleDragOver = ({ active, over }: DragOverEvent) => {
-    console.log("active", active);
-    console.log("over", over);
 
     // Find the column
     const activeColumn = findBoardColumn(
@@ -156,44 +162,27 @@ export default function ProjectUserBoard() {
       columnsData,
       over?.id as string
     );
-    // console.log("activeColumn", activeColumn);
-    // console.log("overColumn", overColumn);
+
+
 
     if (!activeColumn || !overColumn || activeColumn === overColumn) {
       return;
     }
     const activeItems = getColumnItems(columnsData, activeColumn);
     const overItems = getColumnItems(columnsData, overColumn);
-
-    // console.log("activeItems", activeItems);
-    // console.log("overItems", overItems);
-
-    if (overItems.length == 0) {
-      console.log("0");
-
-
-    }
     const activeIndex = activeItems.findIndex((item: { id: UniqueIdentifier; }) => item.id === active.id);
-    const overIndex = overItems?.findIndex((item: { id: UniqueIdentifier; }) => item.id === over?.id);
 
+    // Calculate the index where the dragged item will be inserted
+    let newIndex = 0;
+    if (overItems.length > 0) {
+      const overIndex = overItems.findIndex((item: { id: UniqueIdentifier }) => item.id === over?.id);
+      if (overIndex > -1) {
+        newIndex = overIndex;
+      }
+    }
 
 
     setColumns((prevColumns) => {
-      // let newIndex;
-      // if (over?.id && over?.id in prevColumns) {
-      //   newIndex = overItems.length + 1
-
-      // }
-      // else{
-      //   const isBelowLastItem =
-      //     over &&
-      //     overIndex === overItems.length - 1 &&
-      //     draggingRect.offsetTop > over.rect.offsetTop + over.rect.height;
-
-      //   const modifier = isBelowLastItem ? 1 : 0;
-
-      //   newIndex = overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
-      // }
 
       const updatedColumns = prevColumns.map((col) => {
         if (col.id === activeColumn) {
@@ -204,7 +193,7 @@ export default function ProjectUserBoard() {
               (item: { id: UniqueIdentifier }) => item.id !== active.id
             )
           }
-          console.log("updateActiveCol", updateActiveCol);
+
 
           return updateActiveCol
         }
@@ -212,24 +201,20 @@ export default function ProjectUserBoard() {
           const updateOverCol = {
             ...col,
             taskItems: [
-              ...overItems.slice(0, overIndex),
+              ...overItems.slice(0, newIndex),
               activeItems[activeIndex],
-              ...overItems.slice(overIndex)
+              ...overItems.slice(newIndex)
             ]
           }
-          console.log("updateOverCol", updateOverCol);
+
           return updateOverCol
         }
-        console.log("othetCol", col);
+
         return col;
       }
 
 
       );
-      console.log("updatedColumns", updatedColumns);
-
-
-
       setUpdatedColumns(updatedColumns);
       return updatedColumns;
 
@@ -242,10 +227,12 @@ export default function ProjectUserBoard() {
   };
 
 
+
   const handleDragEnd = async () => {
+    if (isDragging) {
+      setIsDragging(false);
 
-
-
+    }
 
     const shadowCopyUpdatedColumns = updatedColumns.map(column => ({
       ...column,
@@ -272,37 +259,23 @@ export default function ProjectUserBoard() {
         });
       }
     });
-    // const newMapUpdatedColumns = updatedColumns.map((col) => {
-    //   return col.taskItems
-    // }).reduce((acc, val) => acc.concat(val), []);
+    // const updateTaskItem = newActiveItems.find(col => col.id === DraggingId);
 
 
     const newMapUpdatedColumns = shadowCopyUpdatedColumns.flatMap(col => col.taskItems);
 
-    const updateTaskItem = newMapUpdatedColumns.find(col => col.id === isDraggingId);
+    const updateTaskItem = newMapUpdatedColumns.find(col => col.id === DraggingId);
 
-    // console.log("newMapUpdatedColumns", newMapUpdatedColumns);
-    // console.log("updateTaskItem", updateTaskItem);
-
-
-    //  updateTaskItem && dispatch(updateTasksByProject(updateTaskItem))
     const res = updateTaskItem && await updateTaskService(updateTaskItem);
     if (res && res.code === 200) {
       if (selectedProject.id) {
         dispatch(getTasksByProject(selectedProject.id));
       }
     }
+    setDraggingId(null);
   }
 
 
-  // Function called when a drag operation is cancelled
-  const handleDragCancel = useCallback(() => {
-    const simplifiedColumnsData: IColumnData[] = columnsBoard.map(column => ({
-      [column.id]: column.taskItems
-    }));
-    setColumnsData(simplifiedColumnsData);
-    setIsDraggingId(null);
-  }, []);
   const BreadCumbItems: MenuItem[] = [
     {
       template: () => {
@@ -346,7 +319,7 @@ export default function ProjectUserBoard() {
               </div>
               <div>
                 <ProjectListUsersJoin />
-              </div>``
+              </div>
 
             </section>
           </div>
@@ -357,7 +330,7 @@ export default function ProjectUserBoard() {
               onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
               collisionDetection={closestCorners}
-            // onDragCancel={handleDragCancel}
+
             >
 
               <div className=" gap-3 flex overflow-x-auto mt-6 w-full">
@@ -370,7 +343,7 @@ export default function ProjectUserBoard() {
 
                   />
                 ))}
-                <DragOverlay>{isDraggingId ? <TaskBoardItem id={String(isDraggingId)} /> : null}</DragOverlay>
+                <DragOverlay>{DraggingId ? <TaskBoardItem id={String(DraggingId)} /> : null}</DragOverlay>
               </div>
 
 

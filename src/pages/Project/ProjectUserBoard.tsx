@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { closestCorners, DndContext, DragOverEvent, DragOverlay, DragStartEvent, KeyboardSensor, MouseSensor, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
-import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { closestCorners, DndContext, DragEndEvent, DragMoveEvent, DragOverEvent, DragOverlay, DragStartEvent, KeyboardSensor, MouseSensor, TouchSensor, UniqueIdentifier, useSensor, useSensors } from "@dnd-kit/core";
+import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { Button } from "primereact/button";
 import { MenuItem } from "primereact/menuitem";
@@ -59,7 +59,7 @@ export default function ProjectUserBoard() {
   };
   const { selectedProject }: { selectedProject: IProjectModel } = useAppSelector((state) => state.projectReducer);
   const { listTasksByProject }: { listTasksByProject: ITaskModel[] } = useAppSelector((state) => state.taskReducer);
-  console.log("initial", listTasksByProject);
+
 
 
   const [columns, setColumns] = useState<IColumnTaskBoardModel[]>([]);
@@ -67,7 +67,7 @@ export default function ProjectUserBoard() {
   const [columnsData, setColumnsData] = useState<IColumnData[]>([]);
   const dispatch = useAppDispatch();
   const [DraggingId, setDraggingId] = useState<UniqueIdentifier | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+
 
 
   const columnsBoard = [{
@@ -145,11 +145,98 @@ export default function ProjectUserBoard() {
   }
 
   const handleDragStart = useCallback(({ active }: DragStartEvent) => {
-    if (!isDragging) {
-      setDraggingId(active.id);
-    }
-
+    setDraggingId(active.id);
   }, [columnsData])
+
+
+  const handleDragMove = (event: DragMoveEvent) => {
+    const { active, over } = event;
+
+
+    console.log("Active", active.id);
+    console.log("over", over?.id);
+
+    // Handle Items Sorting
+    if (
+      active &&
+      over &&
+      active.id !== over.id
+    ) {
+      // Find the active container and over container
+
+
+      const activeColumn = findBoardColumn(
+        columnsData,
+        active.id as string
+      );
+      const overColumn = findBoardColumn(
+        columnsData,
+        over?.id as string
+      );
+
+
+      // If the active or over container is not found, return
+      if (!activeColumn || !overColumn) return;
+
+
+      // Find the items of the active and over container  
+      const activeItems = getColumnItems(columnsData, activeColumn);
+
+      const overItems = getColumnItems(columnsData, overColumn);
+
+      // Find the index of the active and over container
+      const activeIndex = activeItems.findIndex((item: { id: UniqueIdentifier; }) => item.id === active.id);
+      const overIndex = overItems.findIndex((item: { id: UniqueIdentifier; }) => item.id === over.id);
+
+
+      if (activeColumn === overColumn) {
+        const updatedColumns = columns.map((col) => {
+          if (col.id === activeColumn) {
+            // Copy the active column and update its task items array
+            return {
+              ...col,
+              taskItems: arrayMove(col.taskItems, activeIndex, overIndex)
+            };
+          }
+          // For other columns, return them as they are
+          return col;
+        });
+
+        // Update the state with the new columns array
+        setColumns(updatedColumns);
+      } else {
+        // In different containers
+        const updatedActiveItems = [...activeItems];
+        const updatedOverItems = [...overItems];
+        // Remove the item from the active container
+        const [removedItem] = updatedActiveItems.splice(activeIndex, 1);
+        // Add the removed item to the over container
+        updatedOverItems.splice(overIndex, 0, removedItem);
+
+        // Update the state with the modified items in both containers
+        setColumns((prevColumns) => {
+          const updatedColumns = prevColumns.map((col) => {
+            if (col.id === activeColumn) {
+              return {
+                ...col,
+                taskItems: updatedActiveItems
+              };
+            } else if (col.id === overColumn) {
+              return {
+                ...col,
+                taskItems: updatedOverItems
+              };
+            }
+            return col;
+          });
+          setUpdatedColumns(updatedColumns);
+          return updatedColumns;
+        });
+      }
+
+    }
+  }
+
 
   const handleDragOver = ({ active, over }: DragOverEvent) => {
 
@@ -229,10 +316,7 @@ export default function ProjectUserBoard() {
 
 
   const handleDragEnd = async () => {
-    if (isDragging) {
-      setIsDragging(false);
 
-    }
 
     const shadowCopyUpdatedColumns = updatedColumns.map(column => ({
       ...column,
@@ -327,7 +411,8 @@ export default function ProjectUserBoard() {
             <DndContext
               sensors={sensors}
               onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
+              onDragMove={handleDragMove}
+              //onDragOver={handleDragOver}
               onDragEnd={handleDragEnd}
               collisionDetection={closestCorners}
 
@@ -345,7 +430,6 @@ export default function ProjectUserBoard() {
                 ))}
                 <DragOverlay>{DraggingId ? <TaskBoardItem id={String(DraggingId)} /> : null}</DragOverlay>
               </div>
-
 
             </DndContext>
 

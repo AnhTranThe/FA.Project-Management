@@ -1,6 +1,158 @@
+import dayjs from "dayjs";
+import { useFormik } from "formik";
+import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { ChangeEvent, memo, useContext, useEffect, useState } from "react";
+import { useAppSelector } from "../../hooks/ReduxHook";
+import { IProjectModel } from "../../models/projectModel";
+import { ITaskModel } from "../../models/taskModel";
+import { IUserListModel } from "../../models/userListModel";
+import { getListProjectService } from "../../Services/projectServiceApi";
+import { createNewTaskService, updateTaskService } from "../../Services/taskServiceApi";
+import { getListUserService } from "../../Services/userServiceApi";
+import { getTasksByProject } from "../../store/action/taskAction";
+import { useAppDispatch } from "../../store/store";
+import { validateTask } from "../../utils/yup";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
-export default function TaskBoardAddEditDialog({ isNewTask, dialogVisible, onHide }: { isNewTask: boolean, dialogVisible: boolean, onHide: () => void }) {
+
+
+
+
+const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask }: { isNewTask: boolean, dialogVisible: boolean, onHide: () => void, detailTask: ITaskModel }) => {
+    const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+    const { values, errors, touched, handleBlur, handleSubmit, setFieldValue } =
+        useFormik({
+            enableReinitialize: true,
+            initialValues: {
+                id: detailTask?.id,
+                user_mail: detailTask?.user_mail,
+                project_id: detailTask?.project_id,
+                time_start: detailTask.time_start
+                    ? dayjs(detailTask.time_start).format("YYYY-MM-DD")
+                    : "",
+                time_end: detailTask.time_start
+                    ? dayjs(detailTask.time_start).format("YYYY-MM-DD")
+                    : "",
+                status: detailTask?.status,
+                note: detailTask?.note,
+            },
+            validationSchema: validateTask,
+            onSubmit: async (value) => {
+                console.log(value);
+                const newData = {
+                    ...value,
+                    status: +value.status,
+                };
+
+                if (isNewTask) {
+                    await handleCreateNewTask(newData);
+                    return;
+                } else {
+                    await handleUpdateTask(newData);
+                    return;
+                }
+            },
+        });
+
+    const [listUser, setListUser] = useState<{ email: string }[]>([]);
+    const [listProject, setListProject] = useState<
+        { id: string; name: string }[]
+    >([]);
+    const [colorSelect, setColoSelect] = useState("");
+    const dispatch = useAppDispatch();
+    const { selectedProject }: { selectedProject: IProjectModel | null } = useAppSelector((state) => state.projectReducer);
+    const handleGetListUser = async () => {
+        const resUser = await getListUserService();
+        const newListUser = resUser?.map((ele: IUserListModel) => {
+            return {
+                email: ele.email,
+            };
+        });
+        setListUser(newListUser);
+    };
+    const hanldeSelectStatus = (event: ChangeEvent<HTMLSelectElement>) => {
+        console.log(event.target.value);
+
+        setFieldValue(event.target.name, +event.target.value);
+    };
+    const handleGetListProject = async () => {
+        const resProject = await getListProjectService();
+        const newListProject = resProject?.map((ele: IProjectModel) => {
+            return { id: ele.id, name: ele.name };
+        });
+        setListProject(newListProject);
+    };
+
+    useEffect(() => {
+        console.log("detailTask", detailTask);
+    }, [])
+
+    useEffect(() => {
+        handleGetListUser();
+        handleGetListProject();
+    }, []);
+    useEffect(() => {
+        switch (values.status + "") {
+            case "1":
+                setColoSelect("#22C55E");
+                break;
+            case "2":
+                setColoSelect("#f97316");
+                break;
+            case "3":
+                setColoSelect("#EF4444");
+                break;
+            default:
+                setColoSelect("white");
+                break;
+        }
+    }, [values.status]);
+
+
+    const handleChangeSelectTask = (event: ChangeEvent<HTMLSelectElement>) => {
+        setFieldValue(event.target.name, event.target.value);
+    };
+    const handleCreateNewTask = async (data: ITaskModel) => {
+        const res = await createNewTaskService(data);
+        if (res?.success) {
+            setShowModelToast({
+                severity: "success",
+                summary: "Success",
+                detail: "Create Task Success",
+            });
+            await dispatch(getTasksByProject(selectedProject?.id ?? ""));
+            onHide()
+        } else {
+            setShowModelToast({
+                severity: "warn",
+                summary: "Warning",
+                detail: `${res?.error || "Something Wrong"}`,
+            });
+        }
+    };
+    const handleUpdateTask = async (data: ITaskModel) => {
+        const res = await updateTaskService(data);
+        if (res?.success) {
+            setShowModelToast({
+                severity: "success",
+                summary: "Success",
+                detail: "Update Task Success",
+            });
+            await dispatch(getTasksByProject(selectedProject?.id ?? ""));
+            onHide()
+        } else {
+            setShowModelToast({
+                severity: "warn",
+                summary: "Warning",
+                detail: `${res?.error || "Something Wrong"}`,
+            });
+        }
+    };
+    const handleChangeInput = (event: ChangeEvent<HTMLInputElement>) => {
+
+        setFieldValue(event.target.name, event.target.value);
+    };
     return (
         <>
             <Dialog
@@ -8,7 +160,7 @@ export default function TaskBoardAddEditDialog({ isNewTask, dialogVisible, onHid
                 visible={dialogVisible}
                 style={{ width: "550px" }}
                 onHide={onHide}>
-                {/* <form className="p-fluid" onSubmit={handleSubmit}>
+                <form className="p-fluid" onSubmit={handleSubmit}>
                     <div className="p-field  my-4">
                         <label>User Email</label>
                         <select
@@ -52,15 +204,24 @@ export default function TaskBoardAddEditDialog({ isNewTask, dialogVisible, onHid
                     <div className="p-field  my-4">
                         <label>Status</label>
                         <br />
-                        <input
-                            defaultValue={values.status}
-                            className="px-3 py-2 w-full"
-                            type="number"
+                        <select
+                            className="px-3 py-2 ư-3 mt-2"
                             name="status"
-                            required
-                            onChange={handleChangeInput}
-                            onBlur={handleBlur}
-                        />
+                            id="status"
+                            value={values.status + "" || "1"}
+                            style={{ backgroundColor: `${colorSelect}`, color: "black" }}
+                            onChange={hanldeSelectStatus}>
+                            <option value="0">pls choose status</option>
+                            <option value="1" className="p-button p-button-success">
+                                To-do
+                            </option>
+                            <option value="2" className="p-button p-button-warning">
+                                In-Progress
+                            </option>
+                            <option value="3" className="p-button p-button-danger">
+                                Done
+                            </option>
+                        </select>
                         {errors.status && touched.status && (
                             <span className="text-red-500">{errors.status}</span>
                         )}
@@ -112,8 +273,7 @@ export default function TaskBoardAddEditDialog({ isNewTask, dialogVisible, onHid
                                 label="Cancel"
                                 className="p-button-text underline"
                                 onClick={() => {
-                                    setDialogVisible(false);
-                                    handleCancel();
+                                    onHide();
                                 }}
                             />
                             <Button
@@ -123,9 +283,11 @@ export default function TaskBoardAddEditDialog({ isNewTask, dialogVisible, onHid
                             />
                         </div>
                     </div>
-                </form> */}
+                </form>
             </Dialog>
 
         </>
     )
-}
+})
+
+export default TaskBoardAddEditDialog

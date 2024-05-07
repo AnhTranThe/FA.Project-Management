@@ -22,6 +22,7 @@ import TaskBoardColumn from "../Task/TaskBoardColumn";
 import TaskBoardItem from "../Task/TaskBoardItem";
 import TaskUserSearch from "../Task/TaskUserSearch";
 import ProjectListUsersJoin from "./ProjectListUsersJoin";
+import { IUserLogInInfoModel } from "../../models/userModel";
 
 const emptyColumnsBoard = [{
   id: "to-do",
@@ -51,6 +52,7 @@ export default function ProjectUserBoard() {
   const [isOpen, setIsOpen] = useState(true);
   const [searchKeyValue, setSearchKeyValue] = useState<string>("");
 
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -58,15 +60,18 @@ export default function ProjectUserBoard() {
     setSearchKeyValue(searchKeyValue)
   };
   const { selectedProject }: { selectedProject: IProjectModel } = useAppSelector((state) => state.projectReducer);
+  const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } = useAppSelector((state) => state.userReducer);
   const { listTasksByProject }: { listTasksByProject: ITaskModel[] } = useAppSelector((state) => state.taskReducer);
 
 
+  console.log(userLoginInfo);
 
   const [columns, setColumns] = useState<IColumnTaskBoardModel[]>([]);
   const [updatedColumns, setUpdatedColumns] = useState<IColumnTaskBoardModel[]>([]);
   const [columnsData, setColumnsData] = useState<IColumnData[]>([]);
   const dispatch = useAppDispatch();
   const [DraggingId, setDraggingId] = useState<UniqueIdentifier | null>(null);
+  const [DragingTask, setDragingTask] = useState<ITaskModel | undefined>(undefined);
 
 
 
@@ -74,25 +79,31 @@ export default function ProjectUserBoard() {
     id: "to-do",
     title: "TO DO",
     status: 1,
-    taskItems: listTasksByProject.length ? listTasksByProject?.filter(task => {
+    taskItems: (userLoginInfo.role === 1 ? (listTasksByProject.length ? listTasksByProject?.filter(task => {
       return task.status === 1 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
-    }) : []
+    }) : []) : (listTasksByProject.length ? listTasksByProject?.filter(task => {
+      return task.status === 1 && task.user_mail === userLoginInfo.email && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
+    }) : []))
   },
   {
     id: "in-progress",
     title: "IN PROGRESS",
     status: 2,
-    taskItems: listTasksByProject.length ? listTasksByProject?.filter(task => {
+    taskItems: (userLoginInfo.role === 1 ? (listTasksByProject.length ? listTasksByProject?.filter(task => {
       return task.status === 2 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
-    }) : []
+    }) : []) : (listTasksByProject.length ? listTasksByProject?.filter(task => {
+      return task.status === 2 && task.user_mail === userLoginInfo.email && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
+    }) : []))
   },
   {
     id: "is-done",
     title: "DONE",
     status: 3,
-    taskItems: listTasksByProject.length ? listTasksByProject?.filter(task => {
+    taskItems: (userLoginInfo.role === 1 ? (listTasksByProject.length ? listTasksByProject?.filter(task => {
       return task.status === 3 && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
-    }) : []
+    }) : []) : (listTasksByProject.length ? listTasksByProject?.filter(task => {
+      return task.status === 3 && task.user_mail === userLoginInfo.email && (searchKeyValue ? task.note.toLowerCase().includes(searchKeyValue.toLowerCase()) : true);
+    }) : []))
   }
   ];
 
@@ -146,6 +157,8 @@ export default function ProjectUserBoard() {
 
   const handleDragStart = useCallback(({ active }: DragStartEvent) => {
     setDraggingId(active.id);
+    const selectedTask = listTasksByProject.find(task => task.id === active.id)
+    setDragingTask(selectedTask)
   }, [columnsData])
 
 
@@ -357,6 +370,7 @@ export default function ProjectUserBoard() {
       }
     }
     setDraggingId(null);
+    setDragingTask(undefined)
   }
 
 
@@ -404,7 +418,6 @@ export default function ProjectUserBoard() {
               <div>
                 <ProjectListUsersJoin />
               </div>
-
             </section>
           </div>
           <div>
@@ -428,7 +441,7 @@ export default function ProjectUserBoard() {
 
                   />
                 ))}
-                <DragOverlay>{DraggingId ? <TaskBoardItem id={String(DraggingId)} /> : null}</DragOverlay>
+                <DragOverlay>{DraggingId ? <TaskBoardItem task={DragingTask} id={String(DraggingId)} /> : null}</DragOverlay>
               </div>
 
             </DndContext>

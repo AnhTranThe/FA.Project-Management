@@ -473,8 +473,8 @@ export default function TaskAdmin() {
             <br />
             <select
               className="px-3 py-2 ư-3 mt-2"
-              name="priority"
-              id="priority"
+              name="status"
+              id="status"
               value={values.status + "" || "1"}
               style={{ backgroundColor: `${colorSelect}`, color: "black" }}
               onChange={hanldeSelectStatus}>

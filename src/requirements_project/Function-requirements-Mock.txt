@@ -1,0 +1,63 @@
+===========Phân Quyền
+Admin
+	- project: có thể thấy hết toàn bộ các project
+	- task: 
+		+ có thể thấy hết toàn bộ task															
+		+ Có thể thêm task, và  delete task	
+		+ admin thay đổi thông tin task được nhưng không cập nhật trạng thái						
+		+ Admin không thể can thiệp vào status của task (not-start, in-progress, done)
+
+User
+	- không được thấy tab user
+	- project: 
+		+ chỉ có thể thấy được các project mình đang join
+		+ Không thể thêm xoá sửa
+	- task: 
+		+ chỉ có thể thấy được các task mình đang join
+		+ Chỉ được kéo thả trạng thái
+		+ không thể thêm xoá sửa, chỉ có quyền thay đổi status của task (pending, in-progess, complete)
+
+
+
+	- Trước khi làm phần quản lý admin theo thời gian, cần đảm bảo có sự thống nhất giữa ngày của dự án và task.
+		+	time_end của project > time_start của project (tối thiểu 1 ngày)
+		+	Khi tạo mới project thì time_start project > date_now (dự án khởi tạo cần ở trong tương lai) 
+		+	Tương tự, time_start và time_end của task chỉ cho phép trong thời gian project có hiệu lực
+		+	Time_end task > time_start task
+
+	//Dashboard
+	=================  ADMIN  ================
+	-- Bao nhiêu task bị trễ hạn
+		+  Từ ngày kết thúc date_end, ta sẽ so sánh với ngày hiện tại date_now để biết được task nào bị trễ hạn
+		
+	-- Bao nhiêu task đang chờ nhận việc (time_start > ngày hiện tại)
+		+  Count số task có time_start > date_now
+		
+	-- Bao nhiêu task đang thực hiện (đang in-progress)
+		+  Count số task có time_start > date_now
+		
+	-- Bao nhiêu task sẽ cần phải được hoàn thành trong 3 ngày tới.
+		+  Count số task có time_end - date_now = 3
+		
+	-- Bao nhiêu project đang chạy (check time)
+		+  Count số project có time_end > date_now và time_start < date_now
+		
+	-- Bao nhiêu project sẽ release (phải hoàn thành) trong 7 ngày tới (ngày hiện tại + time_end)
+		+  Count số project có time_end - date_now = 7
+	
+	-- Bao nhiêu project đang được ưu tiên
+		+  Count số project có priority = 1
+
+	-- Bao nhiêu user còn trống task (user hiện đang ko có task)
+		+  Count số user trong task mà không có user_mail
+		
+	-- Bao nhiêu user có task phải hoàn thành trong 7 ngày sắp tới
+		+  Count số user có task có time_end - date_now = 7
+		
+	==================  USER  ================
+	-- Bao nhiêu project của user đó sẽ release trong 7 ngày tới
+		+  Count số project của user có time_end - date_now = 7 ngay
+		
+	-- Bao nhiêu task của user đó phải hoàn thành trong 7 ngày sắp tới
+		+  Count số task của user có task có time_end - date_now = 7
+

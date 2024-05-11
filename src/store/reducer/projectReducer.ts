@@ -11,15 +11,6 @@ import {
   UPDATE_PROJECT,
 } from "../type/actionType";
 
-// const emptyProject: IProjectModel = {
-//   id: "",
-//   name: "",
-//   payment: "",
-//   time_start: "",
-//   time_end: "",
-//   note: "",
-//   priority: 0,
-// };
 export interface IProjectResponseModel {
   data: IProjectModel[];
   selectedProject: IProjectModel | null;

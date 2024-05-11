@@ -27,8 +27,22 @@ const Router = () => {
       ),
       children: [
         {
-          index: true,
+          path: "/dashboard",
           element: <Dashboard />,
+          children: [
+            {
+              path: "/dashboard/user",
+              element: <UserAdmin />,
+            },
+            {
+              path: "/dashboard/project",
+              element: <ProjectAdmin />,
+            },
+            {
+              path: "/dashboard/task",
+              element: <TaskAdmin />,
+            },
+          ],
         },
         {
           path: "/admin/user",
@@ -59,7 +73,7 @@ const Router = () => {
         {
           path: "/client/projects/:id/board",
           element: <ProjectUserBoard />,
-        }
+        },
       ],
     },
     {

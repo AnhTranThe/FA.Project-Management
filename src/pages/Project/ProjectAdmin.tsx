@@ -32,6 +32,7 @@ import { useAppDispatch } from "../../store/store";
 import { validateProject } from "../../utils/yup";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { Dropdown } from "primereact/dropdown";
+import { useLocation } from "react-router-dom";
 
 export default function ProjectAdmin() {
   const [isNewProject, setIsNewProject] = useState(false);
@@ -68,8 +69,11 @@ export default function ProjectAdmin() {
   const [listUserUpdate, setListUserUpdate] = useState<IUserListModel[] | []>(
     []
   );
-  const [selectedNameProject, setSelectedCity] = useState<IProjectModel | null>(null);
+  const [selectedNameProject, setSelectedCity] = useState<IProjectModel | null>(
+    null
+  );
   const [disableSearch, setDisableSearch] = useState(false);
+  const location = useLocation();
 
   const handleGetListUser = async () => {
     const res = await getListUserService();
@@ -77,9 +81,11 @@ export default function ProjectAdmin() {
     setListUser(filterRes);
   };
   useEffect(() => {
-    dispatch(getProjectAll());
+    if (location.pathname === "/admin/project") {
+      dispatch(getProjectAll());
+    }
     handleGetListUser();
-  }, []);
+  }, [data]);
 
   useEffect(() => {
     setValues({
@@ -112,8 +118,36 @@ export default function ProjectAdmin() {
       time_start: detailProject?.time_start,
       time_end: detailProject?.time_end,
     },
-    validationSchema: validateProject,
+    // validationSchema: validateProject,
     onSubmit: (value) => {
+      const dateStart = dayjs(value.time_start);
+      const dateEnd = dayjs(value.time_end);
+      const today = dayjs(new Date());
+
+      // kiểm tra ngày tạo task có trước ngày hnay không và có phải tạo mới không
+      if (
+        today.isAfter(dateStart) &&
+        isNewProject &&
+        today.date() !== dateStart.date()
+      ) {
+        setShowModelToast({
+          severity: "warn",
+          summary: "Warning",
+          detail: "time_start should be today or after today",
+        });
+        return;
+      }
+
+      // kiểm tra time_start có trước ngày time_end không
+      if (dateStart.isAfter(dateEnd) || dateStart.isSame(dateEnd)) {
+        setShowModelToast({
+          severity: "warn",
+          summary: "Warning",
+          detail: "time_end should be after time_start",
+        });
+        return;
+      }
+
       if (selectedUsers.length === 0 && isNewProject) {
         setShowModelToast({
           severity: "warn",
@@ -430,7 +464,7 @@ export default function ProjectAdmin() {
       };
     });
   };
-  
+
   const handleSearchProjectByName = () => {
     if (selectedNameProject !== null) {
       const newList = data.filter((ele: IProjectModel) => {
@@ -447,7 +481,7 @@ export default function ProjectAdmin() {
     dispatch(getProjectAll());
     setDisableSearch(false);
   };
-  
+
   return (
     <>
       <div className="grid crud-demo">

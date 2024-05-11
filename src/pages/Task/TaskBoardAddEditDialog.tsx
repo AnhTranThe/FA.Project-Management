@@ -2,14 +2,14 @@ import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { ChangeEvent, memo, useContext, useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { getListProjectService } from "../../Services/projectServiceApi";
+import { createNewTaskService, updateTaskService } from "../../Services/taskServiceApi";
+import { getListUserService } from "../../Services/userServiceApi";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { IProjectModel } from "../../models/projectModel";
 import { ITaskModel } from "../../models/taskModel";
 import { IUserListModel } from "../../models/userListModel";
-import { getListProjectService } from "../../Services/projectServiceApi";
-import { createNewTaskService, updateTaskService } from "../../Services/taskServiceApi";
-import { getListUserService } from "../../Services/userServiceApi";
 import { getTasksByProject } from "../../store/action/taskAction";
 import { useAppDispatch } from "../../store/store";
 import { validateTask } from "../../utils/yup";
@@ -39,7 +39,6 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
             },
             validationSchema: validateTask,
             onSubmit: async (value) => {
-                console.log(value);
                 const newData = {
                     ...value,
                     status: +value.status,
@@ -72,8 +71,6 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
         setListUser(newListUser);
     };
     const hanldeSelectStatus = (event: ChangeEvent<HTMLSelectElement>) => {
-        console.log(event.target.value);
-
         setFieldValue(event.target.name, +event.target.value);
     };
     const handleGetListProject = async () => {
@@ -83,10 +80,6 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
         });
         setListProject(newListProject);
     };
-
-    useEffect(() => {
-        console.log("detailTask", detailTask);
-    }, [])
 
     useEffect(() => {
         handleGetListUser();

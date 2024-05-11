@@ -4,7 +4,6 @@ import { jwtDecode } from "jwt-decode";
 export const formatDateTime = (dateTimeOffet: string) => {
   const currentDate = dayjs(dateTimeOffet); // Get current date with dayjs
   const formattedDate = currentDate.format("DD-MM-YYYY");
-  //   console.log(formatDateTime)
   return formattedDate;
 };
 
@@ -65,16 +64,3 @@ export const decodeJwtToken = (token: string) => {
   const decoded = jwtDecode(token);
   return decoded;
 };
-
-// export const initializeBoard = (tasks: ITaskModel[]) => {
-//   const boardSections: BoardSections = {};
-
-//   Object.keys(BOARD_SECTIONS).forEach((boardSectionKey) => {
-//     boardSections[boardSectionKey] = getTasksByStatus(
-//       tasks,
-//       boardSectionKey as Status
-//     );
-//   });
-//   console.log(boardSections);
-//   return boardSections;
-// };

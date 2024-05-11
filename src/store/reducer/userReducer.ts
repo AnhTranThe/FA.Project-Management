@@ -1,6 +1,7 @@
 import { actionPayload } from "../../models/actionPayloadModel";
 import { IUserModel } from "../../models/userModel";
 import {
+  GET_LIST_DETAIL_USER_SERVICE,
   GET_USER_LOGIN_INFO,
   GET_USERS_J0IN_IN_PROJECT,
 } from "../type/actionType";
@@ -9,6 +10,7 @@ import { IUserLogInInfoModel } from "./../../models/userModel";
 interface IInitialState {
   listUser: IUserModel[] | [];
   userLoginInfo: IUserLogInInfoModel;
+  listDetailUser: IUserModel[] | [];
 }
 
 const emptyUserLogInInfo: IUserLogInInfoModel = {
@@ -21,6 +23,7 @@ const emptyUserLogInInfo: IUserLogInInfoModel = {
 const initialState: IInitialState = {
   listUser: [],
   userLoginInfo: emptyUserLogInInfo,
+  listDetailUser: [],
 };
 const userReducer = (
   state = initialState,
@@ -38,6 +41,12 @@ const userReducer = (
       return {
         ...state,
         userLoginInfo: payload,
+      };
+    }
+    case GET_LIST_DETAIL_USER_SERVICE: {
+      return {
+        ...state,
+        listDetailUser: payload,
       };
     }
     default:

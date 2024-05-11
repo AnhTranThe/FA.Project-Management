@@ -20,6 +20,8 @@ import { IUserListModel } from "../../models/userListModel";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { validateTask } from "../../utils/yup";
 import { Dropdown } from "primereact/dropdown";
+import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../hooks/ReduxHook";
 
 export default function TaskAdmin() {
   const [isNewTask, setIsNewTask] = useState(true);
@@ -30,7 +32,7 @@ export default function TaskAdmin() {
   const [colorSelect, setColoSelect] = useState("");
   const [taskID, setTaskID] = useState("");
   const [listProject, setListProject] = useState<
-    { id: string; name: string }[]
+    { id: string; name: string; time_start: string; time_end: string }[]
   >([]);
   const [detailTask, setDetailTask] = useState<ITaskModel>({
     id: "",
@@ -46,6 +48,10 @@ export default function TaskAdmin() {
     null
   );
   const [disableSearch, setDisableSearch] = useState(false);
+  const location = useLocation();
+  const { listTaskService }: { listTaskService: ITaskModel[] } = useAppSelector(
+    (state) => state.taskReducer
+  );
 
   const handleGetListUser = async () => {
     const resUser = await getListUserService();
@@ -60,7 +66,12 @@ export default function TaskAdmin() {
   const handleGetListProject = async () => {
     const resProject = await getListProjectService();
     const newListProject = resProject?.map((ele: IProjectModel) => {
-      return { id: ele.id, name: ele.name };
+      return {
+        id: ele.id,
+        name: ele.name,
+        time_start: ele.time_start,
+        time_end: ele.time_end,
+      };
     });
     setListProject(newListProject);
   };
@@ -71,10 +82,14 @@ export default function TaskAdmin() {
   };
 
   useEffect(() => {
-    handleGetListTask();
+    if (location.pathname === "/admin/task") {
+      handleGetListTask();
+    } else {
+      setListTask(listTaskService);
+    }
     handleGetListUser();
     handleGetListProject();
-  }, []);
+  }, [listTaskService]);
 
   const { values, errors, touched, handleBlur, handleSubmit, setFieldValue } =
     useFormik({
@@ -86,14 +101,45 @@ export default function TaskAdmin() {
         time_start: detailTask.time_start
           ? dayjs(detailTask.time_start).format("YYYY-MM-DD")
           : "",
-        time_end: detailTask.time_start
-          ? dayjs(detailTask.time_start).format("YYYY-MM-DD")
+        time_end: detailTask.time_end
+          ? dayjs(detailTask.time_end).format("YYYY-MM-DD")
           : "",
         status: detailTask?.status,
         note: detailTask?.note,
       },
       validationSchema: validateTask,
       onSubmit: async (value) => {
+        const detailProject = listProject.filter((ele) => {
+          return ele.id === value.project_id;
+        })[0];
+        const dateStart = dayjs(value.time_start);
+        const dateEnd = dayjs(value.time_end);
+        const dateStartProject = dayjs(detailProject.time_start);
+        const dateEndProject = dayjs(detailProject.time_end);
+
+        // kiểm tra time_start, time_end Task có trong thời gian của project
+        if (
+          dateStartProject.isAfter(dateStart) ||
+          dateEndProject.isBefore(dateEnd)
+        ) {
+          setShowModelToast({
+            severity: "warn",
+            summary: "Warning",
+            detail: "time start & end Task should be follow in time Project",
+          });
+          return;
+        }
+
+        // kiểm tra xem time_start có trước time_end Task không
+        if (dateStart.isAfter(dateEnd) || dateStart.isSame(dateEnd)) {
+          setShowModelToast({
+            severity: "warn",
+            summary: "Warning",
+            detail: "time_end should be after time_start",
+          });
+          return;
+        }
+
         if (isNewTask) {
           await handleCreateNewTask(value);
           return;
@@ -143,7 +189,6 @@ export default function TaskAdmin() {
 
   const handleDeleteTask = (rowData: ITaskModel) => {
     setDeleteDialogVisible(true);
-    console.log(rowData.id);
     if (rowData.id) {
       setTaskID(rowData.id);
     }
@@ -192,7 +237,6 @@ export default function TaskAdmin() {
         [event.target.name]: event.target.value,
       };
     });
-
     setFieldValue(event.target.name, event.target.value);
   };
 
@@ -456,13 +500,22 @@ export default function TaskAdmin() {
               name="project_id"
               onChange={handleChangeSelectTask}>
               <option value="">pls choose project</option>
-              {listProject?.map((ele: { id: string; name: string }) => {
-                return (
-                  <option value={ele.id} key={ele.id}>
-                    {ele.name}
-                  </option>
-                );
-              })}
+              {listProject?.map(
+                (ele: {
+                  id: string;
+                  name: string;
+                  time_start: string;
+                  time_end: string;
+                }) => {
+                  return (
+                    <option value={ele.id} key={ele.id}>
+                      {ele.name} - time_start:{" "}
+                      {dayjs(ele.time_start).format("MM/DD/YYYY")} & time_end:{" "}
+                      {dayjs(ele.time_end).format("MM/DD/YYYY")}
+                    </option>
+                  );
+                }
+              )}
             </select>
             {errors.project_id && touched.project_id && (
               <span className="text-red-500">{errors.project_id}</span>

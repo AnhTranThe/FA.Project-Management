@@ -17,13 +17,17 @@ User
 		+ Chỉ được kéo thả trạng thái
 		+ không thể thêm xoá sửa, chỉ có quyền thay đổi status của task (pending, in-progess, complete)
 
+													DONE
+--------------------------------------------------------------------------------------------------------------------------		
 
 
-	- Trước khi làm phần quản lý admin theo thời gian, cần đảm bảo có sự thống nhất giữa ngày của dự án và task.
-		+	time_end của project > time_start của project (tối thiểu 1 ngày)
-		+	Khi tạo mới project thì time_start project > date_now (dự án khởi tạo cần ở trong tương lai) 
-		+	Tương tự, time_start và time_end của task chỉ cho phép trong thời gian project có hiệu lực
-		+	Time_end task > time_start task
+
+	- Trước khi làm phần quản lý admin theo thời gian, cần đảm bảo có sự thống nhất giữa ngày của dự án và task.  (done)
+		+	time_end của project > time_start của project (tối thiểu 1 ngày) (done)
+		+	Khi tạo mới project thì time_start project > date_now (dự án khởi tạo cần ở trong tương lai)  (done)
+		+	Tương tự, time_start và time_end của task chỉ cho phép trong thời gian project có hiệu lực  (done) 
+		+	Time_end task > time_start task (done)
+
 
 	//Dashboard
 	=================  ADMIN  ================
@@ -39,6 +43,8 @@ User
 	-- Bao nhiêu task sẽ cần phải được hoàn thành trong 3 ngày tới.
 		+  Count số task có time_end - date_now = 3
 		
+
+
 	-- Bao nhiêu project đang chạy (check time)
 		+  Count số project có time_end > date_now và time_start < date_now
 		
@@ -47,6 +53,8 @@ User
 	
 	-- Bao nhiêu project đang được ưu tiên
 		+  Count số project có priority = 1
+
+
 
 	-- Bao nhiêu user còn trống task (user hiện đang ko có task)
 		+  Count số user trong task mà không có user_mail

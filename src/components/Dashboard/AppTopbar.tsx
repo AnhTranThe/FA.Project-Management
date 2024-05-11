@@ -22,7 +22,7 @@ const AppTopbar = forwardRef((_props, ref) => {
   return (
     <div className="layout-topbar">
       <div className="flex">
-        <Link to="/" className="layout-topbar-logo">
+        <Link to="/dashboard" className="layout-topbar-logo">
           <>
             <span>Jira Clone</span>
           </>

@@ -17,13 +17,14 @@ const LoginPage = () => {
   const [switchValue, setSwitchValue] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const dispatch = useAppDispatch();
-  const emailOpts = [{
-    email: "admin@gmail.com"
-  },
-  {
-    email: "tester@gmail.com"
-  }
-  ]
+  const emailOpts = [
+    {
+      email: "admin@gmail.com",
+    },
+    {
+      email: "tester@gmail.com",
+    },
+  ];
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   // const { layoutConfig } = useContext(LayoutContext);
@@ -35,12 +36,21 @@ const LoginPage = () => {
       const data = await loginService(detailLogin);
 
       if (data) {
-        const decodeAccessToken = decodeJwtToken(data.access_token) as IDecodeAccessTokenModel;
+        const decodeAccessToken = decodeJwtToken(
+          data.access_token
+        ) as IDecodeAccessTokenModel;
         data.role = decodeAccessToken.role;
-        dispatch(getUserLoginInfo(decodeAccessToken.id, decodeAccessToken.email, decodeAccessToken.user_name, decodeAccessToken.role))
+        dispatch(
+          getUserLoginInfo(
+            decodeAccessToken.id,
+            decodeAccessToken.email,
+            decodeAccessToken.user_name,
+            decodeAccessToken.role
+          )
+        );
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
-          navigate("/");
+          navigate("/dashboard");
         } else {
           navigate("/client/projects");
         }
@@ -77,12 +87,6 @@ const LoginPage = () => {
     }
   };
 
-  // const handleChangeDetailUser = (event: ChangeEvent<HTMLInputElement>) => {
-  //   setDetailLogin((pre) => {
-  //     return { ...pre, [event.target.id]: event.target.value };
-  //   });
-  // };
-
   return (
     <div className="flex flex-column align-items-center justify-content-center">
       <div
@@ -110,8 +114,8 @@ const LoginPage = () => {
             <Dropdown
               value={selectedEmail}
               onChange={(e) => {
-                const selectedEmailAddress = e.value.email; // Extract email address from the object
-                setSelectedEmail(e.value); // Update selectedEmail state
+                const selectedEmailAddress = e.value.email;
+                setSelectedEmail(e.value);
                 setDetailLogin((prev) => ({
                   ...prev,
                   email: selectedEmailAddress,
@@ -123,26 +127,6 @@ const LoginPage = () => {
               placeholder="Select Email"
               className="w-full md:w-30rem mb-5"
             />
-            {/* <InputText
-              id="email"
-              type="text"
-              placeholder="email..."
-              className="w-full md:w-30rem mb-5"
-              style={{ padding: "1rem" }}
-              onChange={handleChangeDetailUser}
-            />
-            <label
-              htmlFor="password"
-              className="block text-900 font-medium text-xl mb-2">
-              Password
-            </label>
-            <InputText
-              onChange={handleChangeDetailUser}
-              id="password"
-              placeholder="password..."
-              className="w-full mb-5"
-              data-pr-classname="w-full p-3 md:w-30rem"></InputText> */}
-
             <div className="flex align-items-center justify-content-between mb-5 gap-5">
               <div className="flex align-items-center">
                 <Checkbox

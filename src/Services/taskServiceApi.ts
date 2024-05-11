@@ -22,7 +22,6 @@ export const getListTaskByProjectService = async (projectId: string) => {
 
 export const createNewTaskService = async (data: ITaskModel) => {
   try {
-    console.log(data);
     const res = await axiosInstance.post("/task", data);
     return res.data;
   } catch (error: any) {

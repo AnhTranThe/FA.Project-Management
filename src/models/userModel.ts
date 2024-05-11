@@ -1,6 +1,7 @@
 export interface IUserReducer {
   userReducer: {
     listUser: IUserModel[] | [];
+    listDetailUser: IUserModel[] | [];
   };
 }
 

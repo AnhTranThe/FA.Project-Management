@@ -17,13 +17,20 @@ import {
   updateUserService,
 } from "../../Services/userServiceApi";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../hooks/ReduxHook";
+import { IUserReducer } from "../../models/userModel";
 
 export default function UserAdmin() {
+  const location = useLocation();
   const [expandedRows, setExpandedRows] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [isCreate, setIsCreate] = useState<boolean>(false);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
+  const { listDetailUser } = useAppSelector(
+    (state: IUserReducer) => state.userReducer
+  );
 
   const [detailUserUpdate, setDetailUserUpdate] = useState<IUserListModel>({
     name: "",
@@ -43,8 +50,12 @@ export default function UserAdmin() {
   };
 
   useEffect(() => {
-    getDataUser();
-  }, []);
+    if (location.pathname === "/admin/user") {
+      getDataUser();
+    } else {
+      setListUser(listDetailUser);
+    }
+  }, [location.pathname, listDetailUser]);
 
   const handleOpenCreate = () => {
     setDetailUserUpdate((pre) => {

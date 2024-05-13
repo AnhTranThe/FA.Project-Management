@@ -69,8 +69,7 @@ const Dashboard = () => {
   const handleUserCompleteTask7Days = () => {
     const newData = listTask.filter((ele: ITaskModel) => {
       const { today, dayEnd } = handleGetDay(ele.time_start, ele.time_end);
-      const checkDay = today.diff(dayEnd, "day") <= 7;
-      if (checkDay) {
+      if (dayEnd.isAfter(today) && dayEnd.diff(today, "day") < 7) {
         return ele;
       }
     });
@@ -107,10 +106,9 @@ const Dashboard = () => {
     const newData = listProject.filter((ele: IProjectModel) => {
       const { today, dayEnd } = handleGetDay(ele.time_start, ele.time_end);
       if (
-        dayEnd.isBefore(today) &&
+        dayEnd.isAfter(today) &&
         handleCheckSameDate(today.toString(), dayEnd.toString()) &&
-        today.diff(dayEnd, "day") > 0 &&
-        today.diff(dayEnd, "day") < 7
+        dayEnd.diff(today, "day") < 7
       ) {
         return ele;
       }
@@ -159,10 +157,9 @@ const Dashboard = () => {
     const newData = listTask.filter((ele: ITaskModel) => {
       const { today, dayEnd } = handleGetDay(ele.time_start, ele.time_end);
       if (
-        dayEnd.isBefore(today) &&
+        dayEnd.isAfter(today) &&
         handleCheckSameDate(today.toString(), dayEnd.toString()) &&
-        today.diff(dayEnd, "day") > 0 &&
-        today.diff(dayEnd, "day") < 3
+        dayEnd.diff(today, "day") < 3
       ) {
         return ele;
       }
@@ -173,7 +170,7 @@ const Dashboard = () => {
   return (
     <div className="grid">
       <div className="col-12 lg:col-6 xl:col-6">
-        <div className="card mb-0">
+        <div className="card mb-0 h-full">
           <div className="flex justify-content-between mb-3">
             <div>
               <span className="block text-500 font-medium mb-3 font-bold text-xl">
@@ -206,7 +203,7 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="col-12 lg:col-6 xl:col-6">
-        <div className="card mb-0">
+        <div className="card mb-0 h-full">
           <div className="flex justify-content-between mb-3">
             <div>
               <span className="block text-500 font-medium mb-3 font-bold text-xl">
@@ -228,7 +225,7 @@ const Dashboard = () => {
             label="Project running"
             listDetail={handleProjectInProgress()}
             action={updateListProjectAction}
-            to="project"
+            to="/dashboard/project"
           />
 
           <InfoDetailDashBoarc
@@ -236,7 +233,7 @@ const Dashboard = () => {
             label="Project need complete in 7 days"
             listDetail={handleProjectRelease7day()}
             action={updateListProjectAction}
-            to="project"
+            to="/dashboard/project"
           />
 
           <InfoDetailDashBoarc
@@ -244,7 +241,7 @@ const Dashboard = () => {
             label="Project priority"
             listDetail={handleProjectPriority()}
             action={updateListProjectAction}
-            to="project"
+            to="/dashboard/project"
           />
         </div>
       </div>
@@ -271,7 +268,7 @@ const Dashboard = () => {
             label="Task late deadline"
             listDetail={handleTasklateDeadline()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
 
           <InfoDetailDashBoarc
@@ -279,21 +276,21 @@ const Dashboard = () => {
             label="Task Wait Start"
             listDetail={handleTaskWait()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
           <InfoDetailDashBoarc
             count={hanldeTaskInProgress()?.length ?? 0}
             label="Task is running"
             listDetail={hanldeTaskInProgress()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
           <InfoDetailDashBoarc
             count={handleTaskCompleteIn3Days()?.length ?? 0}
             label="Task need complete in 3 days"
             listDetail={handleTaskCompleteIn3Days()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
         </div>
       </div>

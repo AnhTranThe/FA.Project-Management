@@ -12,6 +12,9 @@ import authRoutes from "./routes/authRoutes";
 import errorRoutes from "./routes/errorRoutes";
 import UserPrivateRoute from "./routes/userPrivateRouter";
 import ProjectUserBoard from "../pages/Project/ProjectUserBoard";
+import DetailServiceUser from "../components/Client/DetailServiceUser";
+import ProjectUserDetailService from "../pages/Project/ProjectUserDetailService";
+import TaskUserDetailService from "../pages/Task/TaskUserDetailService";
 
 const Router = () => {
   // eslint-disable-next-line no-constant-condition
@@ -73,6 +76,20 @@ const Router = () => {
         {
           path: "/client/projects/:id/board",
           element: <ProjectUserBoard />,
+        },
+        {
+          path: "/client/user-service",
+          element: <DetailServiceUser />,
+          children: [
+            {
+              path: "/client/user-service/project",
+              element: <ProjectUserDetailService />,
+            },
+            {
+              path: "/client/user-service/task",
+              element: <TaskUserDetailService />,
+            },
+          ],
         },
       ],
     },

@@ -11,6 +11,7 @@ import { IUserListModel } from "../models/userListModel";
 import { updateListProjectAction } from "../store/action/projectAction";
 import { updateListTaskAction } from "../store/action/taskAction";
 import { getListUserServiceAction } from "../store/action/userAction";
+import { Chart } from "primereact/chart";
 
 const Dashboard = () => {
   const [listUser, setListUser] = useState<IUserListModel[]>([]);
@@ -167,6 +168,102 @@ const Dashboard = () => {
     return newData;
   };
 
+  const dataUser = {
+    labels: ["user no task", "user need complete 7 days"],
+    datasets: [
+      {
+        label: "Sales",
+        data: [
+          handleUserEmptyTask()?.length,
+          handleUserCompleteTask7Days().count,
+        ],
+        backgroundColor: [
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          // "rgba(54, 162, 235, 0.2)",
+          // "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 159, 64)",
+          "rgb(75, 192, 192)",
+          // "rgb(54, 162, 235)",
+          // "rgb(153, 102, 255)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataProject = {
+    labels: [
+      "project running",
+      "project need complete 7 days",
+      "project priority",
+    ],
+    datasets: [
+      {
+        label: "Sales",
+        data: [
+          handleProjectInProgress()?.length,
+          handleProjectRelease7day()?.length,
+          handleProjectPriority()?.length,
+        ],
+        backgroundColor: [
+          // "rgba(255, 159, 64, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          // "rgb(255, 159, 64)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const dataTask = {
+    labels: [
+      "task late deadline",
+      "task wait start",
+      "task running",
+      "task complete 3 days",
+    ],
+    datasets: [
+      {
+        label: "Sales",
+        data: [
+          handleTasklateDeadline()?.length,
+          handleTaskWait()?.length,
+          hanldeTaskInProgress()?.length,
+          handleTaskCompleteIn3Days()?.length,
+        ],
+        backgroundColor: [
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 159, 64)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className="grid">
       <div className="col-12 lg:col-6 xl:col-6">
@@ -200,6 +297,7 @@ const Dashboard = () => {
             action={getListUserServiceAction}
             to="user"
           />
+          <Chart type="pie" data={dataUser} options={options} />
         </div>
       </div>
       <div className="col-12 lg:col-6 xl:col-6">
@@ -243,6 +341,7 @@ const Dashboard = () => {
             action={updateListProjectAction}
             to="/dashboard/project"
           />
+          <Chart type="pie" data={dataProject} options={options} />
         </div>
       </div>
       <div className="col-12 lg:col-6 xl:col-12">
@@ -291,6 +390,12 @@ const Dashboard = () => {
             listDetail={handleTaskCompleteIn3Days()}
             action={updateListTaskAction}
             to="/dashboard/task"
+          />
+          <Chart
+            style={{ width: "500px" }}
+            type="pie"
+            data={dataTask}
+            options={options}
           />
         </div>
       </div>

@@ -62,23 +62,27 @@ export default function ProjectUserDetailService() {
   };
 
   return (
-    <DataTable value={data}>
-      <Column field="name" header="Name" />
-      <Column field="payment" header="Payment" body={bodyPaymentTemple} />
-      <Column field="note" header="Note" />
-      <Column
-        headerStyle={{ justifyContent: "center" }}
-        field="priority"
-        header="Priority"
-        body={bodyPriorityTemple}
-        style={{ minWidth: "7rem", textAlign: "center" }}
-      />
-      <Column
-        field="time_start"
-        header="Time Start"
-        body={bodyTimeStartTemplate}
-      />
-      <Column field="time_end" header="Time End" body={bodyTimeEndTemplate} />
-    </DataTable>
+    <>
+      <h2 className="font-bold">Project User Detail</h2>
+      <DataTable value={data}>
+        <Column field="name" header="Name" />
+        <Column field="payment" header="Payment" body={bodyPaymentTemple} />
+        <Column field="note" header="Note" />
+        <Column
+          headerStyle={{ display: "flex", justifyContent: "center" }}
+          field="priority"
+          header="Priority"
+          body={bodyPriorityTemple}
+          style={{ minWidth: "7rem" }}
+          bodyStyle={{ display: "flex", justifyContent: "center" }}
+        />
+        <Column
+          field="time_start"
+          header="Time Start"
+          body={bodyTimeStartTemplate}
+        />
+        <Column field="time_end" header="Time End" body={bodyTimeEndTemplate} />
+      </DataTable>
+    </>
   );
 }

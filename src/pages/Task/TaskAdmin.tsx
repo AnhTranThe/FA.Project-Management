@@ -323,7 +323,8 @@ export default function TaskAdmin() {
   const bodyleftToolbarTemplate = () => {
     return (
       <React.Fragment>
-        <div className="my-2">
+        <div className="my-2 flex align-items-center gap-5">
+          <h2 className="font-bold m-0">Task List</h2>
           <Button
             label="New"
             onClick={() => {
@@ -331,7 +332,7 @@ export default function TaskAdmin() {
             }}
             icon="pi pi-plus"
             severity="success"
-            className=" mr-2"
+            className="mr-2"
           />
         </div>
       </React.Fragment>
@@ -430,7 +431,7 @@ export default function TaskAdmin() {
                 onClick={handleResetSearch}
               />
             </div>
-            <DataTable value={listTask}>
+            <DataTable value={listTask} paginator rows={5}>
               <Column field="id" header="ID Task" body={bodyIdTaskTemplate} />
               <Column field="user_mail" header="User Email" />
               <Column

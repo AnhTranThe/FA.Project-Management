@@ -58,28 +58,32 @@ export default function TaskUserDetailService() {
   };
 
   return (
-    <DataTable value={listTaskService}>
-      <Column field="id" header="ID Task" body={bodyIdTaskTemplate} />
-      <Column field="user_mail" header="User Email" />
-      <Column
-        field="project_name"
-        header="Project Name"
-        style={{ minWidth: "10rem", textAlign: "center" }}
-      />
-      <Column
-        headerStyle={{ justifyContent: "center" }}
-        field="status"
-        header="Status"
-        body={bodyStatusTemplate}
-        style={{ minWidth: "10rem", textAlign: "center" }}
-      />
-      <Column field="note" header="Note" />
-      <Column
-        field="time_start"
-        header="Time Start"
-        body={bodyTimeStartTemplate}
-      />
-      <Column field="time_end" header="Time End" body={bodyTimeEndTemplate} />
-    </DataTable>
+    <>
+      <h2 className="font-bold">Task Project Detail</h2>
+      <DataTable value={listTaskService}>
+        <Column field="id" header="ID Task" body={bodyIdTaskTemplate} />
+        <Column field="user_mail" header="User Email" />
+        <Column
+          field="project_name"
+          header="Project Name"
+          style={{ minWidth: "10rem", textAlign: "center" }}
+        />
+        <Column
+          headerStyle={{ display: "flex", justifyContent: "center" }}
+          field="status"
+          header="Status"
+          body={bodyStatusTemplate}
+          style={{ minWidth: "10rem" }}
+          bodyStyle={{ display: "flex", justifyContent: "center" }}
+        />
+        <Column field="note" header="Note" />
+        <Column
+          field="time_start"
+          header="Time Start"
+          body={bodyTimeStartTemplate}
+        />
+        <Column field="time_end" header="Time End" body={bodyTimeEndTemplate} />
+      </DataTable>
+    </>
   );
 }

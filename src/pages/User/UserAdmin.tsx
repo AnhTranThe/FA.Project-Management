@@ -6,7 +6,7 @@ import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { Fragment, useContext, useEffect, useState } from "react";
+import React, { Fragment, useContext, useEffect, useState } from "react";
 import { IUserListModel } from "../../models/userListModel";
 
 import {
@@ -20,6 +20,7 @@ import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { IUserReducer } from "../../models/userModel";
+import { Toolbar } from "primereact/toolbar";
 
 export default function UserAdmin() {
   const location = useLocation();
@@ -222,36 +223,42 @@ export default function UserAdmin() {
     );
   };
 
-  const content = (
-    <>
-      <h5>List User</h5>
-      <div className="my-2">
-        <Button
-          label="New"
-          onClick={handleOpenCreate}
-          icon="pi pi-plus"
-          severity="success"
-          className=" mr-2"
-        />
-      </div>
-      <DataTable
-        value={listUser}
-        expandedRows={expandedRows}
-        onRowToggle={(e) => setExpandedRows(e.data)}
-        responsiveLayout="scroll"
-        dataKey="id">
-        <Column field="name" header="Name" sortable />
-        <Column field="email" header="Email" sortable />
-        <Column field="role" header="Role" body={roleBodyTemplate} />
-        <Column field="Action" header="Action" body={actionBodyTemplate} />
-      </DataTable>
-    </>
-  );
+  const bodyleftToolbarTemplate = () => {
+    return (
+      <React.Fragment>
+        <div className="my-2 flex align-items-center gap-5">
+          <h2 className="font-bold m-0">User List</h2>
+          <Button
+            label="New"
+            onClick={handleOpenCreate}
+            icon="pi pi-plus"
+            severity="success"
+            className=" mr-2"
+          />
+        </div>
+      </React.Fragment>
+    );
+  };
 
   return (
     <div className="grid">
       <div className="col-12">
-        <div className="card">{content}</div>
+        <div className="card">
+          <Toolbar className="mb-4" left={bodyleftToolbarTemplate}></Toolbar>
+          <DataTable
+            value={listUser}
+            expandedRows={expandedRows}
+            onRowToggle={(e) => setExpandedRows(e.data)}
+            responsiveLayout="scroll"
+            dataKey="id"
+            paginator
+            rows={5}>
+            <Column field="name" header="Name" sortable />
+            <Column field="email" header="Email" sortable />
+            <Column field="role" header="Role" body={roleBodyTemplate} />
+            <Column field="Action" header="Action" body={actionBodyTemplate} />
+          </DataTable>
+        </div>
 
         <Dialog
           header={isCreate ? "Add User" : "Update User"}

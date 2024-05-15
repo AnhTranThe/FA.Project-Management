@@ -11,6 +11,7 @@ import { IUserListModel } from "../models/userListModel";
 import { updateListProjectAction } from "../store/action/projectAction";
 import { updateListTaskAction } from "../store/action/taskAction";
 import { getListUserServiceAction } from "../store/action/userAction";
+import { Chart } from "primereact/chart";
 
 const Dashboard = () => {
   const [listUser, setListUser] = useState<IUserListModel[]>([]);
@@ -69,8 +70,7 @@ const Dashboard = () => {
   const handleUserCompleteTask7Days = () => {
     const newData = listTask.filter((ele: ITaskModel) => {
       const { today, dayEnd } = handleGetDay(ele.time_start, ele.time_end);
-      const checkDay = today.diff(dayEnd, "day") <= 7;
-      if (checkDay) {
+      if (dayEnd.isAfter(today) && dayEnd.diff(today, "day") < 7) {
         return ele;
       }
     });
@@ -107,10 +107,9 @@ const Dashboard = () => {
     const newData = listProject.filter((ele: IProjectModel) => {
       const { today, dayEnd } = handleGetDay(ele.time_start, ele.time_end);
       if (
-        dayEnd.isBefore(today) &&
+        dayEnd.isAfter(today) &&
         handleCheckSameDate(today.toString(), dayEnd.toString()) &&
-        today.diff(dayEnd, "day") > 0 &&
-        today.diff(dayEnd, "day") < 7
+        dayEnd.diff(today, "day") < 7
       ) {
         return ele;
       }
@@ -159,10 +158,9 @@ const Dashboard = () => {
     const newData = listTask.filter((ele: ITaskModel) => {
       const { today, dayEnd } = handleGetDay(ele.time_start, ele.time_end);
       if (
-        dayEnd.isBefore(today) &&
+        dayEnd.isAfter(today) &&
         handleCheckSameDate(today.toString(), dayEnd.toString()) &&
-        today.diff(dayEnd, "day") > 0 &&
-        today.diff(dayEnd, "day") < 3
+        dayEnd.diff(today, "day") < 3
       ) {
         return ele;
       }
@@ -170,10 +168,106 @@ const Dashboard = () => {
     return newData;
   };
 
+  const dataUser = {
+    labels: ["user no task", "user need complete 7 days"],
+    datasets: [
+      {
+        label: "Sales",
+        data: [
+          handleUserEmptyTask()?.length,
+          handleUserCompleteTask7Days().count,
+        ],
+        backgroundColor: [
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          // "rgba(54, 162, 235, 0.2)",
+          // "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 159, 64)",
+          "rgb(75, 192, 192)",
+          // "rgb(54, 162, 235)",
+          // "rgb(153, 102, 255)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const dataProject = {
+    labels: [
+      "project running",
+      "project need complete 7 days",
+      "project priority",
+    ],
+    datasets: [
+      {
+        label: "Sales",
+        data: [
+          handleProjectInProgress()?.length,
+          handleProjectRelease7day()?.length,
+          handleProjectPriority()?.length,
+        ],
+        backgroundColor: [
+          // "rgba(255, 159, 64, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          // "rgb(255, 159, 64)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const dataTask = {
+    labels: [
+      "task late deadline",
+      "task wait start",
+      "task running",
+      "task complete 3 days",
+    ],
+    datasets: [
+      {
+        label: "Sales",
+        data: [
+          handleTasklateDeadline()?.length,
+          handleTaskWait()?.length,
+          hanldeTaskInProgress()?.length,
+          handleTaskCompleteIn3Days()?.length,
+        ],
+        backgroundColor: [
+          "rgba(255, 159, 64, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+        ],
+        borderColor: [
+          "rgb(255, 159, 64)",
+          "rgb(75, 192, 192)",
+          "rgb(54, 162, 235)",
+          "rgb(153, 102, 255)",
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
   return (
     <div className="grid">
       <div className="col-12 lg:col-6 xl:col-6">
-        <div className="card mb-0">
+        <div className="card mb-0 h-full">
           <div className="flex justify-content-between mb-3">
             <div>
               <span className="block text-500 font-medium mb-3 font-bold text-xl">
@@ -203,10 +297,11 @@ const Dashboard = () => {
             action={getListUserServiceAction}
             to="user"
           />
+          <Chart type="pie" data={dataUser} options={options} />
         </div>
       </div>
       <div className="col-12 lg:col-6 xl:col-6">
-        <div className="card mb-0">
+        <div className="card mb-0 h-full">
           <div className="flex justify-content-between mb-3">
             <div>
               <span className="block text-500 font-medium mb-3 font-bold text-xl">
@@ -228,7 +323,7 @@ const Dashboard = () => {
             label="Project running"
             listDetail={handleProjectInProgress()}
             action={updateListProjectAction}
-            to="project"
+            to="/dashboard/project"
           />
 
           <InfoDetailDashBoarc
@@ -236,7 +331,7 @@ const Dashboard = () => {
             label="Project need complete in 7 days"
             listDetail={handleProjectRelease7day()}
             action={updateListProjectAction}
-            to="project"
+            to="/dashboard/project"
           />
 
           <InfoDetailDashBoarc
@@ -244,8 +339,9 @@ const Dashboard = () => {
             label="Project priority"
             listDetail={handleProjectPriority()}
             action={updateListProjectAction}
-            to="project"
+            to="/dashboard/project"
           />
+          <Chart type="pie" data={dataProject} options={options} />
         </div>
       </div>
       <div className="col-12 lg:col-6 xl:col-12">
@@ -271,7 +367,7 @@ const Dashboard = () => {
             label="Task late deadline"
             listDetail={handleTasklateDeadline()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
 
           <InfoDetailDashBoarc
@@ -279,21 +375,27 @@ const Dashboard = () => {
             label="Task Wait Start"
             listDetail={handleTaskWait()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
           <InfoDetailDashBoarc
             count={hanldeTaskInProgress()?.length ?? 0}
             label="Task is running"
             listDetail={hanldeTaskInProgress()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
           />
           <InfoDetailDashBoarc
             count={handleTaskCompleteIn3Days()?.length ?? 0}
             label="Task need complete in 3 days"
             listDetail={handleTaskCompleteIn3Days()}
             action={updateListTaskAction}
-            to="task"
+            to="/dashboard/task"
+          />
+          <Chart
+            style={{ width: "500px" }}
+            type="pie"
+            data={dataTask}
+            options={options}
           />
         </div>
       </div>

@@ -83,9 +83,10 @@ export default function ProjectAdmin() {
   useEffect(() => {
     if (location.pathname === "/admin/project") {
       dispatch(getProjectAll());
+    } else {
+      handleGetListUser();
     }
-    handleGetListUser();
-  }, [data]);
+  }, []);
 
   useEffect(() => {
     setValues({
@@ -433,7 +434,8 @@ export default function ProjectAdmin() {
   const bodyleftToolbarTemplate = () => {
     return (
       <React.Fragment>
-        <div className="my-2">
+        <div className="my-2 flex align-items-center gap-5">
+          <h2 className="font-bold m-0">Project List</h2>
           <Button
             label="New"
             onClick={openDialogForCreate}
@@ -513,7 +515,7 @@ export default function ProjectAdmin() {
                 onClick={handleResetSearch}
               />
             </div>
-            <DataTable value={data}>
+            <DataTable value={data} paginator rows={5}>
               <Column field="name" header="Name" />
               <Column
                 field="payment"

@@ -20,9 +20,8 @@ export default function ClientAppTopbar() {
   const { IsDarkTheme } = useAppSelector(
     (state: IThemReducer) => state.themeReducer
   );
-  const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } = useAppSelector(
-    (state) => state.userReducer
-  );
+  const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } =
+    useAppSelector((state) => state.userReducer);
 
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
@@ -59,7 +58,9 @@ export default function ClientAppTopbar() {
       command: () => {
         nav("/client/projects");
       },
-      class: `h-2rem border-none ${!IsDarkTheme ? "p-button-light" : "p-button-dark"}`,
+      class: `h-2rem border-none ${
+        !IsDarkTheme ? "p-button-light" : "p-button-dark"
+      }`,
     },
   ];
 
@@ -76,15 +77,17 @@ export default function ClientAppTopbar() {
       },
     },
     {
-      class: `circle-button  pi ${!IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
-        }`,
+      class: `circle-button  pi ${
+        !IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
+      }`,
       command: () => {
         dispatch(setTheme(!IsDarkTheme));
       },
     },
     {
-      class: `circle-button  pi ${!IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
-        }`,
+      class: `circle-button  pi ${
+        !IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
+      }`,
       command: handleProfileButtonClick,
       items: [
         {
@@ -105,7 +108,9 @@ export default function ClientAppTopbar() {
               className="mr-2"
               shape="circle"
             />
-            <div className="flex flex-column align">
+            <div
+              className="flex flex-column align cursor-pointer"
+              onClick={() => nav("/client/user-service")}>
               <span className="font-bold">{userLoginInfo.email}</span>
               <span className="text-sm">
                 {userLoginInfo.role !== 1 ? "customer" : "admin"}
@@ -126,7 +131,6 @@ export default function ClientAppTopbar() {
             label="Log out"
             severity="danger"
           />
-
         );
       },
     },
@@ -166,7 +170,7 @@ export default function ClientAppTopbar() {
 
           <Menu
             className="w-auto p-3 mt-3 surface-card"
-            style={{ boxShadow: '0 1px 10px #818CF8' }}
+            style={{ boxShadow: "0 1px 10px #818CF8" }}
             model={profileMenuItems}
             popup
             ref={menuRef}

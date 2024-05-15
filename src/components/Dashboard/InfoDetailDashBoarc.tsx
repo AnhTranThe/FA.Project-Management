@@ -2,28 +2,31 @@ import { Button } from "primereact/button";
 import { ActionCreator } from "redux";
 import { useAppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
+import { ITaskModel } from "../../models/taskModel";
+import { IProjectModel } from "../../models/projectModel";
+import { IUserListModel } from "../../models/userListModel";
 
-interface IProp<T> {
+interface IProp {
   label: string;
   count: number;
-  listDetail?: T;
+  listDetail?: ITaskModel[] | IProjectModel[] | IUserListModel[];
   action: ActionCreator<any>;
   to: string;
 }
 
-export default function InfoDetailDashBoarc<T>({
+export default function InfoDetailDashBoarc({
   count,
   label,
   action,
   listDetail,
   to,
-}: IProp<T>) {
+}: IProp) {
   const dispatch = useAppDispatch();
   const nav = useNavigate();
 
   const hanldeDishpatch = () => {
     dispatch(action(listDetail));
-    nav(`/dashboard/${to}`);
+    nav(`${to}`);
   };
 
   return (

@@ -26,6 +26,10 @@ export default function InfoDetailDashBoarc({
 
   const hanldeDishpatch = () => {
     dispatch(action(listDetail));
+    const element = document.getElementById("rowBottom");
+    element?.scrollIntoView({
+      behavior: "smooth",
+    });
     nav(`${to}`);
   };
 

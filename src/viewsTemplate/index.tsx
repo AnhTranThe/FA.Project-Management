@@ -399,7 +399,7 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <div className="col-12">
+      <div className="col-12" id="rowBottom">
         <Outlet />
       </div>
     </div>

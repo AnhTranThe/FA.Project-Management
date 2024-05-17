@@ -399,9 +399,10 @@ const Dashboard = () => {
           />
         </div>
       </div>
-      <div className="col-12" id="rowBottom">
+      <div className="col-12">
         <Outlet />
       </div>
+      <div id="rowBottom"></div>
     </div>
   );
 };

@@ -45,8 +45,7 @@ export default function ProjectsUser() {
     useAppSelector((state) => state.userReducer);
 
   const onIngredientsChange = (e: CheckboxChangeEvent) => {
-    let _ingredients = [...ingredients];
-
+    const _ingredients = [...ingredients];
     if (e.checked) _ingredients.push(e.value);
     else _ingredients.splice(_ingredients.indexOf(e.value), 1);
 
@@ -202,11 +201,10 @@ export default function ProjectsUser() {
                   }}
                   onClick={handleSelectedProjectItem(project)}>
                   <div
-                    className={`p-3 surface-card h-full cursor-pointer  ${
-                      IsDarkTheme
-                        ? "hover-item-dark-effect"
-                        : "hover-item-light-effect"
-                    } `}
+                    className={`p-3 surface-card h-full cursor-pointer  ${IsDarkTheme
+                      ? "hover-item-dark-effect"
+                      : "hover-item-light-effect"
+                      } `}
                     style={{ borderRadius: "8px" }}>
                     <div className="flex justify-content-between">
                       <div

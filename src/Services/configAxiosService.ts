@@ -1,6 +1,6 @@
 import axios from "axios";
-const BASE_URL = "http://localhost:8080/api";
 // Tạo một instance Axios
+const BASE_URL = process.env.BASE_URL;
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   timeout: 5000,
@@ -31,13 +31,17 @@ axiosInstance.interceptors.response.use(
     const originalRequest = error.config;
 
     // Check xem error trả về có phải là 401 Unauthorized không và đã thử làm mới token hay chưa ?
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
       originalRequest._retry = true;
-
       try {
         // Thực hiện gửi request để làm mới token
         // const currentToken = localStorage.getItem("refresh_token");
         const refeshToken = localStorage.getItem("Token");
+
         if (refeshToken) {
           const parseRefeshToken = JSON.parse(refeshToken);
           const response = await axios({

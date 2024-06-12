@@ -4,7 +4,6 @@ import {
   closestCorners,
   DndContext,
   DragMoveEvent,
-  DragOverEvent,
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
@@ -12,7 +11,7 @@ import {
   TouchSensor,
   UniqueIdentifier,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { BreadCrumb } from "primereact/breadcrumb";
@@ -27,6 +26,7 @@ import { IColumnData, IColumnTaskBoardModel } from "../../models/dndModel";
 import { IProjectModel } from "../../models/projectModel";
 import { ITaskModel } from "../../models/taskModel";
 
+import { IUserLogInInfoModel } from "../../models/userModel";
 import { updateTaskService } from "../../Services/taskServiceApi";
 import { getTasksByProject } from "../../store/action/taskAction";
 import { useAppDispatch } from "../../store/store";
@@ -34,7 +34,6 @@ import TaskBoardColumn from "../Task/TaskBoardColumn";
 import TaskBoardItem from "../Task/TaskBoardItem";
 import TaskUserSearch from "../Task/TaskUserSearch";
 import ProjectListUsersJoin from "./ProjectListUsersJoin";
-import { IUserLogInInfoModel } from "../../models/userModel";
 
 const emptyColumnsBoard = [
   {
@@ -97,29 +96,29 @@ export default function ProjectUserBoard() {
         userLoginInfo.role === 1
           ? listTasksByProject.length
             ? listTasksByProject?.filter((task) => {
-                return (
-                  task.status === 1 &&
-                  (searchKeyValue
-                    ? task.note
-                        .toLowerCase()
-                        .includes(searchKeyValue.toLowerCase())
-                    : true)
-                );
-              })
+              return (
+                task.status === 1 &&
+                (searchKeyValue
+                  ? task.note
+                    .toLowerCase()
+                    .includes(searchKeyValue.toLowerCase())
+                  : true)
+              );
+            })
             : []
           : listTasksByProject.length
-          ? listTasksByProject?.filter((task) => {
+            ? listTasksByProject?.filter((task) => {
               return (
                 task.status === 1 &&
                 task.user_mail === userLoginInfo.email &&
                 (searchKeyValue
                   ? task.note
-                      .toLowerCase()
-                      .includes(searchKeyValue.toLowerCase())
+                    .toLowerCase()
+                    .includes(searchKeyValue.toLowerCase())
                   : true)
               );
             })
-          : [],
+            : [],
     },
     {
       id: "in-progress",
@@ -129,29 +128,29 @@ export default function ProjectUserBoard() {
         userLoginInfo.role === 1
           ? listTasksByProject.length
             ? listTasksByProject?.filter((task) => {
-                return (
-                  task.status === 2 &&
-                  (searchKeyValue
-                    ? task.note
-                        .toLowerCase()
-                        .includes(searchKeyValue.toLowerCase())
-                    : true)
-                );
-              })
+              return (
+                task.status === 2 &&
+                (searchKeyValue
+                  ? task.note
+                    .toLowerCase()
+                    .includes(searchKeyValue.toLowerCase())
+                  : true)
+              );
+            })
             : []
           : listTasksByProject.length
-          ? listTasksByProject?.filter((task) => {
+            ? listTasksByProject?.filter((task) => {
               return (
                 task.status === 2 &&
                 task.user_mail === userLoginInfo.email &&
                 (searchKeyValue
                   ? task.note
-                      .toLowerCase()
-                      .includes(searchKeyValue.toLowerCase())
+                    .toLowerCase()
+                    .includes(searchKeyValue.toLowerCase())
                   : true)
               );
             })
-          : [],
+            : [],
     },
     {
       id: "is-done",
@@ -161,29 +160,29 @@ export default function ProjectUserBoard() {
         userLoginInfo.role === 1
           ? listTasksByProject.length
             ? listTasksByProject?.filter((task) => {
-                return (
-                  task.status === 3 &&
-                  (searchKeyValue
-                    ? task.note
-                        .toLowerCase()
-                        .includes(searchKeyValue.toLowerCase())
-                    : true)
-                );
-              })
+              return (
+                task.status === 3 &&
+                (searchKeyValue
+                  ? task.note
+                    .toLowerCase()
+                    .includes(searchKeyValue.toLowerCase())
+                  : true)
+              );
+            })
             : []
           : listTasksByProject.length
-          ? listTasksByProject?.filter((task) => {
+            ? listTasksByProject?.filter((task) => {
               return (
                 task.status === 3 &&
                 task.user_mail === userLoginInfo.email &&
                 (searchKeyValue
                   ? task.note
-                      .toLowerCase()
-                      .includes(searchKeyValue.toLowerCase())
+                    .toLowerCase()
+                    .includes(searchKeyValue.toLowerCase())
                   : true)
               );
             })
-          : [],
+            : [],
     },
   ];
 
@@ -321,62 +320,62 @@ export default function ProjectUserBoard() {
     }
   };
 
-  const handleDragOver = ({ active, over }: DragOverEvent) => {
-    // Find the column
-    const activeColumn = findBoardColumn(columnsData, active.id as string);
-    const overColumn = findBoardColumn(columnsData, over?.id as string);
+  // const handleDragOver = ({ active, over }: DragOverEvent) => {
+  //   // Find the column
+  //   const activeColumn = findBoardColumn(columnsData, active.id as string);
+  //   const overColumn = findBoardColumn(columnsData, over?.id as string);
 
-    if (!activeColumn || !overColumn || activeColumn === overColumn) {
-      return;
-    }
-    const activeItems = getColumnItems(columnsData, activeColumn);
-    const overItems = getColumnItems(columnsData, overColumn);
-    const activeIndex = activeItems.findIndex(
-      (item: { id: UniqueIdentifier }) => item.id === active.id
-    );
+  //   if (!activeColumn || !overColumn || activeColumn === overColumn) {
+  //     return;
+  //   }
+  //   const activeItems = getColumnItems(columnsData, activeColumn);
+  //   const overItems = getColumnItems(columnsData, overColumn);
+  //   const activeIndex = activeItems.findIndex(
+  //     (item: { id: UniqueIdentifier }) => item.id === active.id
+  //   );
 
-    // Calculate the index where the dragged item will be inserted
-    let newIndex = 0;
-    if (overItems.length > 0) {
-      const overIndex = overItems.findIndex(
-        (item: { id: UniqueIdentifier }) => item.id === over?.id
-      );
-      if (overIndex > -1) {
-        newIndex = overIndex;
-      }
-    }
+  //   // Calculate the index where the dragged item will be inserted
+  //   let newIndex = 0;
+  //   if (overItems.length > 0) {
+  //     const overIndex = overItems.findIndex(
+  //       (item: { id: UniqueIdentifier }) => item.id === over?.id
+  //     );
+  //     if (overIndex > -1) {
+  //       newIndex = overIndex;
+  //     }
+  //   }
 
-    setColumns((prevColumns) => {
-      const updatedColumns = prevColumns.map((col) => {
-        if (col.id === activeColumn) {
-          const updateActiveCol = {
-            ...col,
-            taskItems: activeItems.filter(
-              (item: { id: UniqueIdentifier }) => item.id !== active.id
-            ),
-          };
+  //   setColumns((prevColumns) => {
+  //     const updatedColumns = prevColumns.map((col) => {
+  //       if (col.id === activeColumn) {
+  //         const updateActiveCol = {
+  //           ...col,
+  //           taskItems: activeItems.filter(
+  //             (item: { id: UniqueIdentifier }) => item.id !== active.id
+  //           ),
+  //         };
 
-          return updateActiveCol;
-        }
-        if (col.id === overColumn) {
-          const updateOverCol = {
-            ...col,
-            taskItems: [
-              ...overItems.slice(0, newIndex),
-              activeItems[activeIndex],
-              ...overItems.slice(newIndex),
-            ],
-          };
+  //         return updateActiveCol;
+  //       }
+  //       if (col.id === overColumn) {
+  //         const updateOverCol = {
+  //           ...col,
+  //           taskItems: [
+  //             ...overItems.slice(0, newIndex),
+  //             activeItems[activeIndex],
+  //             ...overItems.slice(newIndex),
+  //           ],
+  //         };
 
-          return updateOverCol;
-        }
+  //         return updateOverCol;
+  //       }
 
-        return col;
-      });
-      setUpdatedColumns(updatedColumns);
-      return updatedColumns;
-    });
-  };
+  //       return col;
+  //     });
+  //     setUpdatedColumns(updatedColumns);
+  //     return updatedColumns;
+  //   });
+  // };
 
   const handleDragEnd = async () => {
     const shadowCopyUpdatedColumns = updatedColumns.map((column) => ({
@@ -442,9 +441,8 @@ export default function ProjectUserBoard() {
   return (
     <div className="relative flex justify-content-start align-items-start ">
       <div
-        className={`col-3 client-layout-sidebar h-screen z-3 overflow-x-hidden ${
-          isOpen ? "" : "hidden__navbarClient"
-        }`}>
+        className={`col-3 client-layout-sidebar h-screen z-3 overflow-x-hidden ${isOpen ? "" : "hidden__navbarClient"
+          }`}>
         <div className="client-layout-sidebar-content " ref={sidebarRef}>
           <ClientAppSidebar />
         </div>

@@ -8,7 +8,7 @@ import ClientAppMenuItem from "./ClientAppMenuItem";
 
 export default function ClientAppMenu() {
     const { selectedProject }: { selectedProject: IProjectModel } = useAppSelector((state) => state.projectReducer);
-    const model: IModel[] = [...allClientNavigations(selectedProject.id)];
+    const model: IModel[] = [...allClientNavigations(selectedProject.id!)];
 
 
     return (

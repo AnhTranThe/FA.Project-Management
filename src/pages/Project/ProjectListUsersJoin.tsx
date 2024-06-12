@@ -33,8 +33,8 @@ export default function ProjectListUsersJoin() {
   return (
     <>
       <AvatarGroup>
-        {listUser.slice(0, maxAvatars).map((user, index) => (
-          <Avatar key={index} image={generateRandomImageAvt()} size="large" shape="circle" />
+        {listUser.slice(0, maxAvatars).map((index) => (
+          <Avatar key={index.id} image={generateRandomImageAvt()} size="large" shape="circle" />
         ))}
         {listUser.length > maxAvatars && (
           <Avatar

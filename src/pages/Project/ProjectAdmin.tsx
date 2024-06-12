@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
 import { RadioButton } from "primereact/radiobutton";
 import { Toolbar } from "primereact/toolbar";
@@ -29,10 +30,7 @@ import {
   updateListProjectAction,
 } from "../../store/action/projectAction";
 import { useAppDispatch } from "../../store/store";
-import { validateProject } from "../../utils/yup";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
-import { Dropdown } from "primereact/dropdown";
-import { useLocation } from "react-router-dom";
 
 export default function ProjectAdmin() {
   const [isNewProject, setIsNewProject] = useState(false);
@@ -53,7 +51,6 @@ export default function ProjectAdmin() {
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
   const [idProject, setIDProject] = useState("");
   const [idUser, setIDUser] = useState("");
-
   const [detailProject, setDetailProject] = useState<IProjectModel>({
     id: "",
     name: "",
@@ -63,17 +60,16 @@ export default function ProjectAdmin() {
     time_start: "",
     time_end: "",
   });
-
   const [selectedUserUpdate, setSelectedUserUpdate] = useState([]);
   const [listUserInProject, setListUserInProject] = useState([]);
   const [listUserUpdate, setListUserUpdate] = useState<IUserListModel[] | []>(
     []
   );
+  console.log(listUserUpdate)
   const [selectedNameProject, setSelectedCity] = useState<IProjectModel | null>(
     null
   );
   const [disableSearch, setDisableSearch] = useState(false);
-  const location = useLocation();
 
   const handleGetListUser = async () => {
     const res = await getListUserService();
@@ -81,11 +77,8 @@ export default function ProjectAdmin() {
     setListUser(filterRes);
   };
   useEffect(() => {
-    if (location.pathname === "/admin/project") {
-      dispatch(getProjectAll());
-    } else {
-      handleGetListUser();
-    }
+    dispatch(getProjectAll());
+    handleGetListUser();
   }, []);
 
   useEffect(() => {
@@ -307,22 +300,25 @@ export default function ProjectAdmin() {
       </p>
     );
   };
-
-  const handleOpenDiablogUpdateUser = async (rowData) => {
-    const res = await getUserInProjectByIDService(rowData.id);
+  const handleFetchUserInProject = async (projectId: string) => {
+    const res = await getUserInProjectByIDService(projectId);
     if (res.length > 0) {
-      const newData = listUser.filter((ele) => {
-        const checkUserExsisteInproject = res.filter((user) => {
-          return ele.email === user.email;
-        });
-        if (checkUserExsisteInproject.length === 0) {
-          return ele;
-        }
-      });
-      setIDProject(rowData.id);
       setListUserInProject(res);
+      const newData = listUser.filter((ele) => {
+        const checkUserExsisteInproject = res.filter((user) => ele.email === user.email);
+        return checkUserExsisteInproject.length === 0;
+      });
       setListUserUpdate(newData);
       setSelectedUserUpdate([]);
+    } else {
+      setListUserUpdate(listUser);
+    }
+    return res;
+  }
+  const handleOpenDiablogUpdateUser = async (rowData) => {
+    const res = await handleFetchUserInProject(rowData.id);
+    if (res.length > 0) {
+      setIDProject(rowData.id);
       setListUserDialog(true);
     }
   };
@@ -348,7 +344,9 @@ export default function ProjectAdmin() {
         summary: "Success",
         detail: "Add User Inproject Success",
       });
-      setListUserDialog(false);
+      handleFetchUserInProject(idProject);
+
+
     } else {
       setShowModelToast({
         severity: "warn",
@@ -752,16 +750,10 @@ export default function ProjectAdmin() {
         footer={
           <div className="text-right mt-3">
             <Button
-              label="Cancel"
-              icon="pi pi-times"
-              onClick={() => setListUserDialog(false)}
-              className="p-button-text"
-            />
-            <Button
-              label="Update"
+              label="Confirm"
               icon="pi pi-check"
               severity="success"
-              onClick={handleAddUserInproject}
+              onClick={() => { setListUserDialog(false) }}
               autoFocus
             />
           </div>
@@ -778,6 +770,16 @@ export default function ProjectAdmin() {
               maxSelectedLabels={4}
               className="w-full "
             />
+            <div className="text-right mt-3">
+              <Button
+                label="Add Users"
+                icon="pi pi-plus"
+                severity="info"
+                onClick={handleAddUserInproject}
+                autoFocus
+              />
+            </div>
+
           </div>
           <div>
             <h6 className="font-bold">User In Project</h6>

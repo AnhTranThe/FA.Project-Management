@@ -18,6 +18,8 @@
     "chart.js": "^4.4.2",
     "class-variance-authority": "^0.7.0",
     "dayjs": "^1.11.10",
+    "dotenv": "^16.4.5",
+    "dotenv-webpack": "^8.1.0",
     "formik": "^2.4.5",
     "jwt-decode": "^4.0.0",
     "primeflex": "^3.3.1",
@@ -37,6 +39,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@types/node": "^20.14.2",
     "@types/react": "^18.2.66",
     "@types/react-beautiful-dnd": "^13.1.8",
     "@types/react-dom": "^18.2.22",

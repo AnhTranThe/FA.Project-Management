@@ -4,8 +4,10 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
 import { Toolbar } from "primereact/toolbar";
 import React, { ChangeEvent, useContext, useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { getListProjectService } from "../../Services/projectServiceApi";
 import {
   createNewTaskService,
@@ -14,14 +16,12 @@ import {
   updateTaskService,
 } from "../../Services/taskServiceApi";
 import { getListUserService } from "../../Services/userServiceApi";
+import { useAppSelector } from "../../hooks/ReduxHook";
 import { IProjectModel } from "../../models/projectModel";
 import { ITaskModel } from "../../models/taskModel";
 import { IUserListModel } from "../../models/userListModel";
-import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { validateTask } from "../../utils/yup";
-import { Dropdown } from "primereact/dropdown";
-import { useLocation } from "react-router-dom";
-import { useAppSelector } from "../../hooks/ReduxHook";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 export default function TaskAdmin() {
   const [isNewTask, setIsNewTask] = useState(true);
@@ -407,7 +407,7 @@ export default function TaskAdmin() {
                 value={selectedNameProject}
                 onChange={(e) => setSelectedCity(e.value)}
                 options={[
-                  ...new Set(listTask.map((ele) => ele.project_name)),
+                  ...new Set(listTask?.map((ele) => ele.project_name)),
                 ].map((string) => {
                   return { project_name: string };
                 })}

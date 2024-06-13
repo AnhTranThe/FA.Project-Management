@@ -54,20 +54,19 @@ export default function ClientAppTopbar() {
   const itemLeft: IMenuItem[] = [
     {
       label: "Jira",
-      icon: "/public/imgs/logo.png",
+      icon: "/imgs/logo.png",
       command: () => {
         nav("/client/projects");
       },
-      class: `h-2rem border-none ${
-        !IsDarkTheme ? "p-button-light" : "p-button-dark"
-      }`,
+      class: `h-2rem border-none ${!IsDarkTheme ? "p-button-light" : "p-button-dark"
+        }`,
     },
   ];
 
   const itemRights: IMenuItem[] = [
     {
       label: "Github",
-      icon: "/public/imgs/github-mark.png",
+      icon: "/imgs/github-mark.png",
       class: `circle-button ${!IsDarkTheme ? "p-button-light" : ""}`,
       command: () => {
         window.open(
@@ -77,17 +76,15 @@ export default function ClientAppTopbar() {
       },
     },
     {
-      class: `circle-button  pi ${
-        !IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
-      }`,
+      class: `circle-button  pi ${!IsDarkTheme ? "pi-sun p-button-light" : "pi-sun p-button-dark"
+        }`,
       command: () => {
         dispatch(setTheme(!IsDarkTheme));
       },
     },
     {
-      class: `circle-button  pi ${
-        !IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
-      }`,
+      class: `circle-button  pi ${!IsDarkTheme ? "pi-user p-button-light" : "pi-user p-button-dark"
+        }`,
       command: handleProfileButtonClick,
       items: [
         {
@@ -147,7 +144,7 @@ export default function ClientAppTopbar() {
               aria-label={item.label}>
               <img
                 alt="logo"
-                src="/public/imgs/logo.png"
+                src="/imgs/logo.png"
                 className="h-2rem"></img>
               <label className="text-xl pl-2">Jira</label>
             </Button>

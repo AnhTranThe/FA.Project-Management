@@ -98,10 +98,11 @@
 
 .client-layout-sidebar {
   overflow-y: auto;
-  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
   left: 0;
   height: inherit;
-  transition: all 0.3s ease-in;
   background-color: var(--highlight-bg);
   border-radius: 5px;
   padding: 0.5rem 1.5rem;
@@ -129,6 +130,7 @@
   opacity: 0;
   width: 0;
   overflow: hidden;
+  transition: all 1s ease-in-out;
 }
 
 .layout-main .right-content {
@@ -143,7 +145,7 @@
   background-color: white;
   border-radius: 50%;
   color: black;
-  transition: all 0.2s linear;
+  transition: all 0.5s linear;
 }
 .layout-main .right-content .button__navClient button {
   margin: -10px;
@@ -164,6 +166,13 @@
   text-decoration: underline; /* Apply text decoration to the label when hovering */
 }
 
+.p-password {
+  width: 100%;
+}
+.p-password .p-password-input {
+  width: 100%;
+}
+
 .p-dialog-mask #pr_id_2 .form__project .card__container {
   padding: 0.75rem !important;
 }
@@ -181,6 +190,9 @@
   border-radius: 0.5rem;
 }
 
+.ProjectUser {
+  height: 90vh;
+}
 .ProjectUser #features .button__delete {
   top: 15px;
   right: 15px;

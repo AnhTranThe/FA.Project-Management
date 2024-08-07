@@ -18,7 +18,7 @@ import { BreadCrumb } from "primereact/breadcrumb";
 import { Button } from "primereact/button";
 import { MenuItem } from "primereact/menuitem";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import ClientAppSidebar from "../../components/Client/ClientAppSidebar";
 import { useAppSelector } from "../../hooks/ReduxHook";
 
@@ -34,6 +34,7 @@ import TaskBoardColumn from "../Task/TaskBoardColumn";
 import TaskBoardItem from "../Task/TaskBoardItem";
 import TaskUserSearch from "../Task/TaskUserSearch";
 import ProjectListUsersJoin from "./ProjectListUsersJoin";
+import LoadingPage from "../Loading/LoadingPage";
 
 const emptyColumnsBoard = [
   {
@@ -62,6 +63,8 @@ export default function ProjectUserBoard() {
   const sidebarRef = useRef(null);
   const [isOpen, setIsOpen] = useState(true);
   const [searchKeyValue, setSearchKeyValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const nav = useNavigate();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -187,13 +190,17 @@ export default function ProjectUserBoard() {
   ];
 
   useEffect(() => {
-    setColumns(columnsBoard);
-
-    const simplifiedColumnsData: IColumnData[] = columnsBoard.map((column) => ({
-      [column.id]: column.taskItems,
-    }));
-
-    setColumnsData(simplifiedColumnsData);
+    const fetchData = async () => {
+      setIsLoading(true);
+      setColumns(columnsBoard);
+      const simplifiedColumnsData: IColumnData[] = columnsBoard.map((column) => ({
+        [column.id]: column.taskItems,
+      }));
+      setColumnsData(simplifiedColumnsData);
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+      setIsLoading(false);
+    }
+    fetchData();
   }, [listTasksByProject, searchKeyValue]);
 
   const sensors = useSensors(
@@ -427,28 +434,39 @@ export default function ProjectUserBoard() {
     {
       template: () => {
         return (
-          <Link
-            className="text-primary font-semibold"
-            to={`/client/projects/${selectedProject.id}/board`}>
+          <NavLink
+            to={`/client/projects/${selectedProject.id}`}
+            className="text-primary font-semibold">
             {selectedProject.name}
-          </Link>
+          </NavLink>
+          // <Link
+          //   className="text-primary font-semibold"
+
+          //   to={`/client/projects/${selectedProject.id}`}>
+          //   {selectedProject.name}
+          // </Link>
         );
       },
     },
   ];
-  const breadCumbHome = { icon: "pi pi-home", url: "/client/projects" };
+  const breadCumbHome = {
+    icon: "pi pi-home", command: (e: any) => {
+      e.originalEvent.preventDefault();
+      nav("/client/projects");
+    }
+  };
 
   return (
     <div className="relative flex justify-content-start align-items-start ">
       <div
-        className={`col-3 client-layout-sidebar h-screen z-3 overflow-x-hidden ${isOpen ? "" : "hidden__navbarClient"
+        className={` client-layout-sidebar h-screen z-3 overflow-x-hidden ${isOpen ? "col-3" : "hidden__navbarClient"
           }`}>
         <div className="client-layout-sidebar-content " ref={sidebarRef}>
           <ClientAppSidebar />
         </div>
       </div>
 
-      <div className="col-9 relative right-content ">
+      <div style={{ "transition": "all 1s ease-out" }} className={`${isOpen ? "col-9" : "col-12"} relative right-content `}>
         <div className="absolute button__navClient">
           <Button
             onClick={toggleSidebar}
@@ -456,7 +474,7 @@ export default function ProjectUserBoard() {
             className="p-button-rounded p-button-text p-mr-2 p-mt-2"
             aria-label="Toggle sidebar"></Button>
         </div>
-        <div className="w-full">
+        {isLoading === true ? (<LoadingPage />) : (<div className="w-full">
           <section className="pt-6 ">
             <BreadCrumb
               className="border-none"
@@ -477,6 +495,7 @@ export default function ProjectUserBoard() {
               </div>
             </section>
           </div>
+
           <div>
             <DndContext
               sensors={sensors}
@@ -502,8 +521,12 @@ export default function ProjectUserBoard() {
               </div>
             </DndContext>
           </div>
-        </div>
+
+
+        </div>)}
+
       </div>
     </div>
+
   );
 }

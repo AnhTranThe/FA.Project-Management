@@ -17,6 +17,11 @@ export interface ISignUpModel {
   name: string;
   role: number;
 }
+export interface IForgotPasswordModel {
+  email: string;
+  pass: string;
+  confirm: string;
+}
 export interface IDecodeAccessTokenModel {
   id: string;
   email: string;

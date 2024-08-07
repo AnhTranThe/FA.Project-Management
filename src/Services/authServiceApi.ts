@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ILoginDetail, ISignUpModel } from "../models/loginModel";
+import {
+  IForgotPasswordModel,
+  ILoginDetail,
+  ISignUpModel,
+} from "../models/loginModel";
 import axiosInstance from "./configAxiosService";
 
 export const loginService = async (data: ILoginDetail) => {
@@ -19,6 +23,17 @@ export const signUpService = async (data: ISignUpModel) => {
   } catch (error: any) {
     console.log(error);
 
+    return error.response.data;
+  }
+};
+
+export const forgotPasswordService = async (data: IForgotPasswordModel) => {
+  try {
+    const res = await axiosInstance.put("/changepassword", data);
+    console.log(res.data);
+    return res.data;
+  } catch (error: any) {
+    console.log(error);
     return error.response.data;
   }
 };

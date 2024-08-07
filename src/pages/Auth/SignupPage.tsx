@@ -2,12 +2,19 @@ import { useFormik } from "formik";
 import { Button } from "primereact/button";
 import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUpService } from "../../Services/authServiceApi";
 import { ISignUpModel } from "../../models/loginModel";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
 import { validateSignUp } from "../../utils/yup";
+import { PrimeReactContext } from "primereact/api";
+import { LayoutConfig } from "../../types";
+import { LayoutContext } from "../context/layoutcontext";
+import { useAppSelector } from "../../hooks/ReduxHook";
+import { IThemeReducer } from "../../store/reducer/themeReducer";
+import { useAppDispatch } from "../../store/store";
+import { setTheme } from "../../store/action/themeAction";
 
 export default function SignupPage() {
   const [switchValue, setSwitchValue] = useState(false);
@@ -30,6 +37,27 @@ export default function SignupPage() {
       });
     }
   };
+  const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
+  const { IsDarkTheme } = useAppSelector(
+    (state: IThemeReducer) => state.themeReducer
+  );
+  const dispatch = useAppDispatch();
+  const { changeTheme } = useContext(PrimeReactContext);
+  const _changeTheme = (theme: string, colorScheme: string) => {
+    changeTheme?.(layoutConfig.theme, theme, "theme-css", () => {
+      setLayoutConfig((prevState: LayoutConfig) => ({
+        ...prevState,
+        theme,
+        colorScheme,
+      }));
+    });
+  };
+  useEffect(() => {
+    IsDarkTheme
+      ? _changeTheme("lara-dark-indigo", "dark")
+      : _changeTheme("lara-light-indigo", "light");
+  }, [IsDarkTheme]);
+
 
   const { values, errors, touched, handleChange, handleBlur, handleSubmit } = useFormik({
     initialValues: {
@@ -112,7 +140,6 @@ export default function SignupPage() {
               </div>
 
             </div>
-
             <div className="item-form mb-3">
               <label
                 htmlFor="password"
@@ -130,14 +157,13 @@ export default function SignupPage() {
                 onBlur={handleBlur}></InputText>
 
             </div>
-
-
-
             <div className="flex align-items-center justify-content-between mb-5 gap-2">
               <div className="flex align-items-center">
                 <InputSwitch
-                  checked={switchValue}
-                  onChange={(e) => setSwitchValue(e.value)}
+                  checked={IsDarkTheme}
+                  onChange={() => {
+                    dispatch(setTheme(!IsDarkTheme));
+                  }}
                   className="mr-2"
                 />
                 <label htmlFor="rememberme1">Switch dark/light</label>

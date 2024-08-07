@@ -10,7 +10,7 @@ import { useAppSelector } from "../../hooks/ReduxHook";
 import { IMenuItem } from "../../models/commonModel";
 import { LayoutContext } from "../../pages/context/layoutcontext";
 import { setTheme } from "../../store/action/themeAction";
-import { IThemReducer } from "../../store/reducer/themeReducer";
+import { IThemeReducer } from "../../store/reducer/themeReducer";
 import { useAppDispatch } from "../../store/store";
 import { LayoutConfig } from "../../types/layout";
 import { IUserLogInInfoModel } from "../../models/userModel";
@@ -18,7 +18,7 @@ import { IUserLogInInfoModel } from "../../models/userModel";
 export default function ClientAppTopbar() {
   const dispatch = useAppDispatch();
   const { IsDarkTheme } = useAppSelector(
-    (state: IThemReducer) => state.themeReducer
+    (state: IThemeReducer) => state.themeReducer
   );
   const { userLoginInfo }: { userLoginInfo: IUserLogInInfoModel } =
     useAppSelector((state) => state.userReducer);
@@ -98,7 +98,7 @@ export default function ClientAppTopbar() {
     {
       template: () => {
         return (
-          <div className="flex justify-content-center align-items-center text-xl">
+          <div className="flex justify-content-center align-items-center text-xl  p-3" >
             <Avatar
               image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png"
               size="xlarge"
@@ -106,14 +106,27 @@ export default function ClientAppTopbar() {
               shape="circle"
             />
             <div
-              className="flex flex-column align cursor-pointer"
-              onClick={() => nav("/client/user-service")}>
+              className="flex flex-column align "
+            >
               <span className="font-bold">{userLoginInfo.email}</span>
               <span className="text-sm">
                 {userLoginInfo.role !== 1 ? "customer" : "admin"}
               </span>
             </div>
           </div>
+        );
+      },
+    },
+    {
+      template: () => {
+        return (
+          <Button
+            onClick={() => nav("/client/user-service")} title="User Profile"
+            className="w-full mt-3 "
+            icon="pi pi-fw pi-cog"
+            label="User Profile"
+            severity="secondary"
+          />
         );
       },
     },

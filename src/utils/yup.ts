@@ -46,3 +46,20 @@ export const validateSignUp = yup.object().shape({
     .max(50, "Too Long!")
     .required("Required"),
 });
+
+export const validateForgotPassword = yup.object().shape({
+  email: yup
+    .string()
+    .email("Invailid email")
+    .required("(*) Pls!! Fill your email"),
+  pass: yup
+    .string()
+    .min(6, "Password must be 6 characters long")
+    .matches(/[0-9]/, "Password requires a number")
+    .matches(/[a-z]/, "Password requires a lowercase letter")
+    .matches(/[A-Z]/, "Password requires an uppercase letter")
+    .matches(/[^\w]/, "Password requires a symbol"),
+  confirm: yup
+    .string()
+    .oneOf([yup.ref("pass"), ""], 'Must match "password" field value'),
+});

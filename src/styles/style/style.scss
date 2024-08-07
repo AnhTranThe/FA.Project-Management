@@ -96,7 +96,7 @@
   user-select: none;
   left: 0;
   height: inherit;
-  transition: all 0.3s ease-in;
+  // transition: transform 1s;
   background-color: var(--highlight-bg);
   border-radius: 5px;
   padding: 0.5rem 1.5rem;
@@ -122,6 +122,7 @@
   opacity: 0;
   width: 0;
   overflow: hidden;
+  transition: all 1s ease-in-out;
 }
 
 .layout-main {
@@ -136,7 +137,7 @@
       background-color: white;
       border-radius: 50%;
       color: black;
-      transition: all 0.2s linear;
+      transition: all 0.5s linear;
       button {
         margin: -10px;
       }
@@ -159,6 +160,13 @@
 }
 .avatar-link .p-avatar-text:hover {
   text-decoration: underline; /* Apply text decoration to the label when hovering */
+}
+
+.p-password {
+  width: 100%;
+  .p-password-input {
+    width: 100%;
+  }
 }
 
 @import "./page/ProjectUser";

@@ -3,6 +3,7 @@ import { IRouteModel } from "../../models/routerModel";
 import AuthLayout from "../../pages/AuthLayout";
 import LoginPage from "../../pages/Auth/LoginPage";
 import SignupPage from "../../pages/Auth/SignupPage";
+import ForgetPasswordPage from "../../pages/Auth/ForgetPasswordPage";
 
 const authRoutes: IRouteModel = {
   path: "/auth",
@@ -20,6 +21,10 @@ const authRoutes: IRouteModel = {
       path: "signup",
       element: <SignupPage />,
     },
+    {
+      path: "forgot-password",
+      element: <ForgetPasswordPage />
+    }
   ],
 };
 export default authRoutes;

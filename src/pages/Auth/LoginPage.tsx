@@ -1,30 +1,59 @@
+import { PrimeReactContext } from "primereact/api";
 import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
-import { Dropdown } from "primereact/dropdown";
 import { InputSwitch } from "primereact/inputswitch";
-import { useContext, useState } from "react";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../hooks/ReduxHook";
 import { IDecodeAccessTokenModel } from "../../models/loginModel";
 import { loginService } from "../../Services/authServiceApi";
+import { setTheme } from "../../store/action/themeAction";
 import { getUserLoginInfo } from "../../store/action/userAction";
+import { IThemeReducer } from "../../store/reducer/themeReducer";
 import { useAppDispatch } from "../../store/store";
+import { LayoutConfig } from "../../types/layout";
 import { decodeJwtToken } from "../../utils/Utilities";
+import { LayoutContext } from "../context/layoutcontext";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import { useCookies } from 'react-cookie';
+
+
 
 const LoginPage = () => {
-  const [detailLogin, setDetailLogin] = useState({ email: "", password: "" });
-  const [checked, setChecked] = useState(false);
-  const [switchValue, setSwitchValue] = useState(false);
-  const [selectedEmail, setSelectedEmail] = useState<string>("");
+  const [detailLogin, setDetailLogin] = useState({ email: "", password: "", rememberMe: false });
+  const [cookies, setCookie] = useCookies(['authToken']);
+  const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
+
+  // const [selectedEmail, setSelectedEmail] = useState<string>("");
   const dispatch = useAppDispatch();
-  const emailOpts = [
-    {
-      email: "admin@gmail.com",
-    },
-    {
-      email: "tester@gmail.com",
-    },
-  ];
+  const { IsDarkTheme } = useAppSelector(
+    (state: IThemeReducer) => state.themeReducer
+  );
+  const { changeTheme } = useContext(PrimeReactContext);
+  const _changeTheme = (theme: string, colorScheme: string) => {
+    changeTheme?.(layoutConfig.theme, theme, "theme-css", () => {
+      setLayoutConfig((prevState: LayoutConfig) => ({
+        ...prevState,
+        theme,
+        colorScheme,
+      }));
+    });
+  };
+  useEffect(() => {
+    IsDarkTheme
+      ? _changeTheme("lara-dark-indigo", "dark")
+      : _changeTheme("lara-light-indigo", "light");
+  }, [IsDarkTheme]);
+  // const emailOpts = [
+  //   {
+  //     email: "admin@gmail.com",
+  //   },
+  //   {
+  //     email: "tester@gmail.com",
+  //   },
+  // ];
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
   // const { layoutConfig } = useContext(LayoutContext);
@@ -48,6 +77,8 @@ const LoginPage = () => {
             decodeAccessToken.role
           )
         );
+        const cookieOptions = detailLogin.rememberMe ? { path: '/', maxAge: 604800 } : { path: '/' }; // 1 week = 604800 seconds 
+        setCookie('authToken', data.access_token, cookieOptions);
         localStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/dashboard");
@@ -67,9 +98,9 @@ const LoginPage = () => {
         setShowModelToast((pre) => {
           return {
             ...pre,
-            severity: "warn",
-            summary: "Warning",
-            detail: "Name or Email not exsisted",
+            severity: "error",
+            summary: "Error",
+            detail: "Login failed: Email or Password is incorrect.",
           };
         });
         return;
@@ -105,13 +136,17 @@ const LoginPage = () => {
           </div>
 
           <div>
-            <label
-              htmlFor="email"
-              className="block text-900 text-xl font-medium mb-2">
-              Email
-            </label>
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-900 text-xl font-medium mb-2">
+                Email
+              </label>
+              <InputText className="w-full md:w-30rem mb-5" value={detailLogin.email} onChange={(e) => setDetailLogin((prev) => ({ ...prev, email: e.target.value }))} />
 
-            <Dropdown
+            </div>
+
+            {/* <Dropdown
               value={selectedEmail}
               onChange={(e) => {
                 const selectedEmailAddress = e.value.email;
@@ -126,34 +161,45 @@ const LoginPage = () => {
               optionLabel="email"
               placeholder="Select Email"
               className="w-full md:w-30rem mb-5"
-            />
+            /> */}
+            <div>
+              <label
+                htmlFor="Password"
+                className="block text-900 text-xl font-medium mb-2">
+                Password
+              </label>
+              <Password className="mb-5" value={detailLogin.password} onChange={(e) => setDetailLogin((prev) => ({ ...prev, password: e.target.value }))} feedback={false} toggleMask />
+
+            </div>
+
             <div className="flex align-items-center justify-content-between mb-5 gap-5">
               <div className="flex align-items-center">
                 <Checkbox
-                  inputId="rememberme1"
-                  checked={checked}
-                  onChange={(e) => setChecked(e.checked || false)}
+                  checked={detailLogin.rememberMe}
+                  onChange={(e) => setDetailLogin({ ...detailLogin, rememberMe: e.target.checked ?? false })}
                   className="mr-2"></Checkbox>
-                <label htmlFor="rememberme1">Remember me</label>
+                <label >Remember me</label>
               </div>
-              <a
-                className="font-medium no-underline ml-2 text-right cursor-pointer"
-                style={{ color: "var(--primary-color)" }}>
-                Forgot password?
-              </a>
+              <Link to={"/auth/forgot-password"}>
+                <p className="font-medium no-underline ml-2 text-right cursor-pointer">
+                  Forgot password?
+                </p>
+              </Link>
             </div>
             <div className="flex align-items-center justify-content-between mb-5 gap-2">
               <div className="flex align-items-center">
                 <InputSwitch
-                  checked={switchValue}
-                  onChange={(e) => setSwitchValue(e.value)}
+                  checked={IsDarkTheme}
+                  onChange={() => {
+                    dispatch(setTheme(!IsDarkTheme));
+                  }}
                   className="mr-2"
                 />
                 <label htmlFor="rememberme1">Switch dark/light</label>
               </div>
               <Link to={"/auth/signup"}>
                 <p className="p-3 text-sm font-bold underline text-blue-400 cursor-pointer">
-                  Sign Up
+                  Create new account
                 </p>
               </Link>
             </div>

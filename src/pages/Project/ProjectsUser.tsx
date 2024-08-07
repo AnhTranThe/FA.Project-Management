@@ -4,9 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector } from "../../hooks/ReduxHook";
 import { useAppDispatch } from "../../store/store";
 
+import dayjs from "dayjs";
+import { useFormik } from "formik";
 import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
+import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Dialog } from "primereact/dialog";
 import { useContext, useEffect, useState } from "react";
+import { IProjectModel } from "../../models/projectModel";
+import { IUserListModel } from "../../models/userListModel";
+import { IUserLogInInfoModel } from "../../models/userModel";
 import {
   createProjectService,
   deleteProjectService,
@@ -14,28 +20,37 @@ import {
   getProjectByUserService,
 } from "../../Services/projectServiceApi";
 import { getListUserService } from "../../Services/userServiceApi";
-import { IProjectModel } from "../../models/projectModel";
-import { IUserListModel } from "../../models/userListModel";
-import { IUserLogInInfoModel } from "../../models/userModel";
-import { selectedProjectItem } from "../../store/action/projectAction";
+import { selectedProjectItem } from '../../store/action/projectAction';
 import { getTasksByProject } from "../../store/action/taskAction";
 import { getListUserJoinInProjectAction } from "../../store/action/userAction";
 import {
   formatDateTime,
   generateRandomImageProject,
 } from "../../utils/Utilities";
-import { useFormik } from "formik";
-import dayjs from "dayjs";
 import { validateProject } from "../../utils/yup";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
+import LoadingPage from "../Loading/LoadingPage";
 
 export default function ProjectsUser() {
+  const emptyProject: IProjectModel = {
+    id: "",
+    name: "",
+    payment: 0,
+    time_start: "",
+    time_end: "",
+    note: "",
+    priority: 0,
+    arrSelectedUser: []
+  }
   const nav = useNavigate();
   const dispatch = useAppDispatch();
   const [createDialog, setCreateDialog] = useState(false);
   const [listUser, setListUser] = useState<IUserListModel[]>([]);
   const [ingredients, setIngredients] = useState<string[]>([]);
   const [projectByUserLs, setProjectByUserLs] = useState<IProjectModel[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [selectedProjectDetail, setSelectedProjectDetail] = useState<IProjectModel>(emptyProject);
+
 
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
   const { IsDarkTheme }: { IsDarkTheme: boolean } = useAppSelector(
@@ -69,9 +84,32 @@ export default function ProjectsUser() {
     }
   };
 
+  const handleConfirmDelete = () => {
+    confirmDialog({
+      message: 'Do you want to delete this project?',
+      header: 'Delete Confirmation',
+      icon: 'pi pi-info-circle',
+      defaultFocus: 'reject',
+      acceptClassName: 'p-button-danger',
+      accept: async () => {
+        await handleDeleteProject(selectedProjectDetail.id ?? "");
+      },
+      reject() {
+        setSelectedProjectDetail(emptyProject);
+      },
+    });
+  };
+
   useEffect(() => {
-    handleReloadData();
-    handleGetListUser();
+    const fetchData = async () => {
+      setIsLoading(true);
+      await handleReloadData();
+      await handleGetListUser();
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+    };
+    fetchData();
+
   }, []);
 
   const handleSelectedProjectItem =
@@ -79,7 +117,7 @@ export default function ProjectsUser() {
       dispatch(selectedProjectItem(project));
       dispatch(getTasksByProject(project.id ?? ""));
       dispatch(getListUserJoinInProjectAction(project.id ?? ""));
-      nav(`/client/projects/${project.id}/board`);
+      nav(`/client/projects/${project.id}`);
     };
 
   const {
@@ -147,30 +185,31 @@ export default function ProjectsUser() {
       }
     },
   });
-
   const handleDeleteProject = async (id: string) => {
     if (id === "") return;
-
     const res = await deleteProjectService(id);
+    console.log(res)
     if (res.code === 200) {
       setShowModelToast({
         severity: "success",
         summary: "Success",
         detail: "Delete Project Success",
       });
+
       await handleReloadData();
     } else {
+
       setShowModelToast({
         severity: "warn",
         summary: "Warning",
         detail: `${res?.message || "Something Wrong"}`,
       });
     }
+    setSelectedProjectDetail(emptyProject);
   };
-
   return (
-    <div className="ProjectUser">
-      <div className="p-6">
+    <div className="ProjectUser ">
+      <div className="p-6 h-full">
         <h1 className="font-primary-black text-2xl font-bold">
           {userLoginInfo.user_name.toUpperCase()} 'S PROJECTS
         </h1>
@@ -185,8 +224,7 @@ export default function ProjectsUser() {
             </Button>
           </div>
         ) : null}
-
-        <div id="features" className="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8">
+        {isLoading === true ? (<LoadingPage />) : (<div id="features" className="py-4 px-4 lg:px-8 mt-5 mx-0 lg:mx-8">
           <div className="grid justify-content-center">
             {projectByUserLs?.map((project) => (
               <div
@@ -234,15 +272,18 @@ export default function ProjectsUser() {
                     severity="danger"
                     aria-label="Cancel"
                     className="absolute z-2 button__delete"
-                    onClick={() =>
-                      handleDeleteProject(project.id ? project.id : "")
+                    onClick={() => {
+                      setSelectedProjectDetail(project);
+                      handleConfirmDelete()
+                    }
                     }
                   />
                 ) : null}
               </div>
             ))}
           </div>
-        </div>
+        </div>)}
+
       </div>
       <Dialog
         header="Creat New Project"
@@ -314,6 +355,7 @@ export default function ProjectsUser() {
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog />
     </div>
   );
 }

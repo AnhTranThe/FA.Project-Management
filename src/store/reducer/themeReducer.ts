@@ -2,7 +2,7 @@
 
 import { SET_THEME } from "../type/actionType";
 
-export interface IThemReducer {
+export interface IThemeReducer {
   themeReducer: {
     IsDarkTheme: boolean;
   };

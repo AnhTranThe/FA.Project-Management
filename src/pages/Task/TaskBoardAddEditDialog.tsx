@@ -108,7 +108,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
     };
     const handleCreateNewTask = async (data: ITaskModel) => {
         const res = await createNewTaskService(data);
-        if (res?.success) {
+        if (res?.code === 200) {
             setShowModelToast({
                 severity: "success",
                 summary: "Success",
@@ -126,7 +126,8 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
     };
     const handleUpdateTask = async (data: ITaskModel) => {
         const res = await updateTaskService(data);
-        if (res?.success) {
+        console.log(res)
+        if (res?.code === 200) {
             setShowModelToast({
                 severity: "success",
                 summary: "Success",
@@ -135,6 +136,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
             await dispatch(getTasksByProject(selectedProject?.id ?? ""));
             onHide()
         } else {
+
             setShowModelToast({
                 severity: "warn",
                 summary: "Warning",
@@ -157,7 +159,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
                     <div className="p-field  my-4">
                         <label>User Email</label>
                         <select
-                            className="w-full px-2 py-3 border-round"
+                            className="w-full px-2 py-2 border-round mt-2"
                             defaultValue={values.user_mail}
                             name="user_mail"
                             onChange={handleChangeSelectTask}>
@@ -177,7 +179,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
                     <div className="p-field  my-4">
                         <label>Project Id</label>
                         <select
-                            className="w-full px-2 py-3 border-round"
+                            className="w-full px-2 py-2 border-round mt-2"
                             defaultValue={values.project_id}
                             name="project_id"
                             onChange={handleChangeSelectTask}>
@@ -198,13 +200,13 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
                         <label>Status</label>
                         <br />
                         <select
-                            className="px-3 py-2 ư-3 mt-2"
+                            className="px-3 py-2 w-full mt-2"
                             name="status"
                             id="status"
                             value={values.status + "" || "1"}
                             style={{ backgroundColor: `${colorSelect}`, color: "black" }}
                             onChange={hanldeSelectStatus}>
-                            <option value="0">pls choose status</option>
+                            <option value="0" className="p-button p-button-info">pls choose status</option>
                             <option value="1" className="p-button p-button-success">
                                 To-do
                             </option>
@@ -224,7 +226,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
                         <br />
                         <input
                             defaultValue={values.note}
-                            className="px-3 py-2 w-full"
+                            className="px-3 py-2 w-full mt-2"
                             type="text"
                             name="note"
                             required
@@ -240,7 +242,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
                         <br />
                         <input
                             value={values.time_start}
-                            className="px-3 py-2 w-full"
+                            className="px-3 py-2 w-full mt-2"
                             type="date"
                             name="time_start"
                             required
@@ -252,7 +254,7 @@ const TaskBoardAddEditDialog = (({ isNewTask, dialogVisible, onHide, detailTask 
                         <br />
                         <input
                             value={values.time_end}
-                            className="px-3 py-2 w-full"
+                            className="px-3 py-2 w-full mt-2"
                             type="date"
                             name="time_end"
                             required

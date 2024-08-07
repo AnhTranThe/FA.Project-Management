@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from "react";
 import { LayoutContext } from "../../pages/context/layoutcontext";
 import { AppConfigProps, LayoutConfig, LayoutState } from "../../types/layout";
 import { useAppSelector } from "../../hooks/ReduxHook";
-import { IThemReducer } from "../../store/reducer/themeReducer";
+import { IThemeReducer } from "../../store/reducer/themeReducer";
 import { useAppDispatch } from "../../store/store";
 import { setTheme } from "../../store/action/themeAction";
 
@@ -21,7 +21,7 @@ const AppConfig = (props: AppConfigProps) => {
   const { setRipple, changeTheme } = useContext(PrimeReactContext);
 
   const { IsDarkTheme } = useAppSelector(
-    (state: IThemReducer) => state.themeReducer
+    (state: IThemeReducer) => state.themeReducer
   );
   const dispatch = useAppDispatch();
 

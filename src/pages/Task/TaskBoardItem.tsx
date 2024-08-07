@@ -22,18 +22,14 @@ export default function TaskBoardItem({ task, id, onClick }: { task?: ITaskModel
 
     return (
         <div className="my-2" ref={setNodeRef} style={style} {...attributes} >
-            <div onClick={() => onClick && onClick(true)} className="w-full cursor-pointer border-round border-none client-board-column-item px-2 py-2">
+            <div onClick={() => onClick && onClick(true)} className="w-full cursor-pointer border-round border-none client-board-column-item px-2 py-2 hover:bg-primary-reverse">
                 <div className="flex justify-content-between">
                     <p className="py-2 text-xl">{task?.note}</p>
                     {/* <Button {...listeners} icon="pi pi-arrows-alt" rounded size="small" /> */}
                     {
                         userLoginInfo.role !== 1 && (<a  {...listeners} className="pi pi-arrows-alt">
-
                         </a>)
-
                     }
-
-
                 </div>
 
                 <div className="flex align-items-center justify-content-between py-3">

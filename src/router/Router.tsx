@@ -74,7 +74,7 @@ const Router = () => {
           element: <ProjectsUser />,
         },
         {
-          path: "/client/projects/:id/board",
+          path: "/client/projects/:id",
           element: <ProjectUserBoard />,
         },
         {

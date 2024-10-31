@@ -16,7 +16,7 @@ export default function ForgetPasswordPage() {
 
         const res = await forgotPasswordService(e);
         if (res && res.code === 200) {
-            console.log("true")
+
             setShowModelToast({
                 severity: "success",
                 summary: "Success",

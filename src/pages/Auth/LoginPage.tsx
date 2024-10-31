@@ -17,15 +17,13 @@ import { LayoutConfig } from "../../types/layout";
 import { decodeJwtToken } from "../../utils/Utilities";
 import { LayoutContext } from "../context/layoutcontext";
 import { IToastValueContext, ToastContext } from "../context/toastContext";
-import { useCookies } from 'react-cookie';
 
 
 
 const LoginPage = () => {
   const [detailLogin, setDetailLogin] = useState({ email: "", password: "", rememberMe: false });
-  const [cookies, setCookie] = useCookies(['authToken']);
+  console.log(detailLogin)
   const { layoutConfig, setLayoutConfig } = useContext(LayoutContext);
-
   // const [selectedEmail, setSelectedEmail] = useState<string>("");
   const dispatch = useAppDispatch();
   const { IsDarkTheme } = useAppSelector(
@@ -77,9 +75,7 @@ const LoginPage = () => {
             decodeAccessToken.role
           )
         );
-        const cookieOptions = detailLogin.rememberMe ? { path: '/', maxAge: 604800 } : { path: '/' }; // 1 week = 604800 seconds 
-        setCookie('authToken', data.access_token, cookieOptions);
-        localStorage.setItem("Token", JSON.stringify(data));
+        sessionStorage.setItem("Token", JSON.stringify(data));
         if (data.role === 1) {
           navigate("/dashboard");
         } else {

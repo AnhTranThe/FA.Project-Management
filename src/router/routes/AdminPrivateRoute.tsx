@@ -13,7 +13,7 @@ export default function AdminPrivateRoute({
 }: IUserPrivateRouteProps) {
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
-  const loginDetail = JSON.parse(localStorage.getItem("Token")!);
+  const loginDetail = JSON.parse(sessionStorage.getItem("Token")!);
 
   useEffect(() => {
     if (!loginDetail) {

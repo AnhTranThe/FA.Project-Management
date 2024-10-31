@@ -16,7 +16,7 @@ const AppTopbar = forwardRef((_props, ref) => {
   }));
 
   const handleLogout = () => {
-    localStorage.removeItem("Token");
+    sessionStorage.removeItem("Token");
   };
 
   return (

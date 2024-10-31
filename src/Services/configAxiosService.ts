@@ -10,7 +10,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     // Check hệ thống có token hay không và cập nhật Authorization header nếu có
-    const token = localStorage.getItem("Token");
+    const token = sessionStorage.getItem("Token");
     if (token) {
       const parseToken = JSON.parse(token);
       config.headers.Authorization = "Bearer " + `${parseToken.refresh_token}`;
@@ -39,8 +39,8 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         // Thực hiện gửi request để làm mới token
-        // const currentToken = localStorage.getItem("refresh_token");
-        const refeshToken = localStorage.getItem("Token");
+        // const currentToken = sessionStorage.getItem("refresh_token");
+        const refeshToken = sessionStorage.getItem("Token");
 
         if (refeshToken) {
           const parseRefeshToken = JSON.parse(refeshToken);
@@ -55,7 +55,7 @@ axiosInstance.interceptors.response.use(
           // Cập nhật token mới và gửi lại request gốc với token mới
           const newToken = response.data.refresh_token;
           parseRefeshToken.refresh_token = newToken;
-          localStorage.setItem("Token", JSON.stringify(parseRefeshToken));
+          sessionStorage.setItem("Token", JSON.stringify(parseRefeshToken));
           originalRequest.headers.Authorization = "Bearer " + `${newToken}`;
           return axios(originalRequest);
         }
@@ -64,7 +64,7 @@ axiosInstance.interceptors.response.use(
         // Ví dụ: window.location.href = '/login';
         console.log(error);
         window.location.href = "/api/login";
-        localStorage.removeItem("Token");
+        sessionStorage.removeItem("Token");
         return Promise.reject(error);
       }
     }

@@ -45,6 +45,16 @@ export const validateSignUp = yup.object().shape({
     .min(2, "Too Short!")
     .max(50, "Too Long!")
     .required("Required"),
+  password: yup
+    .string()
+    .min(6, "Password must be 6 characters long")
+    .matches(/[0-9]/, "Password requires a number")
+    .matches(/[a-z]/, "Password requires a lowercase letter")
+    .matches(/[A-Z]/, "Password requires an uppercase letter")
+    .matches(/[^\w]/, "Password requires a symbol"),
+  confirmPassword: yup
+    .string()
+    .oneOf([yup.ref("password"), ""], 'Must match "password" field value'),
 });
 
 export const validateForgotPassword = yup.object().shape({

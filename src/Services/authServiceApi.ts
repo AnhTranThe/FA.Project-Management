@@ -29,7 +29,8 @@ export const signUpService = async (data: ISignUpModel) => {
 
 export const forgotPasswordService = async (data: IForgotPasswordModel) => {
   try {
-    const res = await axiosInstance.put("/changepassword", data);
+    console.log(data);
+    const res = await axiosInstance.put("/change-password", data);
     console.log(res.data);
     return res.data;
   } catch (error: any) {

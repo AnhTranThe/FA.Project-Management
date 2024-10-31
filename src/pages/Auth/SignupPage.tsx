@@ -1,25 +1,26 @@
 import { useFormik } from "formik";
+import { PrimeReactContext } from "primereact/api";
 import { Button } from "primereact/button";
 import { InputSwitch } from "primereact/inputswitch";
 import { InputText } from "primereact/inputtext";
 import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signUpService } from "../../Services/authServiceApi";
-import { ISignUpModel } from "../../models/loginModel";
-import { IToastValueContext, ToastContext } from "../context/toastContext";
-import { validateSignUp } from "../../utils/yup";
-import { PrimeReactContext } from "primereact/api";
-import { LayoutConfig } from "../../types";
-import { LayoutContext } from "../context/layoutcontext";
 import { useAppSelector } from "../../hooks/ReduxHook";
+import { ISignUpModel } from "../../models/loginModel";
+import { setTheme } from "../../store/action/themeAction";
 import { IThemeReducer } from "../../store/reducer/themeReducer";
 import { useAppDispatch } from "../../store/store";
-import { setTheme } from "../../store/action/themeAction";
+import { LayoutConfig } from "../../types";
+import { validateSignUp } from "../../utils/yup";
+import { LayoutContext } from "../context/layoutcontext";
+import { IToastValueContext, ToastContext } from "../context/toastContext";
 
 export default function SignupPage() {
-  const [switchValue, setSwitchValue] = useState(false);
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
   const nav = useNavigate();
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const handleVisiblePassword = () => setPasswordVisible(!isPasswordVisible);
   const handleSignUp = async (detaiSignUp: ISignUpModel) => {
     const res = await signUpService(detaiSignUp);
     if (res && res.code === 200) {
@@ -64,6 +65,7 @@ export default function SignupPage() {
       email: "",
       name: "",
       password: "",
+      confirmPassword: "",
       role: 2,
     },
     validationSchema: validateSignUp,
@@ -146,17 +148,70 @@ export default function SignupPage() {
                 className="block text-900 font-medium text-sm ml-1 mb-2">
                 Password
               </label>
-              <InputText
-                id="password"
-                placeholder="password..."
-                required
-                className="w-full"
-                data-pr-classname="w-full p-3 md:w-30rem"
-                defaultValue={values.password}
-                onChange={handleChange}
-                onBlur={handleBlur}></InputText>
+              <div className="p-inputgroup">
+                <InputText
+                  id="password"
+                  placeholder="password..."
+                  type={isPasswordVisible ? "text" : "password"}
+                  required
+                  className="w-full"
+                  data-pr-classname="w-full p-3 md:w-30rem"
+                  defaultValue={values.password}
+                  onChange={handleChange}
+                  onBlur={handleBlur}></InputText>
+
+                <Button
+                  icon={isPasswordVisible ? "pi pi-eye-slash" : "pi pi-eye"}
+                  onClick={handleVisiblePassword}
+                  className="p-button-text"
+                  aria-label="Toggle Password Visibility"
+                />
+              </div>
+              <div className="my-3 pl-2">
+                {errors.password && touched.password && (
+                  <span className="text-red-500 my-3">{errors.password}</span>
+                )}
+              </div>
+
+
 
             </div>
+
+            <div className="item-form mb-3">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-900 font-medium text-sm ml-1 mb-2">
+                Confirm Password
+              </label>
+              <div className="p-inputgroup">
+                <InputText
+                  id="confirmPassword"
+                  placeholder="Confirm password..."
+                  type={isPasswordVisible ? "text" : "password"}
+                  required
+                  className="w-full"
+                  data-pr-classname="w-full p-3 md:w-30rem"
+                  defaultValue={values.confirmPassword}
+                  onChange={handleChange}
+                  onBlur={handleBlur}></InputText>
+
+                <Button
+                  icon={isPasswordVisible ? "pi pi-eye-slash" : "pi pi-eye"}
+                  onClick={handleVisiblePassword}
+                  className="p-button-text"
+                  aria-label="Toggle confirm password Visibility"
+                />
+              </div>
+              <div className="my-3 pl-2">
+                {errors.confirmPassword && touched.confirmPassword && (
+                  <span className="text-red-500 my-3">{errors.confirmPassword}</span>
+                )}
+              </div>
+
+
+
+            </div>
+
             <div className="flex align-items-center justify-content-between mb-5 gap-2">
               <div className="flex align-items-center">
                 <InputSwitch

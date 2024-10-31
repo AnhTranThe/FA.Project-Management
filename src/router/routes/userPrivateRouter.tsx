@@ -11,7 +11,7 @@ interface IUserPrivateRouteProps {
 export default function UserPrivateRoute({ children }: IUserPrivateRouteProps) {
   const { setShowModelToast } = useContext<IToastValueContext>(ToastContext);
 
-  const loginDetail = JSON.parse(localStorage.getItem("Token")!);
+  const loginDetail = JSON.parse(sessionStorage.getItem("Token")!);
 
   useEffect(() => {
     if (!loginDetail) {

@@ -44,7 +44,7 @@ export default function ClientAppTopbar() {
   const menuRef = useRef<Menu>(null);
   const nav = useNavigate();
   const handleLogout = () => {
-    localStorage.removeItem("Token");
+    sessionStorage.removeItem("Token");
     nav("/auth/login");
   };
   const handleProfileButtonClick = (event: any) => {
